@@ -38,6 +38,13 @@ impl Game {
                 self.status_message =
                     "Choose whether to keep the old game or start over.".to_owned();
             }
+            "save_recovery" => {
+                self.state = None;
+                self.screen = AppScreen::SaveRecovery;
+                self.save_recovery_can_preserve = true;
+                self.status_message =
+                    "Load failed: the save data is incomplete or damaged.".to_owned();
+            }
             _ => {
                 // Default: boot state is the main menu.
             }

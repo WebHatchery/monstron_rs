@@ -3,6 +3,7 @@ pub mod combat;
 pub mod hatchery;
 pub mod menu;
 pub mod placeholder;
+pub mod save_recovery;
 pub mod shop;
 pub mod stable;
 pub mod tower;
@@ -15,6 +16,7 @@ pub mod workshop;
 pub enum AppScreen {
     MainMenu,
     ConfirmNewGame,
+    SaveRecovery,
     Settings,
     Town,
     Hatchery,

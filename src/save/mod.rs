@@ -13,6 +13,20 @@ pub struct SaveData {
 
 pub struct SaveRepository;
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum SaveCompatibility {
+    Supported,
+    Newer,
+}
+
+pub fn compatibility(save_version: u32, supported_version: u32) -> SaveCompatibility {
+    if save_version > supported_version {
+        SaveCompatibility::Newer
+    } else {
+        SaveCompatibility::Supported
+    }
+}
+
 impl SaveRepository {
     pub fn save(save_data: &SaveData) -> Result<(), String> {
         macroquad_toolkit::persistence::save_to_slot_with_version(
@@ -29,6 +43,10 @@ impl SaveRepository {
 
     pub fn exists() -> bool {
         macroquad_toolkit::persistence::slot_exists(GAME_NAME, SAVE_SLOT)
+    }
+
+    pub fn quarantine() -> Result<String, String> {
+        macroquad_toolkit::persistence::quarantine_slot(GAME_NAME, SAVE_SLOT)
     }
 }
 

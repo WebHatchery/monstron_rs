@@ -7,11 +7,12 @@ use crate::engine::{
     combat_engine::{self, CombatDestination},
     tower_engine, town_engine,
 };
-use crate::save::{SaveData, SaveRepository};
+use crate::save::{compatibility, SaveCompatibility, SaveData, SaveRepository};
 use crate::screens::{
     combat::CombatAction,
     menu::{MenuAction, NewGameConfirmationAction, SettingsAction},
     placeholder::PlaceholderAction,
+    save_recovery::SaveRecoveryAction,
     tower::TowerAction,
     town::TownAction,
     AppScreen,
@@ -50,6 +51,28 @@ impl Game {
                 self.status_message = "Kept the existing game.".to_owned();
             }
             NewGameConfirmationAction::StartOver => self.start_new_game(),
+        }
+    }
+
+    pub(crate) fn apply_save_recovery_action(&mut self, action: SaveRecoveryAction) {
+        match action {
+            SaveRecoveryAction::Retry => self.load_game(),
+            SaveRecoveryAction::PreserveAndStartNew => match SaveRepository::quarantine() {
+                Ok(quarantine_name) => {
+                    self.start_new_game();
+                    self.status_message = format!(
+                        "Unreadable save preserved as {quarantine_name}. New camp started safely."
+                    );
+                }
+                Err(error) => {
+                    self.screen = AppScreen::SaveRecovery;
+                    self.status_message = format!("Could not preserve the save: {error}");
+                }
+            },
+            SaveRecoveryAction::BackToTitle => {
+                self.screen = AppScreen::MainMenu;
+                self.status_message = "The existing save was left unchanged.".to_owned();
+            }
         }
     }
 
@@ -346,11 +369,15 @@ impl Game {
     pub(crate) fn load_game(&mut self) {
         match SaveRepository::load() {
             Ok(save_data) => {
-                if save_data.version > self.data.config.save_version {
+                if compatibility(save_data.version, self.data.config.save_version)
+                    == SaveCompatibility::Newer
+                {
                     self.status_message = format!(
                         "Save version {} is newer than supported version {}.",
                         save_data.version, self.data.config.save_version
                     );
+                    self.save_recovery_can_preserve = false;
+                    self.screen = AppScreen::SaveRecovery;
                     return;
                 }
 
@@ -365,6 +392,8 @@ impl Game {
             }
             Err(error) => {
                 self.status_message = format!("Load failed: {error}");
+                self.save_recovery_can_preserve = true;
+                self.screen = AppScreen::SaveRecovery;
             }
         }
     }

@@ -9,7 +9,8 @@ Audit date: 26 August 2026
 - **Working specification:** [`docs/pc_demo_definition.md`](docs/pc_demo_definition.md)
 - **Release gate:** [`docs/pc_demo_release_checklist.md`](docs/pc_demo_release_checklist.md)
 - **Next implementation step after approval:** encode the floor-3 finale boundary and its deterministic full-path tests.
-- **Completed release slices:** proposed demo definition/release gate; visible New Game overwrite warning.
+- **Completed release slices:** proposed demo definition/release gate; visible New Game overwrite
+  warning; unreadable-save quarantine and unsupported-newer-save recovery.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.

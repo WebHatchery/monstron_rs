@@ -4,6 +4,13 @@ use crate::engine::{breeding_engine, day_engine, job_engine};
 use crate::state::{GameState, TownJobKind};
 
 #[test]
+fn save_versions_newer_than_the_game_are_not_treated_as_supported() {
+    assert_eq!(compatibility(1, 1), SaveCompatibility::Supported);
+    assert_eq!(compatibility(0, 1), SaveCompatibility::Supported);
+    assert_eq!(compatibility(2, 1), SaveCompatibility::Newer);
+}
+
+#[test]
 fn phase6_and_phase7_fields_round_trip_through_save_data() {
     let data = GameDataLoader::load_embedded().expect("embedded data should load");
     let mut state = GameState::new(&data);

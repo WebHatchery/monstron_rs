@@ -38,7 +38,9 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] Autosave and its visible saved indication pass at every approved progression boundary.
 - [x] New Game presents a visible, clickable overwrite warning when progress exists.
 - [ ] Save reset has a separate confirmation with clear consequences.
-- [ ] Corrupt, unsupported-newer, and partially migrated saves expose a safe recovery path.
+- [x] Unreadable saves can be retried, preserved through quarantine, or left unchanged.
+- [x] Unsupported-newer saves are identified and left unchanged for a newer game build.
+- [ ] Every supported historical save version either migrates fully or reports a safe recovery path.
 - [ ] No crash, hang, progress loss, chroma leak, overlap, clipping, or missing asset exists on the route.
 - [ ] Master/music/SFX volume, mute, fullscreen/windowed, UI scale, and reduced motion persist.
 - [ ] Full-demo deterministic run, release smoke test, and soak gate pass.

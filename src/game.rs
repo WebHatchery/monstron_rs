@@ -9,7 +9,8 @@ use crate::data::{GameData, GameDataLoader};
 use crate::save::SaveRepository;
 use crate::screens::placeholder::PlaceholderKind;
 use crate::screens::{
-    breeding, combat, hatchery, menu, placeholder, shop, stable, tower, town, workshop, AppScreen,
+    breeding, combat, hatchery, menu, placeholder, save_recovery, shop, stable, tower, town,
+    workshop, AppScreen,
 };
 use crate::state::GameState;
 use crate::ui;
@@ -24,6 +25,7 @@ pub struct Game {
     tower_guide_page: usize,
     title_texture: Texture2D,
     fullscreen_enabled: bool,
+    save_recovery_can_preserve: bool,
 }
 
 impl Game {
@@ -53,6 +55,7 @@ impl Game {
             tower_guide_page: 0,
             title_texture,
             fullscreen_enabled: false,
+            save_recovery_can_preserve: false,
         }
     }
 
@@ -67,6 +70,11 @@ impl Game {
             AppScreen::ConfirmNewGame => {
                 if let Some(action) = menu::handle_new_game_confirmation_input() {
                     self.apply_new_game_confirmation_action(action);
+                }
+            }
+            AppScreen::SaveRecovery => {
+                if let Some(action) = save_recovery::handle_input(self.save_recovery_can_preserve) {
+                    self.apply_save_recovery_action(action);
                 }
             }
             AppScreen::Settings => {
@@ -178,6 +186,9 @@ impl Game {
             }
             AppScreen::ConfirmNewGame => {
                 menu::draw_new_game_confirmation(&self.title_texture, SaveRepository::exists());
+            }
+            AppScreen::SaveRecovery => {
+                save_recovery::draw(&self.status_message, self.save_recovery_can_preserve);
             }
             AppScreen::Settings => {
                 menu::draw_settings(self.fullscreen_enabled);
