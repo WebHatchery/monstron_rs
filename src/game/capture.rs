@@ -2,7 +2,7 @@
 
 use super::Game;
 use crate::screens::AppScreen;
-use crate::state::{TowerRunGoal, TownJobKind};
+use crate::state::{CombatOutcome, TowerRunGoal, TownJobKind};
 
 impl Game {
     /// Seed a specific scene for the screenshot harness. Bypasses normal
@@ -20,15 +20,9 @@ impl Game {
                 self.begin_capture_fixture(AppScreen::Town);
                 self.enter_tower(TowerRunGoal::Balanced);
             }
-            "combat" => {
-                self.begin_capture_fixture(AppScreen::Town);
-                if let Some(state) = &mut self.state {
-                    let result =
-                        crate::engine::combat_engine::start_encounter(state, &self.data, 1, false);
-                    self.status_message = result.summary;
-                    self.screen = AppScreen::Combat;
-                }
-            }
+            "combat" => self.begin_capture_combat(None),
+            "combat_victory" => self.begin_capture_combat(Some(CombatOutcome::Victory)),
+            "combat_defeat" => self.begin_capture_combat(Some(CombatOutcome::Defeat)),
             "mainmenu" => {
                 self.state = None;
                 self.screen = AppScreen::MainMenu;
@@ -81,6 +75,41 @@ impl Game {
             _ => {
                 // Default: boot state is the main menu.
             }
+        }
+    }
+
+    fn begin_capture_combat(&mut self, outcome: Option<CombatOutcome>) {
+        self.begin_capture_fixture(AppScreen::Town);
+        let Some(state) = &mut self.state else {
+            return;
+        };
+        let result = crate::engine::combat_engine::start_encounter(state, &self.data, 1, false);
+        self.status_message = result.summary;
+        self.screen = AppScreen::Combat;
+
+        let Some(outcome) = outcome else {
+            return;
+        };
+        let Some(combat) = &mut state.combat else {
+            return;
+        };
+        combat.outcome = Some(outcome);
+        match outcome {
+            CombatOutcome::Victory => {
+                for enemy in &mut combat.enemies {
+                    enemy.hp = 0;
+                }
+                combat.add_log("The Moss Mite falls. The route is clear.".to_owned());
+                self.status_message = "Victory. Tap CONTINUE to return to the tower.".to_owned();
+            }
+            CombatOutcome::Defeat => {
+                for ally in &mut combat.allies {
+                    ally.hp = 0;
+                }
+                combat.add_log("The party can no longer fight.".to_owned());
+                self.status_message = "Defeat. Tap CONTINUE to recover in town.".to_owned();
+            }
+            CombatOutcome::Fled => unreachable!("the capture registry has no fled outcome scene"),
         }
     }
 

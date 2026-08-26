@@ -86,7 +86,7 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   remain pending.
 - A 240-cycle accelerated soak covers town, tower, combat, recovery, backup-saving, and native
   reload boundaries. Real-time rendering, OS-event, and physical-device soak testing remains.
-- The exact packaged release-profile EXE byte-matches the build and boots/renders all 16 seeded
+- The exact packaged release-profile EXE byte-matches the build and boots/renders all 18 seeded
   scenes in 1280×720, 1366×768, and 960×540 windows plus 1920×1080 fullscreen. Its opt-in 30-frame-per-scene CPU report
   enforces a provisional 16.667 ms p95 update+draw budget and reports diagnostic maxima; GPU,
   memory, sustained pacing, interaction,
@@ -98,7 +98,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
 - Catalog metadata is explicitly an internal preview, leads with visible mouse/touch controls, and
   makes no inherited repository or approved public-demo claim. Final store copy remains gated.
 - Combat embeds the processed transparent VFX atlas and separates portrait, HP, role/status, and
-  stat rows on every unit card. Broader intent, target, outcome, and small-window readability remain.
+  stat rows on every unit card. Active, victory, and defeat fixtures name the visible continuation
+  path; broader intent, target, damage/status, and small-window readability remain.
 - No full-demo deterministic test currently spans the numbered path above.
 
 ## Feature freeze

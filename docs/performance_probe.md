@@ -3,7 +3,7 @@
 Audit date: 27 August 2026
 
 The exact packaged optimized Windows executable records a local performance sample while
-`scripts/release_smoke.ps1` renders its 16 deterministic scenes. Each scene contributes 30 frames
+`scripts/release_smoke.ps1` renders its 18 deterministic scenes. Each scene contributes 30 frames
 at 1280x720. The sample contains the average, 95th-percentile, and maximum CPU time spent inside
 Hatchspire's `update` and `draw` calls.
 
@@ -11,9 +11,9 @@ The smoke gate requires every scene's p95 update+draw time to be at most 16.667 
 60 Hz regression budget. The limit can be overridden explicitly for diagnostic runs, but the
 default release gate enforces it.
 
-Five fresh-process runs on the development machine established the initial baseline. The worst p95
-was 0.830 ms in `autosave_notice`; the other runs' worst p95 values were 0.589, 0.581, 0.589, and
-0.523 ms.
+Five fresh-process runs of the original 16-scene set established the initial baseline. Their worst
+p95 was 0.830 ms in `autosave_notice`; the other values were 0.589, 0.581, 0.589, and 0.523 ms. The
+first expanded 18-scene run had a 0.715 ms worst p95 in `save_migration_notice`.
 Maximum samples are retained for diagnosis but are not a release threshold: one run's first-use
 `tower` frame reached 1,260.245 ms while that scene's p95 was 0.556 ms. Lazy glyph/texture work and
 host scheduling make a single cold-frame cap too noisy for this short probe. These values are local
