@@ -4,20 +4,25 @@ use macroquad::prelude::*;
 use macroquad_toolkit::capture;
 
 use hatchspire::game::Game;
+use hatchspire::settings::AppSettings;
 
 fn window_conf() -> Conf {
     // Hand-built Conf means no automatic arming: without this the capture run
     // puts a full game window on the desktop for its whole duration.
     capture::headless::arm("HATCHSPIRE");
+    let capture_mode = capture::capture_requested("HATCHSPIRE");
+    let settings = AppSettings::load().unwrap_or_default();
+    let (preferred_width, preferred_height) = settings.window_dimensions();
 
     // Built by hand (not capture::capture_window_conf) to keep sample_count: 0
     // and high_dpi: false, which the game already relies on; still honors
     // HATCHSPIRE_WINDOW_WIDTH/HEIGHT overrides for the capture harness.
     Conf {
         window_title: "Hatchspire".to_owned(),
-        window_width: capture::env_i32("HATCHSPIRE_WINDOW_WIDTH", 1280),
-        window_height: capture::env_i32("HATCHSPIRE_WINDOW_HEIGHT", 720),
+        window_width: capture::env_i32("HATCHSPIRE_WINDOW_WIDTH", preferred_width),
+        window_height: capture::env_i32("HATCHSPIRE_WINDOW_HEIGHT", preferred_height),
         window_resizable: true,
+        fullscreen: !capture_mode && settings.fullscreen,
         high_dpi: false,
         sample_count: 0,
         ..Default::default()

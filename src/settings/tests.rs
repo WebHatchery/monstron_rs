@@ -24,4 +24,21 @@ fn missing_new_fields_use_safe_defaults_and_out_of_range_values_normalize() {
     assert_eq!(settings.music_volume, 70);
     assert!(!settings.fullscreen);
     assert!(!settings.reduced_motion);
+    assert_eq!(settings.ui_scale_percent, 100);
+}
+
+#[test]
+fn ui_scale_cycles_supported_whole_canvas_sizes_and_normalizes_old_values() {
+    let mut settings = AppSettings::default();
+    assert_eq!(settings.window_dimensions(), (1280, 720));
+    settings.cycle_ui_scale();
+    assert_eq!(settings.window_dimensions(), (1408, 792));
+    settings.cycle_ui_scale();
+    assert_eq!(settings.window_dimensions(), (1600, 900));
+    settings.cycle_ui_scale();
+    assert_eq!(settings.window_dimensions(), (1152, 648));
+
+    settings.ui_scale_percent = 117;
+    settings.normalize();
+    assert_eq!(settings.ui_scale_percent, 110);
 }

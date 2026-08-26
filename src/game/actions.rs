@@ -114,9 +114,20 @@ impl Game {
             SettingsAction::ToggleFullscreen => {
                 self.settings.fullscreen = !self.settings.fullscreen;
                 set_fullscreen(self.settings.fullscreen);
+                if !self.settings.fullscreen {
+                    let (width, height) = self.settings.window_dimensions();
+                    request_new_screen_size(width as f32, height as f32);
+                }
             }
             SettingsAction::ToggleReducedMotion => {
                 self.settings.reduced_motion = !self.settings.reduced_motion;
+            }
+            SettingsAction::CycleUiScale => {
+                self.settings.cycle_ui_scale();
+                if !self.settings.fullscreen {
+                    let (width, height) = self.settings.window_dimensions();
+                    request_new_screen_size(width as f32, height as f32);
+                }
             }
             SettingsAction::OpenHelp => {
                 self.screen = AppScreen::Help;

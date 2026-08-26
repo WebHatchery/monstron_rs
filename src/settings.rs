@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 const GAME_NAME: &str = "hatchspire";
 const SETTINGS_KEY: &str = "settings";
+const UI_SCALES: [u16; 4] = [90, 100, 110, 125];
 
 #[cfg(test)]
 mod tests;
@@ -15,6 +16,7 @@ pub struct AppSettings {
     pub muted: bool,
     pub fullscreen: bool,
     pub reduced_motion: bool,
+    pub ui_scale_percent: u16,
 }
 
 impl Default for AppSettings {
@@ -26,6 +28,7 @@ impl Default for AppSettings {
             muted: false,
             fullscreen: false,
             reduced_motion: false,
+            ui_scale_percent: 100,
         }
     }
 }
@@ -65,10 +68,28 @@ impl AppSettings {
         effective_volume(self.master_volume, self.sfx_volume, self.muted)
     }
 
+    pub fn cycle_ui_scale(&mut self) {
+        let index = UI_SCALES
+            .iter()
+            .position(|scale| *scale == self.ui_scale_percent)
+            .unwrap_or(1);
+        self.ui_scale_percent = UI_SCALES[(index + 1) % UI_SCALES.len()];
+    }
+
+    pub fn window_dimensions(&self) -> (i32, i32) {
+        let scale = i32::from(self.ui_scale_percent);
+        (1280 * scale / 100, 720 * scale / 100)
+    }
+
     fn normalize(&mut self) {
         self.master_volume = self.master_volume.min(100);
         self.music_volume = self.music_volume.min(100);
         self.sfx_volume = self.sfx_volume.min(100);
+        self.ui_scale_percent = UI_SCALES
+            .iter()
+            .copied()
+            .min_by_key(|scale| scale.abs_diff(self.ui_scale_percent))
+            .unwrap_or(100);
     }
 }
 

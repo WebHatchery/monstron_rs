@@ -68,6 +68,7 @@ impl Game {
                     muted: false,
                     fullscreen: false,
                     reduced_motion: true,
+                    ui_scale_percent: 110,
                 };
                 self.screen = AppScreen::Settings;
                 self.status_message = "Settings saved independently from game progress.".to_owned();

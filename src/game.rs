@@ -56,7 +56,6 @@ impl Game {
         let title_texture =
             Texture2D::from_file_with_format(include_bytes!("../hatchspire_title.png"), None);
         title_texture.set_filter(FilterMode::Linear);
-        set_fullscreen(settings.fullscreen);
 
         Self {
             data,

@@ -24,6 +24,7 @@ pub enum SettingsAction {
     ToggleMute,
     ToggleFullscreen,
     ToggleReducedMotion,
+    CycleUiScale,
     OpenHelp,
     Back,
 }
@@ -105,6 +106,9 @@ pub fn handle_settings_input() -> Option<SettingsAction> {
     }
     if ui::button_clicked(reduced_motion_toggle_rect(), true) {
         return Some(SettingsAction::ToggleReducedMotion);
+    }
+    if ui::button_clicked(ui_scale_button_rect(), true) {
+        return Some(SettingsAction::CycleUiScale);
     }
     if ui::button_clicked(settings_back_rect(), true) {
         return Some(SettingsAction::Back);
@@ -221,9 +225,27 @@ pub fn draw_settings(settings: &AppSettings, status_message: &str) {
         "Reduced motion",
         settings.reduced_motion,
     );
+    draw_ui_scale_row(settings.ui_scale_percent);
     ui::draw_title_button(help_button_rect(), "Help & Support", true);
     ui::draw_title_button(settings_back_rect(), "Back", true);
     ui::draw_status(status_message);
+}
+
+fn draw_ui_scale_row(value: u16) {
+    let rect = Rect::new(300.0, 548.0, 680.0, 56.0);
+    ui::draw_panel(rect);
+    draw_ui_text_ex(
+        "Window UI scale",
+        rect.x + 18.0,
+        rect.y + 35.0,
+        TextParams {
+            font_size: 22,
+            color: ui::TEXT_BRIGHT,
+            ..Default::default()
+        },
+    );
+    ui::draw_centered_text(&format!("{value}%"), 750.0, rect.y + 36.0, 22, ui::TEXT);
+    ui::draw_button(ui_scale_button_rect(), "Change", true);
 }
 
 fn draw_volume_row(label: &str, value: u8, y: f32, row: usize) {
@@ -346,6 +368,10 @@ fn mute_toggle_rect() -> Rect {
 
 fn reduced_motion_toggle_rect() -> Rect {
     Rect::new(300.0, 478.0, 680.0, 56.0)
+}
+
+fn ui_scale_button_rect() -> Rect {
+    Rect::new(830.0, 553.0, 132.0, 46.0)
 }
 
 fn volume_buttons() -> [(SettingsAction, Rect); 6] {
