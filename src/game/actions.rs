@@ -10,7 +10,7 @@ use crate::engine::{
 use crate::save::{compatibility, SaveCompatibility, SaveData, SaveRepository};
 use crate::screens::{
     combat::CombatAction,
-    menu::{MenuAction, NewGameConfirmationAction, SettingsAction},
+    menu::{MenuAction, NewGameConfirmationAction, SaveResetConfirmationAction, SettingsAction},
     placeholder::PlaceholderAction,
     save_recovery::SaveRecoveryAction,
     tower::TowerAction,
@@ -35,12 +35,40 @@ impl Game {
                 }
             }
             MenuAction::LoadGame => self.load_game(),
+            MenuAction::SaveOptions => {
+                self.screen = AppScreen::ConfirmSaveReset;
+                self.status_message = "Choose whether to keep or delete the save.".to_owned();
+            }
             MenuAction::Settings => {
                 self.screen = AppScreen::Settings;
             }
             MenuAction::ExitGame => {
                 macroquad::miniquad::window::quit();
             }
+        }
+    }
+
+    pub(crate) fn apply_save_reset_confirmation_action(
+        &mut self,
+        action: SaveResetConfirmationAction,
+    ) {
+        match action {
+            SaveResetConfirmationAction::KeepSave => {
+                self.screen = AppScreen::MainMenu;
+                self.status_message = "Kept the existing save.".to_owned();
+            }
+            SaveResetConfirmationAction::DeleteSave => match SaveRepository::delete() {
+                Ok(()) => {
+                    self.state = None;
+                    self.screen = AppScreen::MainMenu;
+                    self.status_message =
+                        "Saved camp deleted. Start New Game when ready.".to_owned();
+                }
+                Err(error) => {
+                    self.screen = AppScreen::ConfirmSaveReset;
+                    self.status_message = format!("Could not delete the save: {error}");
+                }
+            },
         }
     }
 

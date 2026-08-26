@@ -10,6 +10,7 @@ mod tests;
 pub enum MenuAction {
     NewGame,
     LoadGame,
+    SaveOptions,
     Settings,
     ExitGame,
 }
@@ -24,6 +25,12 @@ pub enum SettingsAction {
 pub enum NewGameConfirmationAction {
     Cancel,
     StartOver,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum SaveResetConfirmationAction {
+    KeepSave,
+    DeleteSave,
 }
 
 pub fn new_game_requires_confirmation(has_saved_game: bool, has_active_game: bool) -> bool {
@@ -55,6 +62,11 @@ pub fn handle_input(has_save: bool) -> Option<MenuAction> {
     let settings = settings_rect();
     if ui::button_clicked(settings, true) {
         return Some(MenuAction::Settings);
+    }
+
+    let save_options = save_options_rect();
+    if ui::button_clicked(save_options, has_save) {
+        return Some(MenuAction::SaveOptions);
     }
 
     let exit_game = exit_game_rect();
@@ -94,10 +106,22 @@ pub fn handle_new_game_confirmation_input() -> Option<NewGameConfirmationAction>
     None
 }
 
+pub fn handle_save_reset_confirmation_input() -> Option<SaveResetConfirmationAction> {
+    if is_key_pressed(KeyCode::Escape) || ui::button_clicked(keep_save_rect(), true) {
+        return Some(SaveResetConfirmationAction::KeepSave);
+    }
+    if ui::button_clicked(delete_save_rect(), true) {
+        return Some(SaveResetConfirmationAction::DeleteSave);
+    }
+
+    None
+}
+
 pub fn draw(title_texture: &Texture2D, has_save: bool) {
     draw_title_art(title_texture);
     ui::draw_title_button(new_game_rect(), "New Game", true);
     ui::draw_title_button(load_game_rect(), "Load Game", has_save);
+    ui::draw_title_button(save_options_rect(), "Save Options", has_save);
     ui::draw_title_button(settings_rect(), "Settings", true);
     ui::draw_title_button(exit_game_rect(), "Exit Game", true);
     ui::draw_tooltip_target(ui::Tooltip {
@@ -115,6 +139,43 @@ pub fn draw(title_texture: &Texture2D, has_save: bool) {
         title: "Settings",
         detail: "Change the window display mode.",
     });
+}
+
+pub fn draw_save_reset_confirmation(title_texture: &Texture2D, has_save: bool) {
+    draw(title_texture, has_save);
+    draw_rectangle(
+        0.0,
+        0.0,
+        ui::VIEW_WIDTH,
+        ui::VIEW_HEIGHT,
+        Color::from_rgba(3, 7, 10, 205),
+    );
+
+    let panel = Rect::new(350.0, 190.0, 580.0, 340.0);
+    ui::draw_panel(panel);
+    ui::draw_centered_text(
+        "Delete the saved camp?",
+        ui::VIEW_WIDTH * 0.5,
+        panel.y + 66.0,
+        36,
+        ui::TEXT_BRIGHT,
+    );
+    ui::draw_centered_text(
+        "DELETE SAVE removes the save slot and current session.",
+        ui::VIEW_WIDTH * 0.5,
+        panel.y + 122.0,
+        19,
+        ui::WARN,
+    );
+    ui::draw_centered_text(
+        "This cannot be undone. Tap KEEP SAVE to return safely.",
+        ui::VIEW_WIDTH * 0.5,
+        panel.y + 160.0,
+        18,
+        ui::TEXT,
+    );
+    ui::draw_title_button(keep_save_rect(), "KEEP SAVE", true);
+    ui::draw_title_button(delete_save_rect(), "DELETE SAVE", true);
 }
 
 pub fn draw_settings(fullscreen_enabled: bool) {
@@ -198,10 +259,14 @@ fn draw_title_art(title_texture: &Texture2D) {
 }
 
 fn new_game_rect() -> Rect {
-    Rect::new(ui::VIEW_WIDTH * 0.5 - 120.0, 442.0, 240.0, 44.0)
+    Rect::new(ui::VIEW_WIDTH * 0.5 - 120.0, 388.0, 240.0, 44.0)
 }
 
 fn load_game_rect() -> Rect {
+    Rect::new(ui::VIEW_WIDTH * 0.5 - 120.0, 442.0, 240.0, 44.0)
+}
+
+fn save_options_rect() -> Rect {
     Rect::new(ui::VIEW_WIDTH * 0.5 - 120.0, 496.0, 240.0, 44.0)
 }
 
@@ -226,5 +291,13 @@ fn keep_game_rect() -> Rect {
 }
 
 fn start_over_rect() -> Rect {
+    Rect::new(660.0, 454.0, 230.0, 48.0)
+}
+
+fn keep_save_rect() -> Rect {
+    Rect::new(390.0, 454.0, 230.0, 48.0)
+}
+
+fn delete_save_rect() -> Rect {
     Rect::new(660.0, 454.0, 230.0, 48.0)
 }

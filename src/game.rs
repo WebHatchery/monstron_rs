@@ -75,6 +75,11 @@ impl Game {
                     self.apply_new_game_confirmation_action(action);
                 }
             }
+            AppScreen::ConfirmSaveReset => {
+                if let Some(action) = menu::handle_save_reset_confirmation_input() {
+                    self.apply_save_reset_confirmation_action(action);
+                }
+            }
             AppScreen::SaveRecovery => {
                 if let Some(action) = save_recovery::handle_input(self.save_recovery_can_preserve) {
                     self.apply_save_recovery_action(action);
@@ -193,6 +198,9 @@ impl Game {
             }
             AppScreen::ConfirmNewGame => {
                 menu::draw_new_game_confirmation(&self.title_texture, SaveRepository::exists());
+            }
+            AppScreen::ConfirmSaveReset => {
+                menu::draw_save_reset_confirmation(&self.title_texture, true);
             }
             AppScreen::SaveRecovery => {
                 save_recovery::draw(&self.status_message, self.save_recovery_can_preserve);

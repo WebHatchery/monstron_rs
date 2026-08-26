@@ -11,6 +11,7 @@
       - "new_game_warning" -> destructive New Game confirmation
       - "save_recovery" -> unreadable-save preservation choices
       - "autosave_notice" -> visible successful autosave status
+      - "save_reset_warning" -> destructive save reset confirmation
       - "town"     -> fresh save, town screen
       - "hatchery" -> seeded hatchery screen
       - "stable"   -> seeded stable roster and recovery scene
@@ -25,7 +26,7 @@
     ./scripts/capture_ui.ps1 -Frames 60 -SkipBuild
 #>
 param(
-    [string[]]$Scenes = @("mainmenu", "new_game_warning", "save_recovery", "autosave_notice", "town", "hatchery", "stable", "breeding", "workshop", "shop", "tower", "combat"),
+    [string[]]$Scenes = @("mainmenu", "new_game_warning", "save_recovery", "autosave_notice", "save_reset_warning", "town", "hatchery", "stable", "breeding", "workshop", "shop", "tower", "combat"),
     [int]$Frames = 150,
     [string]$OutputDir = "docs\verification",
     [switch]$SkipBuild

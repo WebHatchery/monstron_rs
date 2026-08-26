@@ -50,6 +50,10 @@ impl Game {
                 self.begin_capture_fixture(AppScreen::Town);
                 self.status_message = "Built Hatchery at level 1.  [AUTOSAVED]".to_owned();
             }
+            "save_reset_warning" => {
+                self.begin_capture_fixture(AppScreen::ConfirmSaveReset);
+                self.status_message = "Choose whether to keep or delete the save.".to_owned();
+            }
             _ => {
                 // Default: boot state is the main menu.
             }

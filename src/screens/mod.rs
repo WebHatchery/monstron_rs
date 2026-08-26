@@ -16,6 +16,7 @@ pub mod workshop;
 pub enum AppScreen {
     MainMenu,
     ConfirmNewGame,
+    ConfirmSaveReset,
     SaveRecovery,
     Settings,
     Town,

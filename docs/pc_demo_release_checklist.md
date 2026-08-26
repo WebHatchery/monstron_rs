@@ -37,7 +37,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] One failed expedition is recoverable without restarting the game.
 - [x] State-changing actions autosave atomically and expose visible success or failure status.
 - [x] New Game presents a visible, clickable overwrite warning when progress exists.
-- [ ] Save reset has a separate confirmation with clear consequences.
+- [x] Save reset has a separate confirmation, clears the active session, and states its consequences.
 - [x] Unreadable saves can be retried, preserved through quarantine, or left unchanged.
 - [x] Unsupported-newer saves are identified and left unchanged for a newer game build.
 - [ ] Every supported historical save version either migrates fully or reports a safe recovery path.

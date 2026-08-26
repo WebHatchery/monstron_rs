@@ -48,6 +48,10 @@ impl SaveRepository {
     pub fn quarantine() -> Result<String, String> {
         macroquad_toolkit::persistence::quarantine_slot(GAME_NAME, SAVE_SLOT)
     }
+
+    pub fn delete() -> Result<(), String> {
+        macroquad_toolkit::persistence::delete_slot(GAME_NAME, SAVE_SLOT)
+    }
 }
 
 #[cfg(test)]
