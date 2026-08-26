@@ -57,12 +57,17 @@ pub fn draw(save_location: &str) {
         panel.x + 28.0,
         panel.y + 298.0,
     );
+    draw_value(
+        "If crash_log.txt exists beside the saved camp, attach it manually; the game never uploads it.",
+        panel.x + 28.0,
+        panel.y + 328.0,
+    );
 
-    draw_label("When reporting a problem", panel.x + 28.0, panel.y + 354.0);
+    draw_label("When reporting a problem", panel.x + 28.0, panel.y + 376.0);
     draw_value(
         "Include the build above, the exact on-screen message, and the saved-camp file when it is safe to share.",
         panel.x + 28.0,
-        panel.y + 384.0,
+        panel.y + 406.0,
     );
     ui::draw_title_button(back_rect(), "BACK TO SETTINGS", true);
 }

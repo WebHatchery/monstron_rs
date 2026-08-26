@@ -1,12 +1,14 @@
 #![allow(clippy::too_many_arguments)]
 
 use macroquad::prelude::*;
-use macroquad_toolkit::capture;
+use macroquad_toolkit::{capture, crash};
 
 use hatchspire::game::Game;
 use hatchspire::settings::AppSettings;
 
 fn window_conf() -> Conf {
+    crash::install_crash_log("hatchspire");
+
     // Hand-built Conf means no automatic arming: without this the capture run
     // puts a full game window on the desktop for its whole duration.
     capture::headless::arm("HATCHSPIRE");

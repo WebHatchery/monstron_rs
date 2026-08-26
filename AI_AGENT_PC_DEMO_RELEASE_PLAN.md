@@ -16,7 +16,8 @@ Audit date: 26 August 2026
   save-location, and recovery help; independently persisted audio/display/motion preferences.
   Windowed UI scale now resizes the complete canvas across four tested sizes without cropping;
   supported historical saves normalize and rewrite at the current version. Each successful
-  replacement save now retains one restorable previous state without discarding the file it replaces.
+  replacement save now retains one restorable previous state without discarding the file it replaces;
+  native panics also append a local, manually shareable crash log beside the save.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -81,7 +82,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - The Windows archive contains only the executable. It lacks a readme, support instructions, known issues, credits, license notices, and version identification.
 - Cargo remains at generic version `0.1.0`, which is now displayed in Help & Support. Assigning the
   approved demo version and richer build identifier remains a release-candidate task.
-- No Windows icon/version metadata, clean-machine launch test, antivirus/SmartScreen record, gamepad support, crash log, performance budget, or long-session soak gate is documented.
+- Native panics now append a local crash log beside the save. Windows icon/version metadata,
+  clean-machine launch tests, antivirus/SmartScreen records, gamepad support, a performance budget,
+  and a long-session soak gate remain absent.
 - Current automated flows prove systems in isolation and in short chains, not that a new player can understand, enjoy, and finish the demo.
 
 ## Agent-owned work

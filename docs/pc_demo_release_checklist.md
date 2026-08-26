@@ -45,6 +45,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Windowed UI scale persists and preserves the complete canvas at 90%, 100%, 110%, and 125%.
 - [x] Supported historical saves normalize and rewrite fully; unreadable partial saves enter recovery.
 - [x] Each successful replacement save retains one rollback point; recovery preserves the displaced file before restoring it.
+- [x] Native panics append a local crash log beside the save and Help explains how to report it manually.
 - [ ] No crash, hang, progress loss, chroma leak, overlap, clipping, or missing asset exists on the route.
 - [ ] Master/music/SFX volume, mute, fullscreen/windowed, UI scale, and reduced motion persist.
 - [ ] Full-demo deterministic run, release smoke test, and soak gate pass.
