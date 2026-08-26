@@ -3,6 +3,9 @@ use macroquad::prelude::*;
 use crate::ui;
 use macroquad_toolkit::ui::draw_ui_text_ex;
 
+#[cfg(test)]
+mod tests;
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum MenuAction {
     NewGame,
@@ -15,6 +18,16 @@ pub enum MenuAction {
 pub enum SettingsAction {
     ToggleFullscreen,
     Back,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum NewGameConfirmationAction {
+    Cancel,
+    StartOver,
+}
+
+pub fn new_game_requires_confirmation(has_saved_game: bool, has_active_game: bool) -> bool {
+    has_saved_game || has_active_game
 }
 
 pub fn handle_input(has_save: bool) -> Option<MenuAction> {
@@ -70,6 +83,17 @@ pub fn handle_settings_input() -> Option<SettingsAction> {
     None
 }
 
+pub fn handle_new_game_confirmation_input() -> Option<NewGameConfirmationAction> {
+    if is_key_pressed(KeyCode::Escape) || ui::button_clicked(keep_game_rect(), true) {
+        return Some(NewGameConfirmationAction::Cancel);
+    }
+    if ui::button_clicked(start_over_rect(), true) {
+        return Some(NewGameConfirmationAction::StartOver);
+    }
+
+    None
+}
+
 pub fn draw(title_texture: &Texture2D, has_save: bool) {
     draw_title_art(title_texture);
     ui::draw_title_button(new_game_rect(), "New Game", true);
@@ -107,6 +131,50 @@ pub fn draw_settings(fullscreen_enabled: bool) {
     );
     ui::draw_toggle(fullscreen_toggle_rect(), "Fullscreen", fullscreen_enabled);
     ui::draw_title_button(settings_back_rect(), "Back", true);
+}
+
+pub fn draw_new_game_confirmation(title_texture: &Texture2D, has_save: bool) {
+    draw(title_texture, has_save);
+    draw_rectangle(
+        0.0,
+        0.0,
+        ui::VIEW_WIDTH,
+        ui::VIEW_HEIGHT,
+        Color::from_rgba(3, 7, 10, 205),
+    );
+
+    let panel = Rect::new(350.0, 190.0, 580.0, 340.0);
+    ui::draw_panel(panel);
+    ui::draw_centered_text(
+        "Start a new camp?",
+        ui::VIEW_WIDTH * 0.5,
+        panel.y + 66.0,
+        36,
+        ui::TEXT_BRIGHT,
+    );
+    ui::draw_centered_text(
+        "You already have progress in this session or in the save slot.",
+        ui::VIEW_WIDTH * 0.5,
+        panel.y + 116.0,
+        20,
+        ui::TEXT,
+    );
+    ui::draw_centered_text(
+        "START OVER begins from day 1. Saving later will replace that slot.",
+        ui::VIEW_WIDTH * 0.5,
+        panel.y + 150.0,
+        18,
+        ui::WARN,
+    );
+    ui::draw_centered_text(
+        "Tap KEEP OLD GAME to return without changing anything.",
+        ui::VIEW_WIDTH * 0.5,
+        panel.y + 184.0,
+        18,
+        ui::TEXT_DIM,
+    );
+    ui::draw_title_button(keep_game_rect(), "KEEP OLD GAME", true);
+    ui::draw_title_button(start_over_rect(), "START OVER", true);
 }
 
 fn draw_title_art(title_texture: &Texture2D) {
@@ -151,4 +219,12 @@ fn fullscreen_toggle_rect() -> Rect {
 
 fn settings_back_rect() -> Rect {
     Rect::new(520.0, 392.0, 240.0, 44.0)
+}
+
+fn keep_game_rect() -> Rect {
+    Rect::new(390.0, 454.0, 230.0, 48.0)
+}
+
+fn start_over_rect() -> Rect {
+    Rect::new(660.0, 454.0, 230.0, 48.0)
 }

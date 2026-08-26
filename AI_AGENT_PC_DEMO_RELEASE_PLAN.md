@@ -4,11 +4,12 @@ Audit date: 26 August 2026
 
 ## Implementation status
 
-- **Current phase:** Milestone 1 — proposed release definition and critical-path mapping.
+- **Current phase:** Milestone 1 awaits scope approval; independent Milestone 5 save hardening has begun.
 - **Scope state:** Awaiting human approval; no public-demo progression lock has been applied.
 - **Working specification:** [`docs/pc_demo_definition.md`](docs/pc_demo_definition.md)
 - **Release gate:** [`docs/pc_demo_release_checklist.md`](docs/pc_demo_release_checklist.md)
 - **Next implementation step after approval:** encode the floor-3 finale boundary and its deterministic full-path tests.
+- **Completed release slices:** proposed demo definition/release gate; visible New Game overwrite warning.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.

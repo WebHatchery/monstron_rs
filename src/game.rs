@@ -64,6 +64,11 @@ impl Game {
                     self.apply_menu_action(action);
                 }
             }
+            AppScreen::ConfirmNewGame => {
+                if let Some(action) = menu::handle_new_game_confirmation_input() {
+                    self.apply_new_game_confirmation_action(action);
+                }
+            }
             AppScreen::Settings => {
                 if let Some(action) = menu::handle_settings_input() {
                     self.apply_settings_action(action);
@@ -170,6 +175,9 @@ impl Game {
         match self.screen {
             AppScreen::MainMenu => {
                 menu::draw(&self.title_texture, SaveRepository::exists());
+            }
+            AppScreen::ConfirmNewGame => {
+                menu::draw_new_game_confirmation(&self.title_texture, SaveRepository::exists());
             }
             AppScreen::Settings => {
                 menu::draw_settings(self.fullscreen_enabled);

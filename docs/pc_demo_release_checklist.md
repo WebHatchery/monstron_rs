@@ -35,7 +35,10 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] Tutorial, completion, and boundary state survive save/load or fail with a clear migration path.
 - [ ] Every critical action has a visible mouse/touch target with precise tutorial wording.
 - [ ] One failed expedition is recoverable without restarting the game.
-- [ ] Autosave, saved indication, New Game warning, reset confirmation, and corrupt-save recovery pass.
+- [ ] Autosave and its visible saved indication pass at every approved progression boundary.
+- [x] New Game presents a visible, clickable overwrite warning when progress exists.
+- [ ] Save reset has a separate confirmation with clear consequences.
+- [ ] Corrupt, unsupported-newer, and partially migrated saves expose a safe recovery path.
 - [ ] No crash, hang, progress loss, chroma leak, overlap, clipping, or missing asset exists on the route.
 - [ ] Master/music/SFX volume, mute, fullscreen/windowed, UI scale, and reduced motion persist.
 - [ ] Full-demo deterministic run, release smoke test, and soak gate pass.

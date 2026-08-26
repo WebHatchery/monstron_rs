@@ -14,6 +14,7 @@ pub mod workshop;
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum AppScreen {
     MainMenu,
+    ConfirmNewGame,
     Settings,
     Town,
     Hatchery,

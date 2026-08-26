@@ -10,7 +10,7 @@ use crate::engine::{
 use crate::save::{SaveData, SaveRepository};
 use crate::screens::{
     combat::CombatAction,
-    menu::{MenuAction, SettingsAction},
+    menu::{MenuAction, NewGameConfirmationAction, SettingsAction},
     placeholder::PlaceholderAction,
     tower::TowerAction,
     town::TownAction,
@@ -21,7 +21,18 @@ use crate::state::{GameState, TowerRunGoal};
 impl Game {
     pub(crate) fn apply_menu_action(&mut self, action: MenuAction) {
         match action {
-            MenuAction::NewGame => self.start_new_game(),
+            MenuAction::NewGame => {
+                if crate::screens::menu::new_game_requires_confirmation(
+                    SaveRepository::exists(),
+                    self.state.is_some(),
+                ) {
+                    self.screen = AppScreen::ConfirmNewGame;
+                    self.status_message =
+                        "Choose whether to keep the old game or start over.".to_owned();
+                } else {
+                    self.start_new_game();
+                }
+            }
             MenuAction::LoadGame => self.load_game(),
             MenuAction::Settings => {
                 self.screen = AppScreen::Settings;
@@ -29,6 +40,16 @@ impl Game {
             MenuAction::ExitGame => {
                 macroquad::miniquad::window::quit();
             }
+        }
+    }
+
+    pub(crate) fn apply_new_game_confirmation_action(&mut self, action: NewGameConfirmationAction) {
+        match action {
+            NewGameConfirmationAction::Cancel => {
+                self.screen = AppScreen::MainMenu;
+                self.status_message = "Kept the existing game.".to_owned();
+            }
+            NewGameConfirmationAction::StartOver => self.start_new_game(),
         }
     }
 

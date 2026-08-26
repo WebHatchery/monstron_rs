@@ -8,6 +8,7 @@
     (HATCHSPIRE_CAPTURE_*) provided by macroquad_toolkit::capture in
     src/main.rs. Scenes are seeded via Game::begin_capture_scene:
       - "mainmenu" -> boot state (main menu)
+      - "new_game_warning" -> destructive New Game confirmation
       - "town"     -> fresh save, town screen
       - "hatchery" -> seeded hatchery screen
       - "stable"   -> seeded stable roster and recovery scene
@@ -22,7 +23,7 @@
     ./scripts/capture_ui.ps1 -Frames 60 -SkipBuild
 #>
 param(
-    [string[]]$Scenes = @("mainmenu", "town", "hatchery", "stable", "breeding", "workshop", "shop", "tower", "combat"),
+    [string[]]$Scenes = @("mainmenu", "new_game_warning", "town", "hatchery", "stable", "breeding", "workshop", "shop", "tower", "combat"),
     [int]$Frames = 150,
     [string]$OutputDir = "docs\verification",
     [switch]$SkipBuild

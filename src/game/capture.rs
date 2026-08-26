@@ -33,6 +33,11 @@ impl Game {
                 self.screen = AppScreen::MainMenu;
                 self.status_message = "Ready.".to_owned();
             }
+            "new_game_warning" => {
+                self.begin_capture_fixture(AppScreen::ConfirmNewGame);
+                self.status_message =
+                    "Choose whether to keep the old game or start over.".to_owned();
+            }
             _ => {
                 // Default: boot state is the main menu.
             }
