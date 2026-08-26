@@ -2,7 +2,10 @@ use macroquad::prelude::*;
 
 use crate::assets;
 use crate::data::{EnemyBehavior, GameData, MonsterRole};
-use crate::engine::combat_engine::CombatCommand;
+use crate::engine::combat_engine::{
+    player_attack_target, player_skill_target, queued_enemy_intent, CombatCommand, CombatTarget,
+    EnemyIntentKind,
+};
 use crate::state::{CombatOutcome, CombatSide, CombatState, Combatant, GameState};
 use crate::ui;
 use macroquad_toolkit::ui::draw_ui_text_ex;
@@ -64,7 +67,11 @@ pub fn draw(state: &GameState, data: &GameData, status_message: &str) {
         draw_header(combat);
         draw_formation(combat, data);
         draw_actions(combat);
-        draw_rewards(combat, data);
+        if combat.outcome.is_some() {
+            draw_rewards(combat, data);
+        } else {
+            draw_tactics(combat);
+        }
         draw_log(combat);
     } else {
         draw_empty();
@@ -344,6 +351,146 @@ fn draw_rewards(combat: &CombatState, data: &GameData) {
                 ..Default::default()
             },
         );
+    }
+}
+
+fn draw_tactics(combat: &CombatState) {
+    let rect = Rect::new(836.0, 124.0, 412.0, 150.0);
+    ui::draw_panel(rect);
+    ui::draw_section_title("Targeting & Intent", rect.x + 20.0, rect.y + 32.0);
+
+    let lines = tactics_lines(combat);
+    for (index, line) in lines.iter().enumerate() {
+        draw_ui_text_ex(
+            line,
+            rect.x + 20.0,
+            rect.y + 62.0 + index as f32 * 22.0,
+            TextParams {
+                font_size: 15,
+                color: if index == 2 { ui::ACCENT } else { ui::TEXT },
+                ..Default::default()
+            },
+        );
+    }
+}
+
+fn tactics_lines(combat: &CombatState) -> [String; 4] {
+    let attack = player_attack_target(combat)
+        .map(|target| format!("Attack -> {} (auto)", target_label(combat, target)))
+        .unwrap_or_else(|| "Attack -> no living target".to_owned());
+    let skill = player_skill_target(combat)
+        .map(|target| {
+            format!(
+                "{} -> {} (auto)",
+                current_skill_label(combat),
+                skill_target_label(combat, target)
+            )
+        })
+        .unwrap_or_else(|| format!("{} -> no living target", current_skill_label(combat)));
+    let threat = queued_enemy_intent(combat)
+        .map(|intent| enemy_intent_label(combat, intent))
+        .unwrap_or_else(|| "Next threat: none before round end".to_owned());
+    let statuses = active_statuses(combat);
+    [attack, skill, threat, statuses]
+}
+
+fn skill_target_label(combat: &CombatState, target: CombatTarget) -> String {
+    let is_guard = combat.current_turn().is_some_and(|turn| {
+        turn.side == CombatSide::Ally
+            && combat
+                .allies
+                .get(turn.slot)
+                .is_some_and(|ally| ally.role == Some(MonsterRole::Tank))
+    });
+    if is_guard {
+        "back row (self braces)".to_owned()
+    } else {
+        target_label(combat, target)
+    }
+}
+
+fn enemy_intent_label(
+    combat: &CombatState,
+    intent: crate::engine::combat_engine::EnemyIntent,
+) -> String {
+    let actor = combat
+        .enemies
+        .get(intent.actor_index)
+        .map_or("Enemy", |enemy| enemy.name.as_str());
+    let target = target_label(combat, intent.target);
+    match intent.kind {
+        EnemyIntentKind::Attack => {
+            let verb = combat
+                .enemies
+                .get(intent.actor_index)
+                .map_or("hit", |enemy| enemy_attack_verb(combat, enemy));
+            let guard = if intent.intercepted { " [GUARDED]" } else { "" };
+            format!("Next: {actor} {verb} -> {target}{guard}")
+        }
+        EnemyIntentKind::Brace => format!("Next: {actor} -> BRACE (self)"),
+        EnemyIntentKind::Rally => format!("Next: {actor} -> RALLY {target}"),
+        EnemyIntentKind::Ward => format!("Next: {actor} -> WARD {target}"),
+    }
+}
+
+fn enemy_attack_verb(combat: &CombatState, enemy: &Combatant) -> &'static str {
+    match enemy.enemy_behavior.unwrap_or_default() {
+        EnemyBehavior::Bruiser if combat.round.is_multiple_of(3) => "heavy hit",
+        EnemyBehavior::Harrier => "harry",
+        EnemyBehavior::Hexer if combat.round.is_multiple_of(2) => "hex",
+        EnemyBehavior::Swarm => "swarm hit",
+        EnemyBehavior::Ambusher if combat.round == 1 => "ambush",
+        EnemyBehavior::Regenerator if combat.round.is_multiple_of(2) && enemy.hp < enemy.max_hp => {
+            "heal + hit"
+        }
+        EnemyBehavior::Sapper if combat.round.is_multiple_of(2) => "break stance + hit",
+        EnemyBehavior::Leech if enemy.hp < enemy.max_hp => "leech hit",
+        _ => "hit",
+    }
+}
+
+fn target_label(combat: &CombatState, target: CombatTarget) -> String {
+    let combatant = match target.side {
+        CombatSide::Ally => combat.allies.get(target.index),
+        CombatSide::Enemy => combat.enemies.get(target.index),
+    };
+    combatant.map_or_else(
+        || "missing target".to_owned(),
+        |unit| {
+            let row = if unit.slot < 3 { 'F' } else { 'B' };
+            format!("{} {row}{}", unit.name, unit.slot + 1)
+        },
+    )
+}
+
+fn active_statuses(combat: &CombatState) -> String {
+    let guarding = combat
+        .allies
+        .iter()
+        .any(|unit| unit.is_alive() && unit.is_guarding);
+    let defending = combat
+        .allies
+        .iter()
+        .chain(&combat.enemies)
+        .any(|unit| unit.is_alive() && unit.is_defending && !unit.is_guarding);
+    let marked = combat
+        .enemies
+        .iter()
+        .any(|unit| unit.is_alive() && unit.is_marked);
+    let mut labels = Vec::new();
+    if guarding {
+        labels.push("GUARDING");
+    }
+    if defending {
+        labels.push("DEFENDING");
+    }
+    if marked {
+        labels.push("MARKED");
+    }
+    if labels.is_empty() {
+        "Active status: none".to_owned()
+    } else {
+        format!("Active: {}", labels.join(" | "))
     }
 }
 

@@ -21,6 +21,7 @@ impl Game {
                 self.enter_tower(TowerRunGoal::Balanced);
             }
             "combat" => self.begin_capture_combat(None),
+            "combat_status" => self.begin_capture_combat_status(),
             "combat_victory" => self.begin_capture_combat(Some(CombatOutcome::Victory)),
             "combat_defeat" => self.begin_capture_combat(Some(CombatOutcome::Defeat)),
             "mainmenu" => {
@@ -83,6 +84,14 @@ impl Game {
         let Some(state) = &mut self.state else {
             return;
         };
+        if let Some(species) = self.data.species("rootling") {
+            let tank_id =
+                state
+                    .monster_roster
+                    .add_monster("Bramble".to_owned(), species, 0xB4A6_1E04);
+            let _ = state.monster_roster.assign_to_party(tank_id);
+            state.monster_roster.party_slots.swap(0, 3);
+        }
         let result = crate::engine::combat_engine::start_encounter(state, &self.data, 1, false);
         self.status_message = result.summary;
         self.screen = AppScreen::Combat;
@@ -111,6 +120,40 @@ impl Game {
             }
             CombatOutcome::Fled => unreachable!("the capture registry has no fled outcome scene"),
         }
+    }
+
+    fn begin_capture_combat_status(&mut self) {
+        self.begin_capture_combat(None);
+        let Some(combat) = self.state.as_mut().and_then(|state| state.combat.as_mut()) else {
+            return;
+        };
+        if let Some(tank) = combat
+            .allies
+            .iter_mut()
+            .find(|ally| ally.role == Some(crate::data::MonsterRole::Tank))
+        {
+            tank.hp = (tank.max_hp - 7).max(1);
+            tank.is_defending = true;
+            tank.is_guarding = true;
+        }
+        if let Some(support) = combat
+            .allies
+            .iter_mut()
+            .find(|ally| ally.role == Some(crate::data::MonsterRole::Support))
+        {
+            support.hp = (support.max_hp - 5).max(1);
+            support.is_defending = true;
+        }
+        if let Some(enemy) = combat.enemies.first_mut() {
+            enemy.hp = (enemy.max_hp - 8).max(1);
+            enemy.is_marked = true;
+        }
+        combat.add_log("Ember bursts into Moss Mite for 10 damage.".to_owned());
+        combat.add_log("Bramble: GUARDING redirects back-row hits.".to_owned());
+        combat.add_log("Ripple: DEFENDING halves incoming damage.".to_owned());
+        combat.add_log("Moss Mite: MARKED takes +2 damage.".to_owned());
+        self.status_message =
+            "GUARDING redirects; DEFENDING halves damage; MARKED adds +2 damage.".to_owned();
     }
 
     fn begin_capture_fixture(&mut self, screen: AppScreen) {

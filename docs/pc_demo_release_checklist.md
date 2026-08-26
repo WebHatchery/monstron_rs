@@ -59,11 +59,12 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Missing project/toolkit license metadata and absent `gilrs`, `gilrs-core`, and `quad-rand` license files remain explicit blockers.
 - [x] A regression-tested ledger identifies all 37 embedded project art/data inputs.
 - [x] A 240-cycle accelerated soak covers repeated town/tower/combat/recovery and native save reloads.
-- [x] The packaged optimized EXE byte-matches the release build and renders all 18 seeded scenes at 1280×720.
-- [x] Automated structural capture passes for all 18 scenes at 1366×768, 1920×1080, and 960×540.
+- [x] The packaged optimized EXE byte-matches the release build and renders all 19 seeded scenes at 1280×720.
+- [x] Automated structural capture passes for all 19 scenes at 1366×768, 1920×1080, and 960×540.
 - [x] Combat VFX uses the processed transparent atlas; unit-card portrait, HP, role, and stat rows do not overlap.
 - [x] Deterministic combat captures cover active, victory, and defeat states with visible continuation wording.
-- [x] Release capture enforces a local, opt-in 16.667 ms p95 update+draw CPU budget across all 18 scenes.
+- [x] Combat capture names rules-backed automatic Attack/Skill targets, the next enemy intent/target, damage, and status effects.
+- [x] Release capture enforces a local, opt-in 16.667 ms p95 update+draw CPU budget across all 19 scenes.
 - [x] The identical EXE launches read-only from a spaces/Unicode working path without sidecar writes.
 - [x] Internal catalog metadata removes the inherited repository link and unsupported public platform claim.
 - [x] A deploy-only follow-up makes the local preview download byte-match the sealed archive checksum.
@@ -74,7 +75,7 @@ Severity is based on player impact and the approved promise, not implementation 
 ## Important gates
 
 - [ ] Capture review passes at 1280×720, 1366×768, 1920×1080, and a small resizable window.
-- [ ] Combat clearly communicates HP, turn, intent, target, damage, status, and outcome.
+- [x] Combat clearly communicates HP, turn, intent, target, damage, status, and outcome across the four-size package matrix.
 - [ ] Audio feedback is restrained, normalized, attributable, and the game remains clear while muted.
 - [ ] Local opt-in tester summary reports the agreed pacing and balance measures without telemetry.
 - [ ] Real-time frame pacing and memory checks show no sustained degradation during the 2–4 hour soak run.

@@ -2,6 +2,7 @@ pub mod breeding_engine;
 pub mod combat_engine;
 pub mod combat_replay;
 mod combat_support;
+mod combat_targeting;
 pub mod day_engine;
 pub mod egg_engine;
 pub mod job_engine;

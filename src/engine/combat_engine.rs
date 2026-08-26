@@ -5,6 +5,10 @@ use crate::engine::combat_support::{
     flee_succeeds, rebuild_turn_order, record_floor_reached, reward_text, sync_allies,
     victory_rewards,
 };
+pub(crate) use crate::engine::combat_targeting::{
+    player_attack_target, player_skill_target, queued_enemy_intent, CombatTarget, EnemyIntent,
+    EnemyIntentKind,
+};
 use crate::engine::{monster_engine, tower_engine};
 use crate::state::{CombatOutcome, CombatSide, CombatState, GameState};
 use crate::state::{CombatReplayCommand, CombatReplayStep};

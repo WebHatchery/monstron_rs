@@ -139,7 +139,7 @@ try {
         "mainmenu", "new_game_warning", "save_recovery", "autosave_notice",
         "save_migration_notice", "save_reset_warning", "help", "settings",
         "town", "hatchery", "stable", "breeding", "workshop", "shop",
-        "tower", "combat", "combat_victory", "combat_defeat"
+        "tower", "combat", "combat_status", "combat_victory", "combat_defeat"
     )
     $outputDir = "target\release-smoke"
     $shared = Join-Path (Split-Path -Parent $projectDir) "macroquad-toolkit\scripts\capture_ui.ps1"

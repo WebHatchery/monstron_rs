@@ -23,6 +23,7 @@
       - "shop"     -> seeded shop scene
       - "tower"    -> seeded active first-floor dungeon run
       - "combat"   -> seeded first-floor combat scene
+      - "combat_status" -> combat damage and named status evidence
       - "combat_victory" -> resolved victory with visible continuation
       - "combat_defeat" -> resolved defeat with visible recovery continuation
 
@@ -31,7 +32,7 @@
     ./scripts/capture_ui.ps1 -Frames 60 -SkipBuild
 #>
 param(
-    [string[]]$Scenes = @("mainmenu", "new_game_warning", "save_recovery", "autosave_notice", "save_migration_notice", "save_reset_warning", "help", "settings", "town", "hatchery", "stable", "breeding", "workshop", "shop", "tower", "combat", "combat_victory", "combat_defeat"),
+    [string[]]$Scenes = @("mainmenu", "new_game_warning", "save_recovery", "autosave_notice", "save_migration_notice", "save_reset_warning", "help", "settings", "town", "hatchery", "stable", "breeding", "workshop", "shop", "tower", "combat", "combat_status", "combat_victory", "combat_defeat"),
     [int]$Frames = 150,
     [string]$OutputDir = "docs\verification",
     [switch]$SkipBuild

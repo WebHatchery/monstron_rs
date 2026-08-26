@@ -22,7 +22,7 @@ Audit date: 26 August 2026
   drafts, an exact checksum, and 120 available dependency license/notice texts. A regression gate
   covers all 37 embedded project inputs.
   A 240-cycle accelerated soak now stresses town, tower, combat, recovery, backup, and native reload.
-  The exact packaged optimized EXE now passes an 18-scene boot/render smoke gate at 1280×720,
+  The exact packaged optimized EXE now passes a 19-scene boot/render smoke gate at 1280×720,
   1366×768, 1920×1080 fullscreen, and a deliberately small 960×540 window.
   That gate also records opt-in local update+draw CPU samples, enforces a provisional 16.667 ms p95
   budget, and reports diagnostic maxima; GPU, memory, and sustained pacing remain unmeasured.
@@ -30,8 +30,9 @@ Audit date: 26 August 2026
   Help, package manifests, and release smoke now share an exact `version+g<commit>` build identity.
   Catalog metadata now labels the build as an internal preview, leads with visible controls, and
   carries no inherited repository link or approved public-demo claim.
-  Combat now embeds the processed transparent VFX atlas and gives every compact unit card separate
-  portrait, HP, role/status, and stat rows; broader intent/target/outcome readability remains.
+  Combat now embeds the processed transparent VFX atlas, gives every compact unit card separate
+  portrait, HP, role/status, and stat rows, previews rules-backed automatic player targets and the
+  next queued enemy intent/target, and has deterministic damage/status/victory/defeat captures.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -68,13 +69,13 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 20,151 physical lines across 118 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 121 tests: 107 unit tests, 9 end-to-end game-flow tests,
+- The implementation contains 20,633 physical lines across 120 Rust files; every Rust file is below the 800-line project limit.
+- The automated suite currently passes 128 tests: 114 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, one release-inventory test, one release-metadata test, one
   accelerated-soak test, and one code-standards test.
 - Formatting and strict lint checks pass.
 - The Windows release already packages successfully as a self-contained 51.3 MB `hatchspire_windows.zip` containing `hatchspire.exe`.
-- The exact packaged EXE byte-matches the optimized release build and renders all 18 seeded scenes
+- The exact packaged EXE byte-matches the optimized release build and renders all 19 seeded scenes
   at 1280×720 with valid, nontrivial PNG output.
 - GitHub CI checks formatting, linting, tests, WebGL compilation, and a Windows release build.
 - Save data is versioned and stored under the user’s application-data area through `macroquad-toolkit`.
@@ -87,9 +88,11 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - Defeating the floor-10 guardian does not produce an ending; the player only reaches a message that the stairs end. A shorter demo also has no authored finish line.
 - The initial combat capture contained a magenta VFX background and overlapping statistics. Combat
   now uses the processed transparent atlas and distinct card rows at all four structural capture
-  sizes. Deterministic active, victory, and defeat scenes name the visible continuation path. Text
-  remains small at 960×540, and intent, target, damage, and status presentation still need dedicated
-  captures and review.
+  sizes. The active view names automatic Attack/Skill targets and the next queued enemy intent and
+  target from the same selectors used by combat resolution. A dedicated damaged-state fixture names
+  GUARDING, DEFENDING, and MARKED and their effects; victory and defeat name the visible continuation
+  path. The 19-scene four-size package matrix passes, and the combat evidence remains readable at
+  the deliberately small 960×540 size without clipping or overlap.
 - Audio assets are absent. Settings now persist master/music/SFX levels, mute, fullscreen, and
   reduced motion independently from saves. Windowed UI scale preserves the full fixed canvas at
   90%, 100%, 110%, and 125%. Application of volume groups to approved audio remains.
@@ -235,13 +238,13 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
 
 - Add release-profile smoke tests and a seeded headless run covering the full demo path.
 - Implemented independently: exact-package identity checks and release-profile boot/render smoke
-  now cover all 18 registered scenes at four target window sizes. The scope-dependent full-demo
+  now cover all 19 registered scenes at four target window sizes. The scope-dependent full-demo
   path and human visual review still await approval.
 - Add a 2–4 hour soak scenario that repeatedly enters town, facilities, tower, combat, save/load, and quit/restart.
 - Implemented independently: a 240-cycle accelerated soak repeatedly crosses town, tower, combat,
   recovery, atomic backup-save, and native reload boundaries. It does not replace the real-time soak.
 - Track frame time and memory at supported resolutions; investigate sustained degradation.
-- Implemented independently: all 18 optimized 1280×720 capture scenes enforce a provisional
+- Implemented independently: all 19 optimized 1280×720 capture scenes enforce a provisional
   16.667 ms p95 update+draw CPU budget and report diagnostic maxima. GPU presentation, memory,
   sustained real-time behavior, and performance at other resolutions remain.
 - Test fresh install, paths containing spaces and non-ASCII characters, read-only launch folder, missing/corrupt save, Alt+Tab, resizing, fullscreen toggling, and repeated restart.

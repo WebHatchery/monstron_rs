@@ -1,4 +1,7 @@
 use crate::data::{EnemyBehavior, EnemyDefinition, GameData, MonsterRole};
+use crate::engine::combat_targeting::{
+    enemy_target, first_target, packleader_target, warden_target, wounded_target,
+};
 use crate::state::{
     CombatOutcome, CombatSide, CombatState, CombatTurn, Combatant, DailyCommitment, GameState,
     ResourceStack, TowerFoundEgg, TowerRunState,
@@ -480,14 +483,7 @@ fn enemy_action(combat: &mut CombatState, slot: usize) {
         ));
     }
     if behavior == EnemyBehavior::Packleader && slot == 0 && combat.round.is_multiple_of(2) {
-        if let Some(target) = combat
-            .enemies
-            .iter()
-            .enumerate()
-            .filter(|(index, enemy)| *index != slot && enemy.is_alive())
-            .min_by_key(|(_, enemy)| (enemy.attack, enemy.slot))
-            .map(|(index, _)| index)
-        {
+        if let Some(target) = packleader_target(combat, slot) {
             combat.enemies[target].attack += 2;
             combat.enemies[target].morale += 6;
             combat.add_log(format!(
@@ -498,14 +494,7 @@ fn enemy_action(combat: &mut CombatState, slot: usize) {
         }
     }
     if behavior == EnemyBehavior::Warden && slot == 0 && combat.round.is_multiple_of(3) {
-        if let Some(target) = combat
-            .enemies
-            .iter()
-            .enumerate()
-            .filter(|(index, enemy)| *index != slot && enemy.is_alive())
-            .min_by_key(|(_, enemy)| (enemy.hp * 100 / enemy.max_hp.max(1), enemy.slot))
-            .map(|(index, _)| index)
-        {
+        if let Some(target) = warden_target(combat, slot) {
             combat.enemies[target].is_defending = true;
             combat.enemies[target].morale += 5;
             combat.add_log(format!(
@@ -577,85 +566,6 @@ fn enemy_action(combat: &mut CombatState, slot: usize) {
         ));
     }
     log_if_defeated(combat, CombatSide::Ally, target);
-}
-
-fn enemy_target(combat: &CombatState, enemy_slot: usize) -> Option<(usize, Option<usize>)> {
-    let behavior = combat.enemies[enemy_slot]
-        .enemy_behavior
-        .unwrap_or(EnemyBehavior::Standard);
-    if behavior == EnemyBehavior::Ambusher && combat.round == 1 {
-        let target = combat
-            .allies
-            .iter()
-            .enumerate()
-            .filter(|(_, ally)| ally.is_alive())
-            .min_by_key(|(_, ally)| (ally.hp, ally.defense, ally.slot))
-            .map(|(index, _)| index)?;
-        if combat.allies[target].slot >= 3 {
-            if let Some(guard) = guarding_front_tank(&combat.allies) {
-                return Some((guard, Some(guard)));
-            }
-        }
-        return Some((target, None));
-    }
-    let back_targeted = if behavior == EnemyBehavior::Harrier {
-        (combat.round + enemy_slot as u32).is_multiple_of(2)
-    } else {
-        (combat.round + combat.floor + enemy_slot as u32).is_multiple_of(4)
-    };
-    if back_targeted {
-        if let Some(back_target) = row_target(&combat.allies, 3..6) {
-            if let Some(guard) = guarding_front_tank(&combat.allies) {
-                return Some((guard, Some(guard)));
-            }
-            return Some((back_target, None));
-        }
-    }
-    first_target(&combat.allies).map(|target| (target, None))
-}
-
-fn first_target(combatants: &[Combatant]) -> Option<usize> {
-    (0..3)
-        .chain(3..6)
-        .find(|slot| {
-            combatants
-                .iter()
-                .any(|unit| unit.slot == *slot && unit.is_alive())
-        })
-        .and_then(|slot| {
-            combatants
-                .iter()
-                .position(|unit| unit.slot == slot && unit.is_alive())
-        })
-}
-
-fn row_target(combatants: &[Combatant], mut slots: std::ops::Range<usize>) -> Option<usize> {
-    slots
-        .find(|slot| {
-            combatants
-                .iter()
-                .any(|unit| unit.slot == *slot && unit.is_alive())
-        })
-        .and_then(|slot| {
-            combatants
-                .iter()
-                .position(|unit| unit.slot == slot && unit.is_alive())
-        })
-}
-
-fn guarding_front_tank(combatants: &[Combatant]) -> Option<usize> {
-    combatants.iter().position(|unit| {
-        unit.is_alive() && unit.slot < 3 && unit.role == Some(MonsterRole::Tank) && unit.is_guarding
-    })
-}
-
-fn wounded_target(combatants: &[Combatant]) -> Option<usize> {
-    combatants
-        .iter()
-        .enumerate()
-        .filter(|(_, unit)| unit.is_alive() && unit.hp < unit.max_hp)
-        .min_by_key(|(_, unit)| unit.hp)
-        .map(|(index, _)| index)
 }
 
 fn turn_is_alive(combat: &CombatState, turn: CombatTurn) -> bool {

@@ -3,7 +3,7 @@
 Audit date: 27 August 2026
 
 The exact packaged optimized Windows executable records a local performance sample while
-`scripts/release_smoke.ps1` renders its 18 deterministic scenes. Each scene contributes 30 frames
+`scripts/release_smoke.ps1` renders its 19 deterministic scenes. Each scene contributes 30 frames
 at 1280x720. The sample contains the average, 95th-percentile, and maximum CPU time spent inside
 Hatchspire's `update` and `draw` calls.
 
