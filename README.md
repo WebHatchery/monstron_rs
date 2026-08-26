@@ -89,6 +89,7 @@ Standing design constraints:
 - `docs/shipped_asset_provenance.md` — exact embedded art/data inventory and human rights-approval ledger.
 - `docs/accelerated_soak.md` — deterministic 240-cycle engine/native-persistence stress gate and its limits.
 - `docs/release_profile_smoke.md` — exact-package optimized boot/render smoke gate across all 16 scenes.
+- `docs/performance_probe.md` — opt-in optimized update+draw CPU regression budget and exclusions.
 - `TODO.md` — open implementation, testing, and verification work.
 
 ## Internal Windows preview package
@@ -104,7 +105,8 @@ Run the required publisher first, then add the player-facing drafts and exact bu
 
 The packager requires a clean working tree, replaces `dist/hatchspire_windows.zip`, verifies its
 contents, and writes `dist/hatchspire_windows_manifest.json` plus `dist/hatchspire_windows.sha256`.
-The smoke gate then proves the packaged EXE matches the release build and renders all 16 seeded
-scenes at 1280×720. The deploy-only pass synchronizes that sealed archive, rather than the initial
-executable-only base ZIP, to the local preview. The result remains an internal preview; it does not
+The smoke gate then proves the packaged EXE matches the release build, renders all 16 seeded scenes
+at 1280×720, and satisfies the provisional optimized CPU regression budget. The deploy-only pass
+synchronizes that sealed archive, rather than the initial executable-only base ZIP, to the local
+preview. The result remains an internal preview; it does not
 waive the human scope, rights, support, visual-review, device-testing, or release approvals.

@@ -87,7 +87,9 @@ This is the route the tutorial, deterministic test fixture, and release capture 
 - A 240-cycle accelerated soak covers town, tower, combat, recovery, backup-saving, and native
   reload boundaries. Real-time rendering, OS-event, and physical-device soak testing remains.
 - The exact packaged release-profile EXE byte-matches the build and boots/renders all 16 seeded
-  scenes at 1280×720; interaction, visual correctness, and clean-device testing remain.
+  scenes at 1280×720. Its opt-in 30-frame-per-scene CPU report enforces a provisional 16.667 ms p95
+  update+draw budget and a 250 ms cold-frame ceiling; GPU, memory, sustained pacing, interaction,
+  visual correctness, and clean-device testing remain.
 - The same EXE launches from a working path with spaces and Unicode while read-only, without writing
   beside itself. A write-denying directory ACL and clean physical PCs remain manual gates.
 - Help, crash-report guidance, package manifests, and release smoke share a `version+g<commit>` build

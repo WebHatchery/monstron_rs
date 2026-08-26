@@ -2,8 +2,10 @@
 
 use macroquad::prelude::*;
 use macroquad_toolkit::{capture, crash};
+use std::time::Instant;
 
 use hatchspire::game::Game;
+use hatchspire::performance::{append_json_line, FrameTiming};
 use hatchspire::settings::AppSettings;
 
 fn window_conf() -> Conf {
@@ -38,13 +40,26 @@ async fn main() {
     // Screenshot harness: when HATCHSPIRE_CAPTURE_PATH is set, seed a scene,
     // simulate deterministic frames, write a PNG, and exit.
     if let Some(configs) = capture::CaptureConfig::all_from_env("HATCHSPIRE") {
+        let performance_report = capture::env_string("HATCHSPIRE_PERF_REPORT");
         for config in configs {
             game.begin_capture_scene(&config.scene);
+            let mut timing = FrameTiming::default();
             capture::run_capture_once(&config, |_dt| {
+                let started = Instant::now();
                 game.update();
                 game.draw();
+                timing.record(started.elapsed());
             })
             .await;
+            if let Some(path) = &performance_report {
+                let sample = timing.summarize(
+                    &config.scene,
+                    screen_width().round().max(0.0) as u32,
+                    screen_height().round().max(0.0) as u32,
+                );
+                append_json_line(path, &sample)
+                    .unwrap_or_else(|error| panic!("could not write capture performance: {error}"));
+            }
         }
         return;
     }

@@ -6,14 +6,21 @@
     Run .\publish.ps1 and .\scripts\package_windows_preview.ps1 first. The script
     verifies BUILD_INFO.json against Git/Cargo, proves the packaged executable is
     byte-identical to the release build, captures every registered scene with the
-    optimized executable at 1280x720, and validates every PNG header and size.
+    optimized executable at 1280x720, enforces the update+draw CPU budget, and
+    validates every PNG header and size.
 #>
 param(
     [string]$ArchivePath = "dist\hatchspire_windows.zip",
+    [double]$MaxP95CpuMs = 16.667,
+    [double]$MaxSingleCpuMs = 250.0,
     [switch]$AllowDirty
 )
 
 $ErrorActionPreference = "Stop"
+
+if ($MaxP95CpuMs -le 0 -or $MaxSingleCpuMs -le 0) {
+    throw "Performance limits must be greater than zero."
+}
 
 function Get-ZipEntryText {
     param([IO.Compression.ZipArchive]$Zip, [string]$Name)
@@ -135,10 +142,45 @@ try {
     )
     $outputDir = "target\release-smoke"
     $shared = Join-Path (Split-Path -Parent $projectDir) "macroquad-toolkit\scripts\capture_ui.ps1"
-    & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 -WindowWidth 1280 -WindowHeight 720 -OutputDir $outputDir -MinBytes 20000 -SkipBuild -Release
-    if (-not $?) { throw "Release capture harness failed." }
-
     $captureDir = Join-Path $projectDir $outputDir
+    New-Item -ItemType Directory -Path $captureDir -Force | Out-Null
+    $performanceReport = Join-Path $captureDir "performance.jsonl"
+    if (Test-Path -LiteralPath $performanceReport) {
+        Remove-Item -LiteralPath $performanceReport -Force
+    }
+    Set-Item Env:HATCHSPIRE_PERF_REPORT $performanceReport
+    try {
+        & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 -WindowWidth 1280 -WindowHeight 720 -OutputDir $outputDir -MinBytes 20000 -SkipBuild -Release
+        if (-not $?) { throw "Release capture harness failed." }
+    } finally {
+        Remove-Item Env:HATCHSPIRE_PERF_REPORT -ErrorAction SilentlyContinue
+    }
+
+    if (-not (Test-Path -LiteralPath $performanceReport -PathType Leaf)) {
+        throw "Release capture did not write its performance report."
+    }
+    $performanceSamples = @(Get-Content -LiteralPath $performanceReport |
+        Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+        ForEach-Object { $_ | ConvertFrom-Json })
+    if ($performanceSamples.Count -ne $scenes.Count) {
+        throw "Performance report contains $($performanceSamples.Count) scenes; expected $($scenes.Count)."
+    }
+    $p95LimitMicros = [Math]::Round($MaxP95CpuMs * 1000.0)
+    $singleLimitMicros = [Math]::Round($MaxSingleCpuMs * 1000.0)
+    foreach ($sample in $performanceSamples) {
+        if ($sample.frames -ne 30 -or $sample.width -ne 1280 -or $sample.height -ne 720) {
+            throw "Invalid performance sample shape for $($sample.scene)."
+        }
+        if ($sample.p95_cpu_micros -gt $p95LimitMicros) {
+            throw "$($sample.scene) p95 CPU time is $($sample.p95_cpu_micros) us; limit is $p95LimitMicros us."
+        }
+        if ($sample.max_cpu_micros -gt $singleLimitMicros) {
+            throw "$($sample.scene) maximum CPU time is $($sample.max_cpu_micros) us; limit is $singleLimitMicros us."
+        }
+    }
+    $worstP95 = $performanceSamples | Sort-Object p95_cpu_micros -Descending | Select-Object -First 1
+    $worstSingle = $performanceSamples | Sort-Object max_cpu_micros -Descending | Select-Object -First 1
+
     foreach ($scene in $scenes) {
         $path = Join-Path $captureDir "ui_$scene.png"
         if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
@@ -216,6 +258,9 @@ try {
     Write-Host "  Build ID: $expectedBuildId"
     Write-Host "  Executable SHA-256: $releaseExeHash"
     Write-Host "  Scenes: $($scenes.Count) at 1280x720"
+    Write-Host "  Worst p95 update+draw: $($worstP95.scene) $($worstP95.p95_cpu_micros) us"
+    Write-Host "  Worst single update+draw: $($worstSingle.scene) $($worstSingle.max_cpu_micros) us"
+    Write-Host "  CPU limits: p95 $p95LimitMicros us; single $singleLimitMicros us"
     Write-Host "  Relocated launch: spaces + Unicode path, read-only EXE, no sidecar writes"
     Write-Host "  Package status: internal preview; public approval still required" -ForegroundColor Yellow
 } finally {

@@ -4,6 +4,7 @@ pub mod data;
 pub mod engine;
 mod facility_actions;
 pub mod game;
+pub mod performance;
 pub mod save;
 pub mod screens;
 pub mod settings;
