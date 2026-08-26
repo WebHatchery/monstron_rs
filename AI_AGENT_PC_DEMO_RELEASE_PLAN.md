@@ -2,6 +2,17 @@
 
 Audit date: 26 August 2026
 
+## Implementation status
+
+- **Current phase:** Milestone 1 — proposed release definition and critical-path mapping.
+- **Scope state:** Awaiting human approval; no public-demo progression lock has been applied.
+- **Working specification:** [`docs/pc_demo_definition.md`](docs/pc_demo_definition.md)
+- **Release gate:** [`docs/pc_demo_release_checklist.md`](docs/pc_demo_release_checklist.md)
+- **Next implementation step after approval:** encode the floor-3 finale boundary and its deterministic full-path tests.
+
+The working specification deliberately separates approved facts from proposed defaults. Updating
+its decision record is the gate that authorizes scope-sensitive gameplay changes.
+
 ## Scope used for this plan
 
 This plan treats the first public release as a **Windows 10/11 x64 downloadable demo on itch.io**. It excludes WebGL, Linux, macOS, Steam, achievements, cloud saves, online services, localization, and the content-complete 1.0 release.
