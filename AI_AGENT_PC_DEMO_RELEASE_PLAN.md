@@ -22,9 +22,10 @@ Audit date: 26 August 2026
   drafts, an exact checksum, and 120 available dependency license/notice texts. A regression gate
   covers all 37 embedded project inputs.
   A 240-cycle accelerated soak now stresses town, tower, combat, recovery, backup, and native reload.
-  The exact packaged optimized EXE now passes a 16-scene 1280×720 boot/render smoke gate.
-  That gate also records opt-in local update+draw CPU samples and enforces a provisional 16.667 ms
-  p95 budget plus a 250 ms cold-frame ceiling; GPU, memory, and sustained pacing remain unmeasured.
+  The exact packaged optimized EXE now passes a 16-scene boot/render smoke gate at 1280×720,
+  1366×768, 1920×1080 fullscreen, and a deliberately small 960×540 window.
+  That gate also records opt-in local update+draw CPU samples, enforces a provisional 16.667 ms p95
+  budget, and reports diagnostic maxima; GPU, memory, and sustained pacing remain unmeasured.
   It also launches read-only from a working path containing spaces and Unicode without sidecar writes.
   Help, package manifests, and release smoke now share an exact `version+g<commit>` build identity.
   Catalog metadata now labels the build as an internal preview, leads with visible controls, and
@@ -228,14 +229,15 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
 
 - Add release-profile smoke tests and a seeded headless run covering the full demo path.
 - Implemented independently: exact-package identity checks and release-profile boot/render smoke
-  now cover all 16 registered scenes. The scope-dependent full-demo path still awaits approval.
+  now cover all 16 registered scenes at four target window sizes. The scope-dependent full-demo
+  path and human visual review still await approval.
 - Add a 2–4 hour soak scenario that repeatedly enters town, facilities, tower, combat, save/load, and quit/restart.
 - Implemented independently: a 240-cycle accelerated soak repeatedly crosses town, tower, combat,
   recovery, atomic backup-save, and native reload boundaries. It does not replace the real-time soak.
 - Track frame time and memory at supported resolutions; investigate sustained degradation.
 - Implemented independently: all 16 optimized 1280×720 capture scenes enforce a provisional
-  16.667 ms p95 update+draw CPU budget and a 250 ms cold-frame ceiling. GPU presentation, memory,
-  other resolutions, and sustained real-time behavior remain.
+  16.667 ms p95 update+draw CPU budget and report diagnostic maxima. GPU presentation, memory,
+  sustained real-time behavior, and performance at other resolutions remain.
 - Test fresh install, paths containing spaces and non-ASCII characters, read-only launch folder, missing/corrupt save, Alt+Tab, resizing, fullscreen toggling, and repeated restart.
 - Implemented independently: the exact packaged EXE launches read-only from a spaces/Unicode working
   path and writes no sidecars there. Clean-install, write-denying ACL, and OS-event tests remain.

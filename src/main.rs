@@ -26,7 +26,11 @@ fn window_conf() -> Conf {
         window_width: capture::env_i32("HATCHSPIRE_WINDOW_WIDTH", preferred_width),
         window_height: capture::env_i32("HATCHSPIRE_WINDOW_HEIGHT", preferred_height),
         window_resizable: true,
-        fullscreen: !capture_mode && settings.fullscreen,
+        fullscreen: if capture_mode {
+            capture::env_bool("HATCHSPIRE_CAPTURE_FULLSCREEN", false)
+        } else {
+            settings.fullscreen
+        },
         high_dpi: false,
         sample_count: 0,
         ..Default::default()

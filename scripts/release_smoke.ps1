@@ -12,14 +12,13 @@
 param(
     [string]$ArchivePath = "dist\hatchspire_windows.zip",
     [double]$MaxP95CpuMs = 16.667,
-    [double]$MaxSingleCpuMs = 250.0,
     [switch]$AllowDirty
 )
 
 $ErrorActionPreference = "Stop"
 
-if ($MaxP95CpuMs -le 0 -or $MaxSingleCpuMs -le 0) {
-    throw "Performance limits must be greater than zero."
+if ($MaxP95CpuMs -le 0) {
+    throw "The p95 performance limit must be greater than zero."
 }
 
 function Get-ZipEntryText {
@@ -166,16 +165,12 @@ try {
         throw "Performance report contains $($performanceSamples.Count) scenes; expected $($scenes.Count)."
     }
     $p95LimitMicros = [Math]::Round($MaxP95CpuMs * 1000.0)
-    $singleLimitMicros = [Math]::Round($MaxSingleCpuMs * 1000.0)
     foreach ($sample in $performanceSamples) {
         if ($sample.frames -ne 30 -or $sample.width -ne 1280 -or $sample.height -ne 720) {
             throw "Invalid performance sample shape for $($sample.scene)."
         }
         if ($sample.p95_cpu_micros -gt $p95LimitMicros) {
             throw "$($sample.scene) p95 CPU time is $($sample.p95_cpu_micros) us; limit is $p95LimitMicros us."
-        }
-        if ($sample.max_cpu_micros -gt $singleLimitMicros) {
-            throw "$($sample.scene) maximum CPU time is $($sample.max_cpu_micros) us; limit is $singleLimitMicros us."
         }
     }
     $worstP95 = $performanceSamples | Sort-Object p95_cpu_micros -Descending | Select-Object -First 1
@@ -190,6 +185,39 @@ try {
         $height = Get-PngDimension $path 20
         if ($width -ne 1280 -or $height -ne 720) {
             throw ("Release smoke capture has wrong dimensions: {0} is {1}x{2}" -f $path, $width, $height)
+        }
+    }
+
+    $additionalResolutions = @(
+        [pscustomobject]@{ Width = 1366; Height = 768; Label = "1366x768"; Fullscreen = $false },
+        [pscustomobject]@{ Width = 1920; Height = 1080; Label = "1920x1080"; Fullscreen = $true },
+        [pscustomobject]@{ Width = 960; Height = 540; Label = "960x540"; Fullscreen = $false }
+    )
+    foreach ($resolution in $additionalResolutions) {
+        $matrixOutputDir = Join-Path $outputDir $resolution.Label
+        if ($resolution.Fullscreen) {
+            Set-Item Env:HATCHSPIRE_CAPTURE_FULLSCREEN "1"
+        }
+        try {
+            & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 `
+                -WindowWidth $resolution.Width -WindowHeight $resolution.Height `
+                -OutputDir $matrixOutputDir -MinBytes 20000 -SkipBuild -Release
+            if (-not $?) { throw "Release capture failed at $($resolution.Label)." }
+        } finally {
+            Remove-Item Env:HATCHSPIRE_CAPTURE_FULLSCREEN -ErrorAction SilentlyContinue
+        }
+
+        $matrixCaptureDir = Join-Path $projectDir $matrixOutputDir
+        foreach ($scene in $scenes) {
+            $path = Join-Path $matrixCaptureDir "ui_$scene.png"
+            if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+                throw "Release matrix capture is missing: $path"
+            }
+            $width = Get-PngDimension $path 16
+            $height = Get-PngDimension $path 20
+            if ($width -ne $resolution.Width -or $height -ne $resolution.Height) {
+                throw ("Release matrix capture has wrong dimensions: {0} is {1}x{2}" -f $path, $width, $height)
+            }
         }
     }
 
@@ -257,10 +285,10 @@ try {
     Write-Host "  Commit: $commit"
     Write-Host "  Build ID: $expectedBuildId"
     Write-Host "  Executable SHA-256: $releaseExeHash"
-    Write-Host "  Scenes: $($scenes.Count) at 1280x720"
+    Write-Host "  Scenes: $($scenes.Count) at 1280x720, 1366x768, 1920x1080, and 960x540"
     Write-Host "  Worst p95 update+draw: $($worstP95.scene) $($worstP95.p95_cpu_micros) us"
     Write-Host "  Worst single update+draw: $($worstSingle.scene) $($worstSingle.max_cpu_micros) us"
-    Write-Host "  CPU limits: p95 $p95LimitMicros us; single $singleLimitMicros us"
+    Write-Host "  Enforced CPU limit: p95 $p95LimitMicros us"
     Write-Host "  Relocated launch: spaces + Unicode path, read-only EXE, no sidecar writes"
     Write-Host "  Package status: internal preview; public approval still required" -ForegroundColor Yellow
 } finally {

@@ -60,6 +60,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] A regression-tested ledger identifies all 37 embedded project art/data inputs.
 - [x] A 240-cycle accelerated soak covers repeated town/tower/combat/recovery and native save reloads.
 - [x] The packaged optimized EXE byte-matches the release build and renders all 16 seeded scenes at 1280×720.
+- [x] Automated structural capture passes for all 16 scenes at 1366×768, 1920×1080, and 960×540.
 - [x] Release capture enforces a local, opt-in 16.667 ms p95 update+draw CPU budget across all 16 scenes.
 - [x] The identical EXE launches read-only from a spaces/Unicode working path without sidecar writes.
 - [x] Internal catalog metadata removes the inherited repository link and unsupported public platform claim.
