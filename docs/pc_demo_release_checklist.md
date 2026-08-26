@@ -55,8 +55,8 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] ZIP includes versioned executable, readme, support, known issues, credits, notices, and privacy text.
 - [ ] Release manifest records version, commit, build date, file list, archive size, and SHA-256.
 - [x] Internal preview packager adds all draft documents, per-file hashes, build identity, and exact archive checksum.
-- [x] Package audit lists the exact Windows dependency graph and bundles 92 available license/notice texts.
-- [x] Missing project/toolkit license metadata and the absent `quad-rand 0.2.3` license file remain explicit blockers.
+- [x] Package audit lists the exact Windows dependency graph and bundles 120 available license/notice texts.
+- [x] Missing project/toolkit license metadata and absent `gilrs`, `gilrs-core`, and `quad-rand` license files remain explicit blockers.
 - [x] A regression-tested ledger identifies all 37 embedded project art/data inputs.
 - [x] A 240-cycle accelerated soak covers repeated town/tower/combat/recovery and native save reloads.
 - [x] The packaged optimized EXE byte-matches the release build and renders all 16 seeded scenes at 1280×720.

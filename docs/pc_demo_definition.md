@@ -81,7 +81,7 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   scale independently; approved audio playback remains.
 - A self-identifying internal Windows preview package can be generated with player/support/legal
   drafts, exact build identity, per-file hashes, an external archive checksum, the exact Windows
-  dependency list, and 92 available registry-crate license/notice texts. Public approval remains.
+  dependency list, and 120 available registry-crate license/notice texts. Public approval remains.
 - The 37 embedded project inputs have a regression-tested provenance ledger; all visual approvals
   remain pending.
 - A 240-cycle accelerated soak covers town, tower, combat, recovery, backup-saving, and native
