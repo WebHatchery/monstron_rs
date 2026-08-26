@@ -57,6 +57,16 @@ function Get-PngDimension {
         [int]$bytes[$Offset + 3]
 }
 
+function Assert-ChildPath {
+    param([string]$Parent, [string]$Child)
+
+    $parentFull = [IO.Path]::GetFullPath($Parent).TrimEnd('\', '/') + [IO.Path]::DirectorySeparatorChar
+    $childFull = [IO.Path]::GetFullPath($Child)
+    if (-not $childFull.StartsWith($parentFull, [StringComparison]::OrdinalIgnoreCase)) {
+        throw "Path escapes the expected directory: $childFull"
+    }
+}
+
 $projectDir = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
 $archive = if ([IO.Path]::IsPathRooted($ArchivePath)) {
     [IO.Path]::GetFullPath($ArchivePath)
@@ -137,11 +147,72 @@ try {
         }
     }
 
+    $targetRoot = [IO.Path]::GetFullPath((Join-Path $projectDir "target"))
+    $relocatedDir = Join-Path $targetRoot ("release smoke Ω path " + [Guid]::NewGuid().ToString("N"))
+    Assert-ChildPath $targetRoot $relocatedDir
+    $relocatedExe = Join-Path $relocatedDir "hatchspire.exe"
+    $relocatedCapture = Join-Path $captureDir "ui_relocated_mainmenu.png"
+    $relocatedManifest = Join-Path $captureDir ".relocated_manifest_$PID.tsv"
+    $relocatedStdout = Join-Path $captureDir ".relocated_stdout_$PID.log"
+    $relocatedStderr = Join-Path $captureDir ".relocated_stderr_$PID.log"
+    try {
+        New-Item -ItemType Directory -Path $relocatedDir | Out-Null
+        Copy-Item -LiteralPath $releaseExe -Destination $relocatedExe
+        (Get-Item -LiteralPath $relocatedExe).IsReadOnly = $true
+        if (Test-Path -LiteralPath $relocatedCapture) {
+            Remove-Item -LiteralPath $relocatedCapture -Force
+        }
+        Set-Content -LiteralPath $relocatedManifest -Value "mainmenu`t$relocatedCapture" -Encoding utf8
+        Set-Item Env:HATCHSPIRE_CAPTURE_MANIFEST $relocatedManifest
+        Set-Item Env:HATCHSPIRE_CAPTURE_FRAMES "30"
+        Set-Item Env:HATCHSPIRE_WINDOW_WIDTH "1280"
+        Set-Item Env:HATCHSPIRE_WINDOW_HEIGHT "720"
+        Set-Item Env:HATCHSPIRE_HEADLESS "1"
+
+        $relocatedProcess = Start-Process -FilePath $relocatedExe -WorkingDirectory $relocatedDir `
+            -PassThru -WindowStyle Hidden -RedirectStandardOutput $relocatedStdout `
+            -RedirectStandardError $relocatedStderr
+        if (-not $relocatedProcess.WaitForExit(60000)) {
+            $relocatedProcess.Kill()
+            throw "Relocated release executable did not exit within 60 seconds."
+        }
+        if ($relocatedProcess.ExitCode -ne 0) {
+            $details = @(
+                if (Test-Path -LiteralPath $relocatedStdout) { Get-Content $relocatedStdout -Tail 40 }
+                if (Test-Path -LiteralPath $relocatedStderr) { Get-Content $relocatedStderr -Tail 40 }
+            ) -join [Environment]::NewLine
+            throw "Relocated release executable exited with code $($relocatedProcess.ExitCode). $details"
+        }
+        $launchFiles = @(Get-ChildItem -LiteralPath $relocatedDir -File)
+        if ($launchFiles.Count -ne 1 -or $launchFiles[0].Name -ne "hatchspire.exe") {
+            throw "Relocated launch wrote unexpected files beside the executable."
+        }
+        if ((Get-Item -LiteralPath $relocatedCapture).Length -lt 20000 -or
+            (Get-PngDimension $relocatedCapture 16) -ne 1280 -or
+            (Get-PngDimension $relocatedCapture 20) -ne 720) {
+            throw "Relocated release capture is missing, blank, or the wrong size."
+        }
+    } finally {
+        Remove-Item Env:HATCHSPIRE_CAPTURE_MANIFEST, Env:HATCHSPIRE_CAPTURE_FRAMES, `
+            Env:HATCHSPIRE_WINDOW_WIDTH, Env:HATCHSPIRE_WINDOW_HEIGHT, `
+            Env:HATCHSPIRE_HEADLESS -ErrorAction SilentlyContinue
+        Remove-Item -LiteralPath $relocatedManifest, $relocatedStdout, $relocatedStderr `
+            -Force -ErrorAction SilentlyContinue
+        if (Test-Path -LiteralPath $relocatedExe) {
+            (Get-Item -LiteralPath $relocatedExe).IsReadOnly = $false
+        }
+        if (Test-Path -LiteralPath $relocatedDir) {
+            Assert-ChildPath $targetRoot $relocatedDir
+            Remove-Item -LiteralPath $relocatedDir -Recurse -Force
+        }
+    }
+
     Write-Host "Release-profile smoke passed:" -ForegroundColor Green
     Write-Host "  Commit: $commit"
     Write-Host "  Version: $($package.version)"
     Write-Host "  Executable SHA-256: $releaseExeHash"
     Write-Host "  Scenes: $($scenes.Count) at 1280x720"
+    Write-Host "  Relocated launch: spaces + Unicode path, read-only EXE, no sidecar writes"
     Write-Host "  Package status: internal preview; public approval still required" -ForegroundColor Yellow
 } finally {
     Pop-Location

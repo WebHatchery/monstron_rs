@@ -13,7 +13,9 @@ The gate:
 4. hashes `hatchspire.exe` inside the ZIP and requires it to match the release build byte-for-byte;
 5. boots that optimized build through all 16 deterministic capture scenes in one process;
 6. requires a successful process exit within the capture timeout; and
-7. validates every output as a nontrivial 1280×720 PNG.
+7. validates every output as a nontrivial 1280×720 PNG; then
+8. launches the identical EXE from a working path containing spaces and Unicode, marks the EXE
+   read-only, and fails if the game writes any sidecar beside it.
 
 Run the complete internal package sequence with:
 
@@ -33,4 +35,6 @@ Current baseline: all 16 scenes pass at 1280×720. The executable SHA-256 for co
 The smoke gate verifies startup, seeded update/draw, capture output, and clean process completion. It
 does not play the controls, compare visual correctness, traverse the scope-dependent full demo,
 measure sustained frame time or memory, exercise OS window events, or replace clean-machine and
-physical-device testing. The canonical `docs/verification` images still require human visual review.
+physical-device testing. A read-only executable and sidecar-free relocated launch do not reproduce
+a directory with write-denying ACLs. The canonical `docs/verification` images still require human
+visual review.

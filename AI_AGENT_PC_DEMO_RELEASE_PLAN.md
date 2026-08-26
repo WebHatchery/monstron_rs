@@ -23,6 +23,7 @@ Audit date: 26 August 2026
   covers all 37 embedded project inputs.
   A 240-cycle accelerated soak now stresses town, tower, combat, recovery, backup, and native reload.
   The exact packaged optimized EXE now passes a 16-scene 1280×720 boot/render smoke gate.
+  It also launches read-only from a working path containing spaces and Unicode without sidecar writes.
   Catalog metadata now labels the build as an internal preview, leads with visible controls, and
   carries no inherited repository link or approved public-demo claim.
 
@@ -105,9 +106,10 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - Cargo remains at generic version `0.1.0`, which is now displayed in Help & Support. Assigning the
   approved demo version and richer build identifier remains a release-candidate task.
 - Native panics now append a local crash log beside the save. Windows icon/version metadata,
-  clean-machine launch tests, antivirus/SmartScreen records, gamepad support, a performance budget,
-  and a 2–4 hour real-time render/device soak remain absent. A deterministic 240-cycle engine and
-  native-persistence soak now covers 180 victories and 60 recovery returns without deadlock.
+  clean-machine launch tests, a write-denying launch-directory ACL test, antivirus/SmartScreen
+  records, gamepad support, a performance budget, and a 2–4 hour real-time render/device soak remain
+  absent. The exact EXE does pass a read-only spaces/Unicode relocation test, and a deterministic
+  240-cycle engine/native-persistence soak covers 180 victories and 60 recovery returns without deadlock.
 - Current automated flows prove systems in isolation and in short chains, not that a new player can understand, enjoy, and finish the demo.
 
 ## Agent-owned work
@@ -224,6 +226,8 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
   recovery, atomic backup-save, and native reload boundaries. It does not replace the real-time soak.
 - Track frame time and memory at supported resolutions; investigate sustained degradation.
 - Test fresh install, paths containing spaces and non-ASCII characters, read-only launch folder, missing/corrupt save, Alt+Tab, resizing, fullscreen toggling, and repeated restart.
+- Implemented independently: the exact packaged EXE launches read-only from a spaces/Unicode working
+  path and writes no sidecars there. Clean-install, write-denying ACL, and OS-event tests remain.
 - Verify on integrated graphics or an equivalent low-spec machine when the human provides access.
 - Add a release manifest containing version, commit, build date, SHA-256, archive size, and included files.
 - Add Windows application icon/version metadata if the chosen packaging path supports it cleanly.
