@@ -40,6 +40,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Save reset has a separate confirmation, clears the active session, and states its consequences.
 - [x] Unreadable saves can be retried, preserved through quarantine, or left unchanged.
 - [x] Unsupported-newer saves are identified and left unchanged for a newer game build.
+- [x] Help & Support displays the running version, native save path, and recovery/report guidance.
 - [ ] Every supported historical save version either migrates fully or reports a safe recovery path.
 - [ ] No crash, hang, progress loss, chroma leak, overlap, clipping, or missing asset exists on the route.
 - [ ] Master/music/SFX volume, mute, fullscreen/windowed, UI scale, and reduced motion persist.

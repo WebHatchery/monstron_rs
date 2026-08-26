@@ -11,7 +11,8 @@ Audit date: 26 August 2026
 - **Next implementation step after approval:** encode the floor-3 finale boundary and its deterministic full-path tests.
 - **Completed release slices:** proposed demo definition/release gate; visible New Game overwrite
   warning; unreadable-save quarantine and unsupported-newer-save recovery; change-aware atomic
-  autosave with visible success/failure status; separately confirmed save reset.
+  autosave with visible success/failure status; separately confirmed save reset; in-game build,
+  save-location, and recovery help.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -65,14 +66,15 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - Audio is absent. Settings only toggle fullscreen; there are no master/music/SFX controls, UI scale, reduced-motion option, or persisted settings.
 - Save/load remains a single slot. The initial audit found no autosave or recovery shell; New Game
   confirmation, change-aware autosave, corrupt-save quarantine, and newer-save protection are now
-  implemented, together with a separately confirmed save reset. Save-location help, historical
-  migrations, and backup restore remain.
+  implemented, together with a separately confirmed save reset and native save-location help.
+  Historical migrations and backup restore remain.
 - There is no `LICENSE`, credits/attribution file, third-party notice, privacy statement, or recorded provenance manifest for shipped art, fonts, and audio.
 - `asset_registry.json` is empty even though roughly twenty large atlases and the title image are embedded in the executable. The full asset tree contains 531 files and about 782 MB, so shipped inputs must be distinguished from experiments and references.
 - `publish-itch.ps1` exists, but the required `itch.json` does not. The publisher cannot target an itch.io project yet.
 - `game_page.json` still promises “Browser, Windows” and links to a repository named `monstron_rs`; both must be reviewed for a Windows-only Hatchspire demo.
 - The Windows archive contains only the executable. It lacks a readme, support instructions, known issues, credits, license notices, and version identification.
-- Cargo is at generic version `0.1.0`; the game does not display a release version/build identifier.
+- Cargo remains at generic version `0.1.0`, which is now displayed in Help & Support. Assigning the
+  approved demo version and richer build identifier remains a release-candidate task.
 - No Windows icon/version metadata, clean-machine launch test, antivirus/SmartScreen record, gamepad support, crash log, performance budget, or long-session soak gate is documented.
 - Current automated flows prove systems in isolation and in short chains, not that a new player can understand, enjoy, and finish the demo.
 

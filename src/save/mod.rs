@@ -52,6 +52,20 @@ impl SaveRepository {
     pub fn delete() -> Result<(), String> {
         macroquad_toolkit::persistence::delete_slot(GAME_NAME, SAVE_SLOT)
     }
+
+    pub fn location_description() -> String {
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+            macroquad_toolkit::persistence::get_app_data_path(GAME_NAME, "save_slot_1.json")
+                .map(|path| path.display().to_string())
+                .unwrap_or_else(|| "Windows could not determine the save-data folder.".to_owned())
+        }
+
+        #[cfg(target_arch = "wasm32")]
+        {
+            "Browser storage for this site (development build only).".to_owned()
+        }
+    }
 }
 
 #[cfg(test)]

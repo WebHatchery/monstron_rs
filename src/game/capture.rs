@@ -54,6 +54,11 @@ impl Game {
                 self.begin_capture_fixture(AppScreen::ConfirmSaveReset);
                 self.status_message = "Choose whether to keep or delete the save.".to_owned();
             }
+            "help" => {
+                self.state = None;
+                self.screen = AppScreen::Help;
+                self.status_message = "Help verification scene.".to_owned();
+            }
             _ => {
                 // Default: boot state is the main menu.
             }

@@ -18,6 +18,7 @@ pub enum MenuAction {
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum SettingsAction {
     ToggleFullscreen,
+    OpenHelp,
     Back,
 }
 
@@ -91,6 +92,9 @@ pub fn handle_settings_input() -> Option<SettingsAction> {
     if ui::button_clicked(settings_back_rect(), true) {
         return Some(SettingsAction::Back);
     }
+    if ui::button_clicked(help_button_rect(), true) {
+        return Some(SettingsAction::OpenHelp);
+    }
 
     None
 }
@@ -137,7 +141,7 @@ pub fn draw(title_texture: &Texture2D, has_save: bool) {
     ui::draw_tooltip_target(ui::Tooltip {
         rect: settings_rect(),
         title: "Settings",
-        detail: "Change the window display mode.",
+        detail: "Change display mode or open Help & Support.",
     });
 }
 
@@ -191,6 +195,7 @@ pub fn draw_settings(fullscreen_enabled: bool) {
         },
     );
     ui::draw_toggle(fullscreen_toggle_rect(), "Fullscreen", fullscreen_enabled);
+    ui::draw_title_button(help_button_rect(), "Help & Support", true);
     ui::draw_title_button(settings_back_rect(), "Back", true);
 }
 
@@ -283,6 +288,10 @@ fn fullscreen_toggle_rect() -> Rect {
 }
 
 fn settings_back_rect() -> Rect {
+    Rect::new(520.0, 474.0, 240.0, 44.0)
+}
+
+fn help_button_rect() -> Rect {
     Rect::new(520.0, 392.0, 240.0, 44.0)
 }
 

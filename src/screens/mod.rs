@@ -1,6 +1,7 @@
 pub mod breeding;
 pub mod combat;
 pub mod hatchery;
+pub mod help;
 pub mod menu;
 pub mod placeholder;
 pub mod save_recovery;
@@ -19,6 +20,7 @@ pub enum AppScreen {
     ConfirmSaveReset,
     SaveRecovery,
     Settings,
+    Help,
     Town,
     Hatchery,
     Stable,

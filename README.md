@@ -35,6 +35,7 @@ Turn a fragile camp into a working monster haven that can support increasingly d
 - S/L/T: save, load, or title inside menu.
 - Progress autosaves after every successful state-changing action; manual save remains available.
 - Save Options on the title screen deletes the single slot only after a separate confirmation.
+- Help & Support in Settings shows the build version, save path, and recovery guidance.
 - Mouse: build, open, trade, and greet.
 - Touch/mouse: every required tower action has a visible target, including room routing, EXPLORE, SURVEY, CAMP, RETREAT, event choices, and the Field Guide.
 

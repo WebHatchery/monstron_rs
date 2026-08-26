@@ -10,6 +10,7 @@ use crate::engine::{
 use crate::save::{compatibility, SaveCompatibility, SaveData, SaveRepository};
 use crate::screens::{
     combat::CombatAction,
+    help::HelpAction,
     menu::{MenuAction, NewGameConfirmationAction, SaveResetConfirmationAction, SettingsAction},
     placeholder::PlaceholderAction,
     save_recovery::SaveRecoveryAction,
@@ -110,9 +111,18 @@ impl Game {
                 self.fullscreen_enabled = !self.fullscreen_enabled;
                 set_fullscreen(self.fullscreen_enabled);
             }
+            SettingsAction::OpenHelp => {
+                self.screen = AppScreen::Help;
+            }
             SettingsAction::Back => {
                 self.screen = AppScreen::MainMenu;
             }
+        }
+    }
+
+    pub(crate) fn apply_help_action(&mut self, action: HelpAction) {
+        match action {
+            HelpAction::Back => self.screen = AppScreen::Settings,
         }
     }
 

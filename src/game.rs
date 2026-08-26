@@ -10,7 +10,7 @@ use crate::data::{GameData, GameDataLoader};
 use crate::save::SaveRepository;
 use crate::screens::placeholder::PlaceholderKind;
 use crate::screens::{
-    breeding, combat, hatchery, menu, placeholder, save_recovery, shop, stable, tower, town,
+    breeding, combat, hatchery, help, menu, placeholder, save_recovery, shop, stable, tower, town,
     workshop, AppScreen,
 };
 use crate::state::GameState;
@@ -88,6 +88,11 @@ impl Game {
             AppScreen::Settings => {
                 if let Some(action) = menu::handle_settings_input() {
                     self.apply_settings_action(action);
+                }
+            }
+            AppScreen::Help => {
+                if let Some(action) = help::handle_input() {
+                    self.apply_help_action(action);
                 }
             }
             AppScreen::Town => {
@@ -207,6 +212,9 @@ impl Game {
             }
             AppScreen::Settings => {
                 menu::draw_settings(self.fullscreen_enabled);
+            }
+            AppScreen::Help => {
+                help::draw(&SaveRepository::location_description());
             }
             AppScreen::Town => {
                 if let Some(state) = &self.state {
