@@ -43,6 +43,7 @@ impl Game {
                 self.state = None;
                 self.screen = AppScreen::SaveRecovery;
                 self.save_recovery_can_preserve = true;
+                self.save_recovery_has_backup = true;
                 self.status_message =
                     "Load failed: the save data is incomplete or damaged.".to_owned();
             }

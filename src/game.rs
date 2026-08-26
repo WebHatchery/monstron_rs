@@ -28,6 +28,7 @@ pub struct Game {
     title_texture: Texture2D,
     settings: AppSettings,
     save_recovery_can_preserve: bool,
+    save_recovery_has_backup: bool,
     autosave_enabled: bool,
 }
 
@@ -68,6 +69,7 @@ impl Game {
             title_texture,
             settings,
             save_recovery_can_preserve: false,
+            save_recovery_has_backup: false,
             autosave_enabled: true,
         }
     }
@@ -91,7 +93,10 @@ impl Game {
                 }
             }
             AppScreen::SaveRecovery => {
-                if let Some(action) = save_recovery::handle_input(self.save_recovery_can_preserve) {
+                if let Some(action) = save_recovery::handle_input(
+                    self.save_recovery_can_preserve,
+                    self.save_recovery_has_backup,
+                ) {
                     self.apply_save_recovery_action(action);
                 }
             }
@@ -218,7 +223,11 @@ impl Game {
                 menu::draw_save_reset_confirmation(&self.title_texture, true);
             }
             AppScreen::SaveRecovery => {
-                save_recovery::draw(&self.status_message, self.save_recovery_can_preserve);
+                save_recovery::draw(
+                    &self.status_message,
+                    self.save_recovery_can_preserve,
+                    self.save_recovery_has_backup,
+                );
             }
             AppScreen::Settings => {
                 menu::draw_settings(&self.settings, &self.status_message);

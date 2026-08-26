@@ -6,16 +6,20 @@ use crate::ui;
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum SaveRecoveryAction {
     Retry,
+    RestoreBackup,
     PreserveAndStartNew,
     BackToTitle,
 }
 
-pub fn handle_input(can_preserve: bool) -> Option<SaveRecoveryAction> {
+pub fn handle_input(can_preserve: bool, has_backup: bool) -> Option<SaveRecoveryAction> {
     if ui::button_clicked(retry_rect(), true) {
         return Some(SaveRecoveryAction::Retry);
     }
     if can_preserve && ui::button_clicked(preserve_rect(), true) {
         return Some(SaveRecoveryAction::PreserveAndStartNew);
+    }
+    if has_backup && ui::button_clicked(restore_rect(), true) {
+        return Some(SaveRecoveryAction::RestoreBackup);
     }
     if is_key_pressed(KeyCode::Escape) || ui::button_clicked(back_rect(), true) {
         return Some(SaveRecoveryAction::BackToTitle);
@@ -24,7 +28,7 @@ pub fn handle_input(can_preserve: bool) -> Option<SaveRecoveryAction> {
     None
 }
 
-pub fn draw(problem: &str, can_preserve: bool) {
+pub fn draw(problem: &str, can_preserve: bool, has_backup: bool) {
     draw_rectangle(0.0, 0.0, ui::VIEW_WIDTH, ui::VIEW_HEIGHT, ui::BACKGROUND);
     let panel = Rect::new(250.0, 110.0, 780.0, 500.0);
     ui::draw_panel(panel);
@@ -51,7 +55,9 @@ pub fn draw(problem: &str, can_preserve: bool) {
         },
     );
 
-    let explanation = if can_preserve {
+    let explanation = if has_backup {
+        "Tap RESTORE BACKUP to preserve this file and reopen the previous known-good save."
+    } else if can_preserve {
         "Tap RETRY LOAD after repairing the file, or preserve its exact contents before starting a new camp."
     } else {
         "Install a newer Hatchspire build to load it. This version will not alter the save."
@@ -68,6 +74,9 @@ pub fn draw(problem: &str, can_preserve: bool) {
     if can_preserve {
         ui::draw_title_button(preserve_rect(), "PRESERVE & START NEW", true);
     }
+    if has_backup {
+        ui::draw_title_button(restore_rect(), "RESTORE BACKUP", true);
+    }
     ui::draw_title_button(back_rect(), "BACK TO TITLE", true);
 }
 
@@ -79,6 +88,10 @@ fn preserve_rect() -> Rect {
     Rect::new(680.0, 388.0, 280.0, 50.0)
 }
 
+fn restore_rect() -> Rect {
+    Rect::new(500.0, 458.0, 280.0, 50.0)
+}
+
 fn back_rect() -> Rect {
-    Rect::new(500.0, 474.0, 280.0, 50.0)
+    Rect::new(500.0, 530.0, 280.0, 50.0)
 }

@@ -86,6 +86,23 @@ impl Game {
     pub(crate) fn apply_save_recovery_action(&mut self, action: SaveRecoveryAction) {
         match action {
             SaveRecoveryAction::Retry => self.load_game(),
+            SaveRecoveryAction::RestoreBackup => match SaveRepository::restore_backup() {
+                Ok(displaced_slot) => {
+                    self.load_game();
+                    let load_status = self.status_message.clone();
+                    self.status_message = match displaced_slot {
+                        Some(name) => format!(
+                            "Backup restored; the replaced file is preserved as {name}. {load_status}"
+                        ),
+                        None => format!("Backup restored. {load_status}"),
+                    };
+                }
+                Err(error) => {
+                    self.screen = AppScreen::SaveRecovery;
+                    self.status_message = format!("Could not restore the backup: {error}");
+                    self.save_recovery_has_backup = SaveRepository::backup_exists();
+                }
+            },
             SaveRecoveryAction::PreserveAndStartNew => match SaveRepository::quarantine() {
                 Ok(quarantine_name) => {
                     self.start_new_game();
@@ -440,6 +457,7 @@ impl Game {
                         save_data.version, self.data.config.save_version
                     );
                     self.save_recovery_can_preserve = false;
+                    self.save_recovery_has_backup = SaveRepository::backup_exists();
                     self.screen = AppScreen::SaveRecovery;
                     return;
                 }
@@ -460,7 +478,7 @@ impl Game {
                     version: self.data.config.save_version,
                     state: self.state.clone().expect("loaded state was just installed"),
                 };
-                self.status_message = match SaveRepository::save(&migrated) {
+                self.status_message = match SaveRepository::rewrite_loaded(&migrated) {
                     Ok(()) if save_compatibility == SaveCompatibility::Older => format!(
                         "Loaded day {loaded_day} and upgraded save version {loaded_version} to {}.",
                         self.data.config.save_version
@@ -477,6 +495,7 @@ impl Game {
             Err(error) => {
                 self.status_message = format!("Load failed: {error}");
                 self.save_recovery_can_preserve = true;
+                self.save_recovery_has_backup = SaveRepository::backup_exists();
                 self.screen = AppScreen::SaveRecovery;
             }
         }

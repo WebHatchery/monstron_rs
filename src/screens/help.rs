@@ -53,7 +53,7 @@ pub fn draw(save_location: &str) {
         panel.y + 268.0,
     );
     draw_value(
-        "An unreadable save can be preserved from the recovery screen before starting a new camp.",
+        "Recovery can restore the previous save while preserving the replaced file, or archive an unreadable save.",
         panel.x + 28.0,
         panel.y + 298.0,
     );

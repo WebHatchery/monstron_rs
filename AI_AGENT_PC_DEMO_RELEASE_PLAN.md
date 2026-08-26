@@ -15,7 +15,8 @@ Audit date: 26 August 2026
   autosave with visible success/failure status; separately confirmed save reset; in-game build,
   save-location, and recovery help; independently persisted audio/display/motion preferences.
   Windowed UI scale now resizes the complete canvas across four tested sizes without cropping;
-  supported historical saves normalize and rewrite at the current version.
+  supported historical saves normalize and rewrite at the current version. Each successful
+  replacement save now retains one restorable previous state without discarding the file it replaces.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -52,8 +53,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 18,555 lines across 100 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 104 tests: 93 unit tests, 9 end-to-end game-flow tests, one asset-registry test, and one code-standards test.
+- The implementation contains 19,613 lines across 108 Rust files; every Rust file is below the 800-line project limit.
+- The automated suite currently passes 112 tests: 101 unit tests, 9 end-to-end game-flow tests, one asset-registry test, and one code-standards test.
 - Formatting and strict lint checks pass.
 - The Windows release already packages successfully as a self-contained 51.3 MB `hatchspire_windows.zip` containing `hatchspire.exe`.
 - GitHub CI checks formatting, linting, tests, WebGL compilation, and a Windows release build.
@@ -72,7 +73,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - Save/load remains a single slot. The initial audit found no autosave or recovery shell; New Game
   confirmation, change-aware autosave, corrupt-save quarantine, and newer-save protection are now
   implemented, together with a separately confirmed save reset and native save-location help.
-  Backup restore remains.
+  One-step backup restore is also available from the recovery screen and preserves the displaced file.
 - There is no `LICENSE`, credits/attribution file, third-party notice, privacy statement, or recorded provenance manifest for shipped art, fonts, and audio.
 - `asset_registry.json` is empty even though roughly twenty large atlases and the title image are embedded in the executable. The full asset tree contains 531 files and about 782 MB, so shipped inputs must be distinguished from experiments and references.
 - `publish-itch.ps1` exists, but the required `itch.json` does not. The publisher cannot target an itch.io project yet.
