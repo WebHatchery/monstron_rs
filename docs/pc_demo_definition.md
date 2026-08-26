@@ -76,7 +76,9 @@ This is the route the tutorial, deterministic test fixture, and release capture 
 - Floor 3 has no guardian or authored finale state.
 - Tutorial completion, demo completion, and post-finale results are not represented in save data.
 - Change-aware autosave, New Game confirmation, separately confirmed reset, native save-location
-  help, visible historical-save migration, and one-step rollback are implemented.
+  help, visible historical-save migration, one-step rollback, and a visible native quit control are
+  implemented. Eight major completed-action boundaries survive native save/restart cycles, while a
+  structural gate requires all ten mutating screen routes to use the autosave wrapper.
 - Settings persist audio groups, mute, fullscreen, reduced motion, and whole-canvas windowed UI
   scale independently; approved audio playback remains.
 - A self-identifying internal Windows preview package can be generated with player/support/legal

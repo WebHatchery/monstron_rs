@@ -36,11 +36,13 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] Every critical action has a visible mouse/touch target with precise tutorial wording.
 - [ ] One failed expedition is recoverable without restarting the game.
 - [x] State-changing actions autosave atomically and expose visible success or failure status.
+- [x] All ten mutating screen routes pass through autosave; eight major completed-action boundaries survive native save/restart cycles.
 - [x] New Game presents a visible, clickable overwrite warning when progress exists.
 - [x] Save reset has a separate confirmation, clears the active session, and states its consequences.
 - [x] Unreadable saves can be retried, preserved through quarantine, or left unchanged.
 - [x] Unsupported-newer saves are identified and left unchanged for a newer game build.
 - [x] Help & Support displays the running version, native save path, and recovery/report guidance.
+- [x] The main menu provides a visible native Exit Game control.
 - [x] Help and package manifests identify the exact Git build, including dirty working builds.
 - [x] Master/music/SFX values, mute, fullscreen, and reduced motion persist outside game saves.
 - [x] Windowed UI scale persists and preserves the complete canvas at 90%, 100%, 110%, and 125%.

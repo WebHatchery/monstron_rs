@@ -197,17 +197,11 @@ try {
     )
     foreach ($resolution in $additionalResolutions) {
         $matrixOutputDir = Join-Path $outputDir $resolution.Label
-        if ($resolution.Fullscreen) {
-            Set-Item Env:HATCHSPIRE_CAPTURE_FULLSCREEN "1"
-        }
-        try {
-            & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 `
-                -WindowWidth $resolution.Width -WindowHeight $resolution.Height `
-                -OutputDir $matrixOutputDir -MinBytes 20000 -SkipBuild -Release
-            if (-not $?) { throw "Release capture failed at $($resolution.Label)." }
-        } finally {
-            Remove-Item Env:HATCHSPIRE_CAPTURE_FULLSCREEN -ErrorAction SilentlyContinue
-        }
+        & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 `
+            -WindowWidth $resolution.Width -WindowHeight $resolution.Height `
+            -OutputDir $matrixOutputDir -MinBytes 20000 -SkipBuild -Release `
+            -Fullscreen:$resolution.Fullscreen
+        if (-not $?) { throw "Release capture failed at $($resolution.Label)." }
 
         $matrixCaptureDir = Join-Path $projectDir $matrixOutputDir
         foreach ($scene in $scenes) {

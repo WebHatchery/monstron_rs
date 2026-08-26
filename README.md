@@ -88,6 +88,7 @@ Standing design constraints:
 - `docs/monster_art_pipeline.md` — art DNA, prompt export, and the local ComfyUI generation workflow.
 - `docs/shipped_asset_provenance.md` — exact embedded art/data inventory and human rights-approval ledger.
 - `docs/accelerated_soak.md` — deterministic 240-cycle engine/native-persistence stress gate and its limits.
+- `docs/autosave_boundary_matrix.md` — native restart checks at eight completed progression boundaries.
 - `docs/release_profile_smoke.md` — exact-package optimized boot/render smoke gate across all 19 scenes.
 - `docs/performance_probe.md` — opt-in optimized update+draw CPU regression budget and exclusions.
 - `TODO.md` — open implementation, testing, and verification work.

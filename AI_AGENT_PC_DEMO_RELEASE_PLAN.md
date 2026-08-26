@@ -12,8 +12,10 @@ Audit date: 26 August 2026
 - **Next implementation step after approval:** encode the floor-3 finale boundary and its deterministic full-path tests.
 - **Completed release slices:** proposed demo definition/release gate; visible New Game overwrite
   warning; unreadable-save quarantine and unsupported-newer-save recovery; change-aware atomic
-  autosave with visible success/failure status; separately confirmed save reset; in-game build,
-  save-location, and recovery help; independently persisted audio/display/motion preferences.
+  autosave with visible success/failure status; an eight-boundary native save/restart matrix and a
+  gate requiring all ten mutating screen routes to use that autosave wrapper; separately confirmed
+  save reset; in-game build, save-location, recovery help, and visible native quit; independently
+  persisted audio/display/motion preferences.
   Windowed UI scale now resizes the complete canvas across four tested sizes without cropping;
   supported historical saves normalize and rewrite at the current version. Each successful
   replacement save now retains one restorable previous state without discarding the file it replaces;
@@ -69,10 +71,10 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 20,633 physical lines across 120 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 128 tests: 114 unit tests, 9 end-to-end game-flow tests,
+- The implementation contains 20,822 physical lines across 121 Rust files; every Rust file is below the 800-line project limit.
+- The automated suite currently passes 130 tests: 114 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, one release-inventory test, one release-metadata test, one
-  accelerated-soak test, and one code-standards test.
+  accelerated-soak test, two autosave-boundary tests, and one code-standards test.
 - Formatting and strict lint checks pass.
 - The Windows release already packages successfully as a self-contained 51.3 MB `hatchspire_windows.zip` containing `hatchspire.exe`.
 - The exact packaged EXE byte-matches the optimized release build and renders all 19 seeded scenes
@@ -99,7 +101,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - Save/load remains a single slot. The initial audit found no autosave or recovery shell; New Game
   confirmation, change-aware autosave, corrupt-save quarantine, and newer-save protection are now
   implemented, together with a separately confirmed save reset and native save-location help.
-  One-step backup restore is also available from the recovery screen and preserves the displaced file.
+  One-step backup restore is also available from the recovery screen and preserves the displaced
+  file. Eight completed-action boundaries now survive actual native save/restart cycles, and a
+  structural gate requires every mutating screen route to pass through the autosave wrapper.
 - Draft credits, third-party notices, privacy, support, player readme, and known-issues files now
   exist. The exact Windows dependency inventory bundles 120 available registry-crate license/notice
   texts. No project/toolkit license has been chosen; `gilrs 0.10.10`, `gilrs-core 0.5.15`, and
