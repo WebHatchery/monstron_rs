@@ -10,7 +10,8 @@ Audit date: 26 August 2026
 - **Release gate:** [`docs/pc_demo_release_checklist.md`](docs/pc_demo_release_checklist.md)
 - **Next implementation step after approval:** encode the floor-3 finale boundary and its deterministic full-path tests.
 - **Completed release slices:** proposed demo definition/release gate; visible New Game overwrite
-  warning; unreadable-save quarantine and unsupported-newer-save recovery.
+  warning; unreadable-save quarantine and unsupported-newer-save recovery; change-aware atomic
+  autosave with visible success/failure status.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -62,7 +63,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - Defeating the floor-10 guardian does not produce an ending; the player only reaches a message that the stairs end. A shorter demo also has no authored finish line.
 - The current combat verification capture visibly contains magenta/chroma sprite backgrounds, overlapping statistics, tiny text, and a presentation drop from the polished title/tower screens.
 - Audio is absent. Settings only toggle fullscreen; there are no master/music/SFX controls, UI scale, reduced-motion option, or persisted settings.
-- Save/load is a single manual slot. There is no visible autosave, destructive New Game warning, save-location help, backup/recovery flow, or corrupt-save quarantine exposed to the player.
+- Save/load remains a single slot. The initial audit found no autosave or recovery shell; New Game
+  confirmation, change-aware autosave, corrupt-save quarantine, and newer-save protection are now
+  implemented. Save reset, save-location help, historical migrations, and backup restore remain.
 - There is no `LICENSE`, credits/attribution file, third-party notice, privacy statement, or recorded provenance manifest for shipped art, fonts, and audio.
 - `asset_registry.json` is empty even though roughly twenty large atlases and the title image are embedded in the executable. The full asset tree contains 531 files and about 782 MB, so shipped inputs must be distinguished from experiments and references.
 - `publish-itch.ps1` exists, but the required `itch.json` does not. The publisher cannot target an itch.io project yet.

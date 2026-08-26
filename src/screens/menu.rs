@@ -160,7 +160,7 @@ pub fn draw_new_game_confirmation(title_texture: &Texture2D, has_save: bool) {
         ui::TEXT,
     );
     ui::draw_centered_text(
-        "START OVER begins from day 1. Saving later will replace that slot.",
+        "START OVER begins from day 1 and immediately replaces that save slot.",
         ui::VIEW_WIDTH * 0.5,
         panel.y + 150.0,
         18,

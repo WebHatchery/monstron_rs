@@ -2,6 +2,7 @@
 
 mod actions;
 mod capture;
+mod save_flow;
 
 use macroquad::prelude::*;
 
@@ -26,6 +27,7 @@ pub struct Game {
     title_texture: Texture2D,
     fullscreen_enabled: bool,
     save_recovery_can_preserve: bool,
+    autosave_enabled: bool,
 }
 
 impl Game {
@@ -56,6 +58,7 @@ impl Game {
             title_texture,
             fullscreen_enabled: false,
             save_recovery_can_preserve: false,
+            autosave_enabled: true,
         }
     }
 
@@ -86,7 +89,11 @@ impl Game {
                 if let Some(state) = &self.state {
                     if let Some(action) = town::handle_input(state, &self.data, self.town_menu_open)
                     {
-                        self.apply_town_action(action);
+                        if matches!(&action, town::TownAction::Save | town::TownAction::Load) {
+                            self.apply_town_action(action);
+                        } else {
+                            self.apply_progression(|game| game.apply_town_action(action));
+                        }
                     }
                 } else {
                     self.screen = AppScreen::MainMenu;
@@ -96,7 +103,7 @@ impl Game {
             AppScreen::Hatchery => {
                 if let Some(state) = &self.state {
                     if let Some(action) = hatchery::handle_input(state) {
-                        self.apply_hatchery_action(action);
+                        self.apply_progression(|game| game.apply_hatchery_action(action));
                     }
                 } else {
                     self.screen = AppScreen::MainMenu;
@@ -106,7 +113,7 @@ impl Game {
             AppScreen::Stable => {
                 if let Some(state) = &self.state {
                     if let Some(action) = stable::handle_input(state) {
-                        self.apply_stable_action(action);
+                        self.apply_progression(|game| game.apply_stable_action(action));
                     }
                 } else {
                     self.screen = AppScreen::MainMenu;
@@ -116,7 +123,7 @@ impl Game {
             AppScreen::Breeding => {
                 if let Some(state) = &self.state {
                     if let Some(action) = breeding::handle_input(state) {
-                        self.apply_breeding_action(action);
+                        self.apply_progression(|game| game.apply_breeding_action(action));
                     }
                 } else {
                     self.screen = AppScreen::MainMenu;
@@ -126,7 +133,7 @@ impl Game {
             AppScreen::Workshop => {
                 if let Some(state) = &self.state {
                     if let Some(action) = workshop::handle_input(state) {
-                        self.apply_workshop_action(action);
+                        self.apply_progression(|game| game.apply_workshop_action(action));
                     }
                 } else {
                     self.screen = AppScreen::MainMenu;
@@ -135,12 +142,12 @@ impl Game {
             }
             AppScreen::Shop => {
                 if let Some(action) = shop::handle_input() {
-                    self.apply_shop_action(action);
+                    self.apply_progression(|game| game.apply_shop_action(action));
                 }
             }
             AppScreen::DungeonPrep => {
                 if let Some(action) = placeholder::handle_input(PlaceholderKind::DungeonPrep) {
-                    self.apply_placeholder_action(action);
+                    self.apply_progression(|game| game.apply_placeholder_action(action));
                 }
             }
             AppScreen::Tower => {
@@ -151,7 +158,7 @@ impl Game {
                         self.tower_guide_open,
                         self.tower_guide_page,
                     ) {
-                        self.apply_tower_action(action);
+                        self.apply_progression(|game| game.apply_tower_action(action));
                     }
                 } else {
                     self.screen = AppScreen::MainMenu;
@@ -161,7 +168,7 @@ impl Game {
             AppScreen::Combat => {
                 if let Some(state) = &self.state {
                     if let Some(action) = combat::handle_input(state) {
-                        self.apply_combat_action(action);
+                        self.apply_progression(|game| game.apply_combat_action(action));
                     }
                 } else {
                     self.screen = AppScreen::MainMenu;
@@ -170,7 +177,7 @@ impl Game {
             }
             AppScreen::EndOfDay => {
                 if let Some(action) = placeholder::handle_input(PlaceholderKind::EndOfDay) {
-                    self.apply_placeholder_action(action);
+                    self.apply_progression(|game| game.apply_placeholder_action(action));
                 }
             }
         }

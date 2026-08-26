@@ -8,6 +8,7 @@ impl Game {
     /// Seed a specific scene for the screenshot harness. Bypasses normal
     /// facility-unlock gating so a fresh save can still reach these screens.
     pub fn begin_capture_scene(&mut self, scene: &str) {
+        self.autosave_enabled = false;
         match scene {
             "town" => self.begin_capture_fixture(AppScreen::Town),
             "hatchery" => self.begin_capture_fixture(AppScreen::Hatchery),
@@ -44,6 +45,10 @@ impl Game {
                 self.save_recovery_can_preserve = true;
                 self.status_message =
                     "Load failed: the save data is incomplete or damaged.".to_owned();
+            }
+            "autosave_notice" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.status_message = "Built Hatchery at level 1.  [AUTOSAVED]".to_owned();
             }
             _ => {
                 // Default: boot state is the main menu.

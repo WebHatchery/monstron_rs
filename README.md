@@ -33,6 +33,7 @@ Turn a fragile camp into a working monster haven that can support increasingly d
 - I/F: combat herbs or flee.
 - Esc: camp menu.
 - S/L/T: save, load, or title inside menu.
+- Progress autosaves after every successful state-changing action; manual save remains available.
 - Mouse: build, open, trade, and greet.
 - Touch/mouse: every required tower action has a visible target, including room routing, EXPLORE, SURVEY, CAMP, RETREAT, event choices, and the Field Guide.
 

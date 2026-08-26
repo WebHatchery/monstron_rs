@@ -343,6 +343,7 @@ impl Game {
         self.screen = AppScreen::Town;
         self.town_menu_open = false;
         self.status_message = "New save started beside the ruined tower.".to_owned();
+        self.autosave_new_game();
     }
 
     pub(crate) fn save_game(&mut self) {

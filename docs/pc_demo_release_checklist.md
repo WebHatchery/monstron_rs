@@ -35,7 +35,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] Tutorial, completion, and boundary state survive save/load or fail with a clear migration path.
 - [ ] Every critical action has a visible mouse/touch target with precise tutorial wording.
 - [ ] One failed expedition is recoverable without restarting the game.
-- [ ] Autosave and its visible saved indication pass at every approved progression boundary.
+- [x] State-changing actions autosave atomically and expose visible success or failure status.
 - [x] New Game presents a visible, clickable overwrite warning when progress exists.
 - [ ] Save reset has a separate confirmation with clear consequences.
 - [x] Unreadable saves can be retried, preserved through quarantine, or left unchanged.

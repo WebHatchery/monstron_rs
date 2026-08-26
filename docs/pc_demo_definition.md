@@ -75,7 +75,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
 - The existing floor data unlocks floor 4 immediately after floor 3; there is no demo boundary.
 - Floor 3 has no guardian or authored finale state.
 - Tutorial completion, demo completion, and post-finale results are not represented in save data.
-- Saving is manual; New Game can replace in-memory progress without a confirmation flow.
+- Change-aware autosave and New Game confirmation are implemented; reset, save-location help, and
+  supported-version migration gates remain.
 - The current settings screen exposes fullscreen only.
 - No full-demo deterministic test currently spans the numbered path above.
 
