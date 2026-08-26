@@ -53,6 +53,8 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] Every shipped asset and dependency has an approved rights basis and required attribution.
 - [ ] ZIP includes versioned executable, readme, support, known issues, credits, notices, and privacy text.
 - [ ] Release manifest records version, commit, build date, file list, archive size, and SHA-256.
+- [x] Internal preview packager adds all draft documents, per-file hashes, build identity, and exact archive checksum.
+- [x] A regression-tested ledger identifies all 37 embedded project art/data inputs.
 - [ ] Restricted itch download matches the recorded checksum and completes on a clean machine.
 - [ ] No blocking or unaccepted important issue remains open.
 - [ ] Human owner records GO and explicitly authorizes the public action.

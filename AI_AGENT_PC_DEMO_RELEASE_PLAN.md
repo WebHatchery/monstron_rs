@@ -17,7 +17,9 @@ Audit date: 26 August 2026
   Windowed UI scale now resizes the complete canvas across four tested sizes without cropping;
   supported historical saves normalize and rewrite at the current version. Each successful
   replacement save now retains one restorable previous state without discarding the file it replaces;
-  native panics also append a local, manually shareable crash log beside the save.
+  native panics also append a local, manually shareable crash log beside the save. A post-publish
+  packager now produces a self-identifying nine-file internal Windows preview with player/support/
+  legal drafts and an exact checksum. A regression gate covers all 37 embedded project inputs.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -54,8 +56,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 19,613 lines across 108 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 112 tests: 101 unit tests, 9 end-to-end game-flow tests, one asset-registry test, and one code-standards test.
+- The implementation contains 19,703 lines across 109 Rust files; every Rust file is below the 800-line project limit.
+- The automated suite currently passes 113 tests: 101 unit tests, 9 end-to-end game-flow tests,
+  one asset-registry test, one release-inventory test, and one code-standards test.
 - Formatting and strict lint checks pass.
 - The Windows release already packages successfully as a self-contained 51.3 MB `hatchspire_windows.zip` containing `hatchspire.exe`.
 - GitHub CI checks formatting, linting, tests, WebGL compilation, and a Windows release build.
@@ -75,11 +78,18 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   confirmation, change-aware autosave, corrupt-save quarantine, and newer-save protection are now
   implemented, together with a separately confirmed save reset and native save-location help.
   One-step backup restore is also available from the recovery screen and preserves the displaced file.
-- There is no `LICENSE`, credits/attribution file, third-party notice, privacy statement, or recorded provenance manifest for shipped art, fonts, and audio.
-- `asset_registry.json` is empty even though roughly twenty large atlases and the title image are embedded in the executable. The full asset tree contains 531 files and about 782 MB, so shipped inputs must be distinguished from experiments and references.
+- Draft credits, third-party notices, privacy, support, player readme, and known-issues files now
+  exist. No project license has been chosen, dependency license texts are not yet bundled, and
+  human approval is still required.
+- A regression-tested ledger now identifies the 24 visual and 13 JSON inputs embedded in the
+  executable, distinguishing them from the much larger experimental asset tree. Every visual row
+  still lacks sufficient provenance and rights-holder approval for public distribution.
 - `publish-itch.ps1` exists, but the required `itch.json` does not. The publisher cannot target an itch.io project yet.
 - `game_page.json` still promises “Browser, Windows” and links to a repository named `monstron_rs`; both must be reviewed for a Windows-only Hatchspire demo.
-- The Windows archive contains only the executable. It lacks a readme, support instructions, known issues, credits, license notices, and version identification.
+- The ordinary publisher still creates an executable-only base ZIP. The post-publish preview
+  packager replaces it with a verified nine-file internal archive containing the executable,
+  build identity, readme, support, known issues, credits, privacy, dependency inventory, and notice
+  drafts, plus external manifest and SHA-256 sidecars. Final approved content remains gated.
 - Cargo remains at generic version `0.1.0`, which is now displayed in Help & Support. Assigning the
   approved demo version and richer build identifier remains a release-candidate task.
 - Native panics now append a local crash log beside the save. Windows icon/version metadata,

@@ -79,6 +79,10 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   help, visible historical-save migration, and one-step rollback are implemented.
 - Settings persist audio groups, mute, fullscreen, reduced motion, and whole-canvas windowed UI
   scale independently; approved audio playback remains.
+- A nine-file internal Windows preview package can be generated with player/support/legal drafts,
+  exact build identity, per-file hashes, and an external archive checksum. Public approval remains.
+- The 37 embedded project inputs have a regression-tested provenance ledger; all visual approvals
+  remain pending.
 - No full-demo deterministic test currently spans the numbered path above.
 
 ## Feature freeze

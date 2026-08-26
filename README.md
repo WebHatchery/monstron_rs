@@ -86,4 +86,19 @@ Standing design constraints:
 ## Documentation
 
 - `docs/monster_art_pipeline.md` — art DNA, prompt export, and the local ComfyUI generation workflow.
+- `docs/shipped_asset_provenance.md` — exact embedded art/data inventory and human rights-approval ledger.
 - `TODO.md` — open implementation, testing, and verification work.
+
+## Internal Windows preview package
+
+Run the required publisher first, then add the player-facing drafts and exact build manifest:
+
+```powershell
+.\publish.ps1
+.\scripts\package_windows_preview.ps1
+```
+
+The packager requires a clean working tree, replaces `dist/hatchspire_windows.zip`, verifies its
+contents, and writes `dist/hatchspire_windows_manifest.json` plus `dist/hatchspire_windows.sha256`.
+The result is explicitly marked as an internal preview; it does not waive the human scope, rights,
+support, device-testing, or release approvals.
