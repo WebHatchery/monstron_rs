@@ -11,6 +11,16 @@ fn git_output(arguments: &[&str]) -> Option<String> {
 fn main() {
     println!("cargo:rerun-if-changed=.git/HEAD");
     println!("cargo:rerun-if-changed=.git/index");
+    if let Some(head_ref) = git_output(&["symbolic-ref", "-q", "HEAD"]) {
+        if let Some(head_path) = git_output(&["rev-parse", "--git-path", &head_ref]) {
+            println!("cargo:rerun-if-changed={head_path}");
+        }
+    }
+    if let Some(files) = git_output(&["-c", "core.quotepath=false", "ls-files"]) {
+        for file in files.lines().filter(|file| !file.is_empty()) {
+            println!("cargo:rerun-if-changed={file}");
+        }
+    }
 
     let version = std::env::var("CARGO_PKG_VERSION").unwrap_or_else(|_| "unknown".to_owned());
     let commit = git_output(&["rev-parse", "--short=12", "HEAD"])

@@ -82,7 +82,8 @@ try {
 
 $stamp = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
 $shortCommit = $commit.Substring(0, [Math]::Min(12, $commit.Length))
-$displayBuildId = "$version+g$shortCommit"
+$dirtySuffix = if ($isDirty) { "-dirty" } else { "" }
+$displayBuildId = "$version+g$shortCommit$dirtySuffix"
 $workDir = Join-Path $distDir (".windows-preview-" + [Guid]::NewGuid().ToString("N"))
 $candidateArchive = Join-Path $distDir (".hatchspire-windows-" + [Guid]::NewGuid().ToString("N") + ".zip")
 Assert-ChildPath $distDir $workDir

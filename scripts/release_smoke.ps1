@@ -85,7 +85,8 @@ if (-not (Test-Path -LiteralPath $archive -PathType Leaf)) {
 
 $dirtyLines = @(& git -C $projectDir status --porcelain)
 if ($LASTEXITCODE -ne 0) { throw "Could not inspect the Hatchspire working tree." }
-if ($dirtyLines.Count -gt 0 -and -not $AllowDirty) {
+$isDirty = $dirtyLines.Count -gt 0
+if ($isDirty -and -not $AllowDirty) {
     throw "The working tree is dirty. Commit the smoke-test inputs or pass -AllowDirty for an internal test."
 }
 $commit = (& git -C $projectDir rev-parse HEAD).Trim()
@@ -124,7 +125,8 @@ try {
     if ($buildInfo.version -ne $package.version) {
         throw "Package version $($buildInfo.version) does not match Cargo $($package.version)."
     }
-    $expectedBuildId = "$($package.version)+g$($commit.Substring(0, [Math]::Min(12, $commit.Length)))"
+    $dirtySuffix = if ($isDirty) { "-dirty" } else { "" }
+    $expectedBuildId = "$($package.version)+g$($commit.Substring(0, [Math]::Min(12, $commit.Length)))$dirtySuffix"
     if ($buildInfo.build_id -ne $expectedBuildId) {
         throw "Package build ID $($buildInfo.build_id) does not match $expectedBuildId."
     }
