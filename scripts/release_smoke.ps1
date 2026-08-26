@@ -118,6 +118,10 @@ try {
     if ($buildInfo.version -ne $package.version) {
         throw "Package version $($buildInfo.version) does not match Cargo $($package.version)."
     }
+    $expectedBuildId = "$($package.version)+g$($commit.Substring(0, [Math]::Min(12, $commit.Length)))"
+    if ($buildInfo.build_id -ne $expectedBuildId) {
+        throw "Package build ID $($buildInfo.build_id) does not match $expectedBuildId."
+    }
     $releaseExeHash = (Get-FileHash -LiteralPath $releaseExe -Algorithm SHA256).Hash.ToLowerInvariant()
     if ($packagedExeHash -ne $releaseExeHash) {
         throw "Packaged executable differs from the release executable."
@@ -209,7 +213,7 @@ try {
 
     Write-Host "Release-profile smoke passed:" -ForegroundColor Green
     Write-Host "  Commit: $commit"
-    Write-Host "  Version: $($package.version)"
+    Write-Host "  Build ID: $expectedBuildId"
     Write-Host "  Executable SHA-256: $releaseExeHash"
     Write-Host "  Scenes: $($scenes.Count) at 1280x720"
     Write-Host "  Relocated launch: spaces + Unicode path, read-only EXE, no sidecar writes"

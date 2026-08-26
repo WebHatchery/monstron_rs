@@ -10,7 +10,8 @@ This is an internal development build, not the approved public demo.
   chroma/magenta art defects, overlap, and small text.
 - Gamepad support is not implemented.
 - The build uses one local save slot and has no cloud save or account support.
-- Version `0.1.0` is a development placeholder, not an approved demo version.
+- Version `0.1.0` is a development placeholder, not an approved demo version. The `+g<commit>`
+  suffix identifies the exact build for testing.
 - Final visual-asset provenance, dependency notices, credits, and publisher rights approval are
   incomplete. This build must not be distributed publicly.
 

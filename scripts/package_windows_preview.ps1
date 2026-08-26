@@ -81,6 +81,8 @@ try {
 }
 
 $stamp = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
+$shortCommit = $commit.Substring(0, [Math]::Min(12, $commit.Length))
+$displayBuildId = "$version+g$shortCommit"
 $workDir = Join-Path $distDir (".windows-preview-" + [Guid]::NewGuid().ToString("N"))
 $candidateArchive = Join-Path $distDir (".hatchspire-windows-" + [Guid]::NewGuid().ToString("N") + ".zip")
 Assert-ChildPath $distDir $workDir
@@ -205,6 +207,7 @@ try {
         title = "Hatchspire"
         package_status = "internal_preview_not_publicly_approved"
         version = $version
+        build_id = $displayBuildId
         git_commit = $commit
         working_tree_dirty = $isDirty
         built_utc = $stamp
@@ -230,6 +233,7 @@ try {
         archive_bytes = $archiveInfo.Length
         archive_sha256 = $archiveHash
         version = $version
+        build_id = $displayBuildId
         git_commit = $commit
         working_tree_dirty = $isDirty
         built_utc = $stamp

@@ -1,4 +1,5 @@
 pub mod assets;
+pub mod build_info;
 pub mod data;
 pub mod engine;
 mod facility_actions;

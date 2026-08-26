@@ -36,7 +36,7 @@ pub fn draw(save_location: &str) {
     ui::draw_panel(panel);
     draw_label("Build", panel.x + 28.0, panel.y + 42.0);
     draw_value(
-        &format!("Hatchspire {}", env!("CARGO_PKG_VERSION")),
+        &format!("Hatchspire {}", crate::build_info::BUILD_ID),
         panel.x + 28.0,
         panel.y + 72.0,
     );

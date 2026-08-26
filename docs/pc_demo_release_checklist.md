@@ -41,6 +41,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Unreadable saves can be retried, preserved through quarantine, or left unchanged.
 - [x] Unsupported-newer saves are identified and left unchanged for a newer game build.
 - [x] Help & Support displays the running version, native save path, and recovery/report guidance.
+- [x] Help and package manifests identify the exact Git build, including dirty working builds.
 - [x] Master/music/SFX values, mute, fullscreen, and reduced motion persist outside game saves.
 - [x] Windowed UI scale persists and preserves the complete canvas at 90%, 100%, 110%, and 125%.
 - [x] Supported historical saves normalize and rewrite fully; unreadable partial saves enter recovery.
