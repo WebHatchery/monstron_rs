@@ -21,6 +21,7 @@ Audit date: 26 August 2026
   packager now produces a self-identifying nine-file internal Windows preview with player/support/
   legal drafts and an exact checksum. A regression gate covers all 37 embedded project inputs.
   A 240-cycle accelerated soak now stresses town, tower, combat, recovery, backup, and native reload.
+  The exact packaged optimized EXE now passes a 16-scene 1280×720 boot/render smoke gate.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -63,6 +64,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   code-standards test.
 - Formatting and strict lint checks pass.
 - The Windows release already packages successfully as a self-contained 51.3 MB `hatchspire_windows.zip` containing `hatchspire.exe`.
+- The exact packaged EXE byte-matches the optimized release build and renders all 16 seeded scenes
+  at 1280×720 with valid, nontrivial PNG output.
 - GitHub CI checks formatting, linting, tests, WebGL compilation, and a Windows release build.
 - Save data is versioned and stored under the user’s application-data area through `macroquad-toolkit`.
 - Deterministic combat replay, data validation, seeded captures, and verification screenshots provide unusually good foundations for regression work.
@@ -207,6 +210,8 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
 ### 7. Establish Windows quality gates
 
 - Add release-profile smoke tests and a seeded headless run covering the full demo path.
+- Implemented independently: exact-package identity checks and release-profile boot/render smoke
+  now cover all 16 registered scenes. The scope-dependent full-demo path still awaits approval.
 - Add a 2–4 hour soak scenario that repeatedly enters town, facilities, tower, combat, save/load, and quit/restart.
 - Implemented independently: a 240-cycle accelerated soak repeatedly crosses town, tower, combat,
   recovery, atomic backup-save, and native reload boundaries. It does not replace the real-time soak.

@@ -85,6 +85,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   remain pending.
 - A 240-cycle accelerated soak covers town, tower, combat, recovery, backup-saving, and native
   reload boundaries. Real-time rendering, OS-event, and physical-device soak testing remains.
+- The exact packaged release-profile EXE byte-matches the build and boots/renders all 16 seeded
+  scenes at 1280×720; interaction, visual correctness, and clean-device testing remain.
 - No full-demo deterministic test currently spans the numbered path above.
 
 ## Feature freeze

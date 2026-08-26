@@ -88,6 +88,7 @@ Standing design constraints:
 - `docs/monster_art_pipeline.md` — art DNA, prompt export, and the local ComfyUI generation workflow.
 - `docs/shipped_asset_provenance.md` — exact embedded art/data inventory and human rights-approval ledger.
 - `docs/accelerated_soak.md` — deterministic 240-cycle engine/native-persistence stress gate and its limits.
+- `docs/release_profile_smoke.md` — exact-package optimized boot/render smoke gate across all 16 scenes.
 - `TODO.md` — open implementation, testing, and verification work.
 
 ## Internal Windows preview package
@@ -97,9 +98,11 @@ Run the required publisher first, then add the player-facing drafts and exact bu
 ```powershell
 .\publish.ps1
 .\scripts\package_windows_preview.ps1
+.\scripts\release_smoke.ps1
 ```
 
 The packager requires a clean working tree, replaces `dist/hatchspire_windows.zip`, verifies its
 contents, and writes `dist/hatchspire_windows_manifest.json` plus `dist/hatchspire_windows.sha256`.
-The result is explicitly marked as an internal preview; it does not waive the human scope, rights,
-support, device-testing, or release approvals.
+The smoke gate then proves the packaged EXE matches the release build and renders all 16 seeded
+scenes at 1280×720. The result remains an internal preview; it does not waive the human scope,
+rights, support, visual-review, device-testing, or release approvals.
