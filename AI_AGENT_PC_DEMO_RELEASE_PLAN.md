@@ -22,6 +22,8 @@ Audit date: 26 August 2026
   legal drafts and an exact checksum. A regression gate covers all 37 embedded project inputs.
   A 240-cycle accelerated soak now stresses town, tower, combat, recovery, backup, and native reload.
   The exact packaged optimized EXE now passes a 16-scene 1280×720 boot/render smoke gate.
+  Catalog metadata now labels the build as an internal preview, leads with visible controls, and
+  carries no inherited repository link or approved public-demo claim.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -58,10 +60,10 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 19,865 lines across 110 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 114 tests: 101 unit tests, 9 end-to-end game-flow tests,
-  one asset-registry test, one release-inventory test, one accelerated-soak test, and one
-  code-standards test.
+- The implementation contains 19,903 lines across 111 Rust files; every Rust file is below the 800-line project limit.
+- The automated suite currently passes 115 tests: 101 unit tests, 9 end-to-end game-flow tests,
+  one asset-registry test, one release-inventory test, one release-metadata test, one
+  accelerated-soak test, and one code-standards test.
 - Formatting and strict lint checks pass.
 - The Windows release already packages successfully as a self-contained 51.3 MB `hatchspire_windows.zip` containing `hatchspire.exe`.
 - The exact packaged EXE byte-matches the optimized release build and renders all 16 seeded scenes
@@ -90,7 +92,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   executable, distinguishing them from the much larger experimental asset tree. Every visual row
   still lacks sufficient provenance and rights-holder approval for public distribution.
 - `publish-itch.ps1` exists, but the required `itch.json` does not. The publisher cannot target an itch.io project yet.
-- `game_page.json` still promises “Browser, Windows” and links to a repository named `monstron_rs`; both must be reviewed for a Windows-only Hatchspire demo.
+- `game_page.json` now labels the build as an internal preview, describes the Windows target and
+  development-only browser build, leads with visible mouse/touch controls, and omits the inherited
+  `monstron_rs` link. Final approved public-demo copy and repository choice remain human gates.
 - The ordinary publisher still creates an executable-only base ZIP. The post-publish preview
   packager replaces it with a verified nine-file internal archive containing the executable,
   build identity, readme, support, known issues, credits, privacy, dependency inventory, and notice

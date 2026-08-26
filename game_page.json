@@ -1,7 +1,7 @@
 {
   "title": "Hatchspire",
   "status": {
-    "text": "Playable",
+    "text": "Internal Preview",
     "class": "playable"
   },
   "canvas_rendering": "pixelated",
@@ -10,72 +10,45 @@
     "height": 720
   },
   "about": [
-    "Hatch and raise tower-born monsters. Rebuild your camp beneath the ruined spire, breed stronger companions, and push ever deeper into the dungeon above."
+    "Hatch and raise tower-born monsters. Rebuild your camp beneath the ruined spire, breed stronger companions, and push ever deeper into the dungeon above.",
+    "This catalog build is an internal development preview, not the approved public demo."
   ],
   "controls": [
     {
-      "key": "Enter",
-      "desc": "New save / enter tower"
+      "key": "Mouse / touch",
+      "desc": "Every required action has a visible target"
     },
     {
-      "key": "Space",
-      "desc": "Sleep"
+      "key": "Main menu",
+      "desc": "Tap New Game, Continue, Settings, or Save Options"
     },
     {
-      "key": "WASD / Arrows",
-      "desc": "Move through tower view"
+      "key": "Town",
+      "desc": "Tap camp actions, buildings, NPCs, or Enter Tower"
     },
     {
-      "key": "Minimap",
-      "desc": "Discovered tower terrain"
+      "key": "Facilities",
+      "desc": "Tap the labeled cards and action buttons"
     },
     {
-      "key": "D",
-      "desc": "Tower prep"
+      "key": "Tower map",
+      "desc": "Tap a room to focus it, then tap ROUTE"
     },
     {
-      "key": "H",
-      "desc": "Hatchery"
+      "key": "Tower actions",
+      "desc": "Tap EXPLORE, SURVEY, CAMP, RETREAT, or FIELD GUIDE"
     },
     {
-      "key": "R",
-      "desc": "Stable / return from tower"
+      "key": "Combat",
+      "desc": "Tap ATTACK, SKILL, DEFEND, HERBS, or FLEE"
     },
     {
-      "key": "B",
-      "desc": "Breeding Grove"
+      "key": "Camp menu",
+      "desc": "Tap Save, Load, Title, or Exit Game"
     },
     {
-      "key": "W",
-      "desc": "Workshop jobs"
-    },
-    {
-      "key": "T",
-      "desc": "Shop trades"
-    },
-    {
-      "key": "C",
-      "desc": "Scavenge supplies"
-    },
-    {
-      "key": "A/S/D",
-      "desc": "Combat attack / skill / defend"
-    },
-    {
-      "key": "I/F",
-      "desc": "Combat herbs / flee"
-    },
-    {
-      "key": "Esc",
-      "desc": "Camp menu"
-    },
-    {
-      "key": "S/L/T",
-      "desc": "Save / load / title inside menu"
-    },
-    {
-      "key": "Mouse",
-      "desc": "Build, open, trade, greet"
+      "key": "Keyboard",
+      "desc": "Optional shortcuts supplement the same visible controls"
     }
   ],
   "details": [
@@ -89,13 +62,16 @@
     },
     {
       "label": "Platform",
-      "value": "Browser, Windows"
+      "value": "Windows 10/11 x64 target; browser build is development-only"
+    },
+    {
+      "label": "Release state",
+      "value": "Internal preview — public demo scope and version are not approved"
     }
   ],
   "download": {
     "href": "hatchspire_windows.zip",
     "label": "Windows Build"
   },
-  "wasm_cache_bust": "phase8-hardening-1",
-  "repository": "https://github.com/WebHatchery/monstron_rs"
+  "wasm_cache_bust": "windows-preview-hardening-1"
 }

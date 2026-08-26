@@ -57,6 +57,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] A regression-tested ledger identifies all 37 embedded project art/data inputs.
 - [x] A 240-cycle accelerated soak covers repeated town/tower/combat/recovery and native save reloads.
 - [x] The packaged optimized EXE byte-matches the release build and renders all 16 seeded scenes at 1280×720.
+- [x] Internal catalog metadata removes the inherited repository link and unsupported public platform claim.
 - [ ] Restricted itch download matches the recorded checksum and completes on a clean machine.
 - [ ] No blocking or unaccepted important issue remains open.
 - [ ] Human owner records GO and explicitly authorizes the public action.
