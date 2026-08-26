@@ -13,6 +13,7 @@ use crate::screens::{
     breeding, combat, hatchery, help, menu, placeholder, save_recovery, shop, stable, tower, town,
     workshop, AppScreen,
 };
+use crate::settings::AppSettings;
 use crate::state::GameState;
 use crate::ui;
 
@@ -25,7 +26,7 @@ pub struct Game {
     tower_guide_open: bool,
     tower_guide_page: usize,
     title_texture: Texture2D,
-    fullscreen_enabled: bool,
+    settings: AppSettings,
     save_recovery_can_preserve: bool,
     autosave_enabled: bool,
 }
@@ -43,9 +44,19 @@ impl Game {
             }
         };
 
+        let (settings, settings_error) = match AppSettings::load() {
+            Ok(settings) => (settings, None),
+            Err(error) => (AppSettings::default(), Some(error)),
+        };
+        let status_message = match settings_error {
+            Some(error) => format!("{status_message} Settings reset to defaults: {error}"),
+            None => status_message,
+        };
+
         let title_texture =
             Texture2D::from_file_with_format(include_bytes!("../hatchspire_title.png"), None);
         title_texture.set_filter(FilterMode::Linear);
+        set_fullscreen(settings.fullscreen);
 
         Self {
             data,
@@ -56,7 +67,7 @@ impl Game {
             tower_guide_open: false,
             tower_guide_page: 0,
             title_texture,
-            fullscreen_enabled: false,
+            settings,
             save_recovery_can_preserve: false,
             autosave_enabled: true,
         }
@@ -211,7 +222,7 @@ impl Game {
                 save_recovery::draw(&self.status_message, self.save_recovery_can_preserve);
             }
             AppScreen::Settings => {
-                menu::draw_settings(self.fullscreen_enabled);
+                menu::draw_settings(&self.settings, &self.status_message);
             }
             AppScreen::Help => {
                 help::draw(&SaveRepository::location_description());

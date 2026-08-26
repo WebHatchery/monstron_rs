@@ -77,7 +77,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
 - Tutorial completion, demo completion, and post-finale results are not represented in save data.
 - Change-aware autosave, New Game confirmation, separately confirmed reset, and native save-location
   help are implemented; supported-version migration gates remain.
-- The current settings screen exposes fullscreen only.
+- Settings persist audio groups, mute, fullscreen, and reduced motion independently; UI scale and
+  approved audio playback remain.
 - No full-demo deterministic test currently spans the numbered path above.
 
 ## Feature freeze

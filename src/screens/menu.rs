@@ -1,5 +1,6 @@
 use macroquad::prelude::*;
 
+use crate::settings::AppSettings;
 use crate::ui;
 use macroquad_toolkit::ui::draw_ui_text_ex;
 
@@ -17,7 +18,12 @@ pub enum MenuAction {
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum SettingsAction {
+    AdjustMaster(i8),
+    AdjustMusic(i8),
+    AdjustSfx(i8),
+    ToggleMute,
     ToggleFullscreen,
+    ToggleReducedMotion,
     OpenHelp,
     Back,
 }
@@ -88,6 +94,17 @@ pub fn handle_settings_input() -> Option<SettingsAction> {
         || ui::button_clicked(fullscreen_toggle_rect(), true)
     {
         return Some(SettingsAction::ToggleFullscreen);
+    }
+    for (action, rect) in volume_buttons() {
+        if ui::button_clicked(rect, true) {
+            return Some(action);
+        }
+    }
+    if ui::button_clicked(mute_toggle_rect(), true) {
+        return Some(SettingsAction::ToggleMute);
+    }
+    if ui::button_clicked(reduced_motion_toggle_rect(), true) {
+        return Some(SettingsAction::ToggleReducedMotion);
     }
     if ui::button_clicked(settings_back_rect(), true) {
         return Some(SettingsAction::Back);
@@ -182,7 +199,7 @@ pub fn draw_save_reset_confirmation(title_texture: &Texture2D, has_save: bool) {
     ui::draw_title_button(delete_save_rect(), "DELETE SAVE", true);
 }
 
-pub fn draw_settings(fullscreen_enabled: bool) {
+pub fn draw_settings(settings: &AppSettings, status_message: &str) {
     draw_rectangle(0.0, 0.0, ui::VIEW_WIDTH, ui::VIEW_HEIGHT, ui::BACKGROUND);
     draw_ui_text_ex(
         "Settings",
@@ -194,9 +211,37 @@ pub fn draw_settings(fullscreen_enabled: bool) {
             ..Default::default()
         },
     );
-    ui::draw_toggle(fullscreen_toggle_rect(), "Fullscreen", fullscreen_enabled);
+    draw_volume_row("Master volume", settings.master_volume, 128.0, 0);
+    draw_volume_row("Music volume", settings.music_volume, 198.0, 1);
+    draw_volume_row("SFX volume", settings.sfx_volume, 268.0, 2);
+    ui::draw_toggle(mute_toggle_rect(), "Mute all audio", settings.muted);
+    ui::draw_toggle(fullscreen_toggle_rect(), "Fullscreen", settings.fullscreen);
+    ui::draw_toggle(
+        reduced_motion_toggle_rect(),
+        "Reduced motion",
+        settings.reduced_motion,
+    );
     ui::draw_title_button(help_button_rect(), "Help & Support", true);
     ui::draw_title_button(settings_back_rect(), "Back", true);
+    ui::draw_status(status_message);
+}
+
+fn draw_volume_row(label: &str, value: u8, y: f32, row: usize) {
+    let rect = Rect::new(300.0, y, 680.0, 56.0);
+    ui::draw_panel(rect);
+    draw_ui_text_ex(
+        label,
+        rect.x + 18.0,
+        rect.y + 35.0,
+        TextParams {
+            font_size: 22,
+            color: ui::TEXT_BRIGHT,
+            ..Default::default()
+        },
+    );
+    ui::draw_centered_text(&format!("{value}%"), 750.0, rect.y + 36.0, 22, ui::TEXT);
+    ui::draw_button(volume_button_rect(row, false), "−", true);
+    ui::draw_button(volume_button_rect(row, true), "+", true);
 }
 
 pub fn draw_new_game_confirmation(title_texture: &Texture2D, has_save: bool) {
@@ -284,15 +329,49 @@ fn exit_game_rect() -> Rect {
 }
 
 fn fullscreen_toggle_rect() -> Rect {
-    Rect::new(410.0, 278.0, 460.0, 64.0)
+    Rect::new(300.0, 408.0, 680.0, 56.0)
 }
 
 fn settings_back_rect() -> Rect {
-    Rect::new(520.0, 474.0, 240.0, 44.0)
+    Rect::new(665.0, 620.0, 240.0, 44.0)
 }
 
 fn help_button_rect() -> Rect {
-    Rect::new(520.0, 392.0, 240.0, 44.0)
+    Rect::new(375.0, 620.0, 240.0, 44.0)
+}
+
+fn mute_toggle_rect() -> Rect {
+    Rect::new(300.0, 338.0, 680.0, 56.0)
+}
+
+fn reduced_motion_toggle_rect() -> Rect {
+    Rect::new(300.0, 478.0, 680.0, 56.0)
+}
+
+fn volume_buttons() -> [(SettingsAction, Rect); 6] {
+    [
+        (
+            SettingsAction::AdjustMaster(-10),
+            volume_button_rect(0, false),
+        ),
+        (
+            SettingsAction::AdjustMaster(10),
+            volume_button_rect(0, true),
+        ),
+        (
+            SettingsAction::AdjustMusic(-10),
+            volume_button_rect(1, false),
+        ),
+        (SettingsAction::AdjustMusic(10), volume_button_rect(1, true)),
+        (SettingsAction::AdjustSfx(-10), volume_button_rect(2, false)),
+        (SettingsAction::AdjustSfx(10), volume_button_rect(2, true)),
+    ]
+}
+
+fn volume_button_rect(row: usize, increase: bool) -> Rect {
+    let y = 133.0 + row as f32 * 70.0;
+    let x = if increase { 910.0 } else { 840.0 };
+    Rect::new(x, y, 52.0, 46.0)
 }
 
 fn keep_game_rect() -> Rect {

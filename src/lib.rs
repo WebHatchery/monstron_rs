@@ -5,5 +5,6 @@ mod facility_actions;
 pub mod game;
 pub mod save;
 pub mod screens;
+pub mod settings;
 pub mod state;
 pub mod ui;

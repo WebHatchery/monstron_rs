@@ -59,6 +59,19 @@ impl Game {
                 self.screen = AppScreen::Help;
                 self.status_message = "Help verification scene.".to_owned();
             }
+            "settings" => {
+                self.state = None;
+                self.settings = crate::settings::AppSettings {
+                    master_volume: 80,
+                    music_volume: 60,
+                    sfx_volume: 70,
+                    muted: false,
+                    fullscreen: false,
+                    reduced_motion: true,
+                };
+                self.screen = AppScreen::Settings;
+                self.status_message = "Settings saved independently from game progress.".to_owned();
+            }
             _ => {
                 // Default: boot state is the main menu.
             }

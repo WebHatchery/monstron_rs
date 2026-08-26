@@ -12,7 +12,7 @@ Audit date: 26 August 2026
 - **Completed release slices:** proposed demo definition/release gate; visible New Game overwrite
   warning; unreadable-save quarantine and unsupported-newer-save recovery; change-aware atomic
   autosave with visible success/failure status; separately confirmed save reset; in-game build,
-  save-location, and recovery help.
+  save-location, and recovery help; independently persisted audio/display/motion preferences.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -63,7 +63,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - There is no first-time tutorial or guided opening. New Game drops directly into the town.
 - Defeating the floor-10 guardian does not produce an ending; the player only reaches a message that the stairs end. A shorter demo also has no authored finish line.
 - The current combat verification capture visibly contains magenta/chroma sprite backgrounds, overlapping statistics, tiny text, and a presentation drop from the polished title/tower screens.
-- Audio is absent. Settings only toggle fullscreen; there are no master/music/SFX controls, UI scale, reduced-motion option, or persisted settings.
+- Audio assets are absent. Settings now persist master/music/SFX levels, mute, fullscreen, and
+  reduced motion independently from saves. UI scale and application of the volume groups to
+  approved audio remain.
 - Save/load remains a single slot. The initial audit found no autosave or recovery shell; New Game
   confirmation, change-aware autosave, corrupt-save quarantine, and newer-save protection are now
   implemented, together with a separately confirmed save reset and native save-location help.

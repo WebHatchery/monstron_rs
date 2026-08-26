@@ -107,17 +107,30 @@ impl Game {
 
     pub(crate) fn apply_settings_action(&mut self, action: SettingsAction) {
         match action {
+            SettingsAction::AdjustMaster(delta) => self.settings.adjust_master(delta),
+            SettingsAction::AdjustMusic(delta) => self.settings.adjust_music(delta),
+            SettingsAction::AdjustSfx(delta) => self.settings.adjust_sfx(delta),
+            SettingsAction::ToggleMute => self.settings.muted = !self.settings.muted,
             SettingsAction::ToggleFullscreen => {
-                self.fullscreen_enabled = !self.fullscreen_enabled;
-                set_fullscreen(self.fullscreen_enabled);
+                self.settings.fullscreen = !self.settings.fullscreen;
+                set_fullscreen(self.settings.fullscreen);
+            }
+            SettingsAction::ToggleReducedMotion => {
+                self.settings.reduced_motion = !self.settings.reduced_motion;
             }
             SettingsAction::OpenHelp => {
                 self.screen = AppScreen::Help;
+                return;
             }
             SettingsAction::Back => {
                 self.screen = AppScreen::MainMenu;
+                return;
             }
         }
+        self.status_message = match self.settings.save() {
+            Ok(()) => "Settings saved independently from game progress.".to_owned(),
+            Err(error) => format!("Settings could not be saved: {error}"),
+        };
     }
 
     pub(crate) fn apply_help_action(&mut self, action: HelpAction) {
