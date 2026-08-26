@@ -14,7 +14,8 @@ Audit date: 26 August 2026
   warning; unreadable-save quarantine and unsupported-newer-save recovery; change-aware atomic
   autosave with visible success/failure status; separately confirmed save reset; in-game build,
   save-location, and recovery help; independently persisted audio/display/motion preferences.
-  Windowed UI scale now resizes the complete canvas across four tested sizes without cropping.
+  Windowed UI scale now resizes the complete canvas across four tested sizes without cropping;
+  supported historical saves normalize and rewrite at the current version.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -71,7 +72,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - Save/load remains a single slot. The initial audit found no autosave or recovery shell; New Game
   confirmation, change-aware autosave, corrupt-save quarantine, and newer-save protection are now
   implemented, together with a separately confirmed save reset and native save-location help.
-  Historical migrations and backup restore remain.
+  Backup restore remains.
 - There is no `LICENSE`, credits/attribution file, third-party notice, privacy statement, or recorded provenance manifest for shipped art, fonts, and audio.
 - `asset_registry.json` is empty even though roughly twenty large atlases and the title image are embedded in the executable. The full asset tree contains 531 files and about 782 MB, so shipped inputs must be distinguished from experiments and references.
 - `publish-itch.ps1` exists, but the required `itch.json` does not. The publisher cannot target an itch.io project yet.

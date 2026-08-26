@@ -50,6 +50,10 @@ impl Game {
                 self.begin_capture_fixture(AppScreen::Town);
                 self.status_message = "Built Hatchery at level 1.  [AUTOSAVED]".to_owned();
             }
+            "save_migration_notice" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.status_message = "Loaded day 7 and upgraded save version 0 to 1.".to_owned();
+            }
             "save_reset_warning" => {
                 self.begin_capture_fixture(AppScreen::ConfirmSaveReset);
                 self.status_message = "Choose whether to keep or delete the save.".to_owned();

@@ -15,15 +15,16 @@ pub struct SaveRepository;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum SaveCompatibility {
-    Supported,
+    Current,
+    Older,
     Newer,
 }
 
 pub fn compatibility(save_version: u32, supported_version: u32) -> SaveCompatibility {
-    if save_version > supported_version {
-        SaveCompatibility::Newer
-    } else {
-        SaveCompatibility::Supported
+    match save_version.cmp(&supported_version) {
+        std::cmp::Ordering::Less => SaveCompatibility::Older,
+        std::cmp::Ordering::Equal => SaveCompatibility::Current,
+        std::cmp::Ordering::Greater => SaveCompatibility::Newer,
     }
 }
 

@@ -38,6 +38,7 @@ Turn a fragile camp into a working monster haven that can support increasingly d
 - Help & Support in Settings shows the build version, save path, and recovery guidance.
 - Audio levels, mute, fullscreen, and reduced motion persist independently from game saves.
 - Window UI scale resizes the complete fixed canvas to 90%, 100%, 110%, or 125% without clipping controls.
+- Supported older saves are normalized and rewritten at the current version when loaded.
 - Mouse: build, open, trade, and greet.
 - Touch/mouse: every required tower action has a visible target, including room routing, EXPLORE, SURVEY, CAMP, RETREAT, event choices, and the Field Guide.
 

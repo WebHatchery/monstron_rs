@@ -5,8 +5,8 @@ use crate::state::{GameState, TownJobKind};
 
 #[test]
 fn save_versions_newer_than_the_game_are_not_treated_as_supported() {
-    assert_eq!(compatibility(1, 1), SaveCompatibility::Supported);
-    assert_eq!(compatibility(0, 1), SaveCompatibility::Supported);
+    assert_eq!(compatibility(1, 1), SaveCompatibility::Current);
+    assert_eq!(compatibility(0, 1), SaveCompatibility::Older);
     assert_eq!(compatibility(2, 1), SaveCompatibility::Newer);
 }
 
@@ -51,10 +51,7 @@ fn older_saves_without_phase6_or_phase7_fields_still_load() {
         .add_egg("mossy_egg".to_owned(), 1, 1, 0xF00D);
     state.town.set_monster_job(1, TownJobKind::Forage);
 
-    let save_data = SaveData {
-        version: data.config.save_version,
-        state,
-    };
+    let save_data = SaveData { version: 0, state };
     let mut value = serde_json::to_value(&save_data).expect("save should become json");
     value["state"]["town"]
         .as_object_mut()
@@ -87,6 +84,7 @@ fn older_saves_without_phase6_or_phase7_fields_still_load() {
     }
 
     let loaded: SaveData = serde_json::from_value(value).expect("old save should load");
+    assert_eq!(compatibility(loaded.version, 1), SaveCompatibility::Older);
     assert!(loaded.state.town.assignments.is_empty());
     assert!(loaded.state.egg_inventory.eggs[0].inheritance.is_none());
     assert_eq!(loaded.state.monster_roster.monsters[0].condition.fatigue, 0);
@@ -94,6 +92,12 @@ fn older_saves_without_phase6_or_phase7_fields_still_load() {
     assert!(loaded.state.monster_roster.monsters[0]
         .art_profile
         .is_empty());
+    let normalized = serde_json::to_value(&loaded).expect("migrated save should serialize fully");
+    assert!(normalized["state"]["town"].get("assignments").is_some());
+    assert!(normalized["state"].get("tower_discoveries").is_some());
+    assert!(normalized["state"]["monster_roster"]["monsters"][0]
+        .get("condition")
+        .is_some());
 }
 
 #[test]

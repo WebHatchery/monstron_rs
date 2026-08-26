@@ -432,9 +432,9 @@ impl Game {
     pub(crate) fn load_game(&mut self) {
         match SaveRepository::load() {
             Ok(save_data) => {
-                if compatibility(save_data.version, self.data.config.save_version)
-                    == SaveCompatibility::Newer
-                {
+                let save_compatibility =
+                    compatibility(save_data.version, self.data.config.save_version);
+                if save_compatibility == SaveCompatibility::Newer {
                     self.status_message = format!(
                         "Save version {} is newer than supported version {}.",
                         save_data.version, self.data.config.save_version
@@ -444,14 +444,35 @@ impl Game {
                     return;
                 }
 
+                let loaded_version = save_data.version;
                 let loaded_day = save_data.state.day;
                 let mut loaded_state = save_data.state;
+                let before_repairs = serde_json::to_vec(&loaded_state).ok();
                 loaded_state.monster_roster.ensure_art_profiles(&self.data);
                 tower_engine::ensure_map(&mut loaded_state, &self.data);
+                let after_repairs = serde_json::to_vec(&loaded_state).ok();
+                let repairs_applied = before_repairs != after_repairs;
                 self.state = Some(loaded_state);
                 self.screen = AppScreen::Town;
                 self.town_menu_open = false;
-                self.status_message = format!("Loaded save on day {loaded_day}.");
+
+                let migrated = SaveData {
+                    version: self.data.config.save_version,
+                    state: self.state.clone().expect("loaded state was just installed"),
+                };
+                self.status_message = match SaveRepository::save(&migrated) {
+                    Ok(()) if save_compatibility == SaveCompatibility::Older => format!(
+                        "Loaded day {loaded_day} and upgraded save version {loaded_version} to {}.",
+                        self.data.config.save_version
+                    ),
+                    Ok(()) if repairs_applied => {
+                        format!("Loaded day {loaded_day} and repaired missing save fields.")
+                    }
+                    Ok(()) => format!("Loaded save on day {loaded_day}."),
+                    Err(error) => format!(
+                        "Loaded day {loaded_day}, but the normalized save could not be written: {error}"
+                    ),
+                };
             }
             Err(error) => {
                 self.status_message = format!("Load failed: {error}");
