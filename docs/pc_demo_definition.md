@@ -79,8 +79,9 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   help, visible historical-save migration, and one-step rollback are implemented.
 - Settings persist audio groups, mute, fullscreen, reduced motion, and whole-canvas windowed UI
   scale independently; approved audio playback remains.
-- A nine-file internal Windows preview package can be generated with player/support/legal drafts,
-  exact build identity, per-file hashes, and an external archive checksum. Public approval remains.
+- A self-identifying internal Windows preview package can be generated with player/support/legal
+  drafts, exact build identity, per-file hashes, an external archive checksum, the exact Windows
+  dependency list, and 92 available registry-crate license/notice texts. Public approval remains.
 - The 37 embedded project inputs have a regression-tested provenance ledger; all visual approvals
   remain pending.
 - A 240-cycle accelerated soak covers town, tower, combat, recovery, backup-saving, and native

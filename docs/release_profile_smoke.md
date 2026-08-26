@@ -21,6 +21,7 @@ Run the complete internal package sequence with:
 .\publish.ps1
 .\scripts\package_windows_preview.ps1
 .\scripts\release_smoke.ps1
+.\publish.ps1 -DeployOnly
 ```
 
 Current baseline: all 16 scenes pass at 1280×720. The executable SHA-256 for commit

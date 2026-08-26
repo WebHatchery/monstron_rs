@@ -64,7 +64,7 @@ if ($LASTEXITCODE -ne 0) { throw "Could not resolve the Hatchspire commit." }
 
 Push-Location $projectDir
 try {
-    $metadata = (& cargo metadata --manifest-path Cargo.toml --no-deps --format-version 1) |
+    $metadata = (& cargo metadata --manifest-path Cargo.toml --format-version 1) |
         ConvertFrom-Json
     if ($LASTEXITCODE -ne 0) { throw "Could not read Cargo package metadata." }
     $manifest = (Resolve-Path Cargo.toml).Path
@@ -145,6 +145,42 @@ try {
         if ([string]::IsNullOrWhiteSpace($license)) { $license = "NOT DECLARED IN CARGO METADATA" }
         $dependencies[$key] = $license
     }
+    $licensesDir = Join-Path $docsDir "licenses"
+    New-Item -ItemType Directory -Path $licensesDir -Force | Out-Null
+    $licensePaths = @{}
+    $licenseFileGaps = [Collections.Generic.List[string]]::new()
+    foreach ($dependency in $dependencies.GetEnumerator()) {
+        $parts = $dependency.Name.Split(' ', 2)
+        $dependencyPackage = $metadata.packages |
+            Where-Object { $_.name -eq $parts[0] -and $_.version -eq $parts[1] } |
+            Select-Object -First 1
+        if ($null -eq $dependencyPackage -or $null -eq $dependencyPackage.source) {
+            $licensePaths[$dependency.Name] = @()
+            continue
+        }
+
+        $sourceDir = Split-Path $dependencyPackage.manifest_path -Parent
+        $licenseFiles = @(Get-ChildItem -LiteralPath $sourceDir -File |
+            Where-Object { $_.Name -match '^(LICENSE|LICENCE|COPYING|NOTICE|UNLICENSE|COPYRIGHT)($|[._-])' } |
+            Sort-Object Name)
+        if ($licenseFiles.Count -eq 0) {
+            $licenseFileGaps.Add($dependency.Name)
+            $licensePaths[$dependency.Name] = @()
+            continue
+        }
+
+        $safePackageName = ($dependency.Name -replace '[^A-Za-z0-9._-]', '_')
+        $destination = Join-Path $licensesDir $safePackageName
+        New-Item -ItemType Directory -Path $destination -Force | Out-Null
+        $copiedPaths = foreach ($licenseFile in $licenseFiles) {
+            $copiedFile = Join-Path $destination $licenseFile.Name
+            Copy-Item -LiteralPath $licenseFile.FullName -Destination $copiedFile -Force
+            (Get-Item -LiteralPath $copiedFile).LastWriteTimeUtc = [DateTime]::UtcNow
+            "licenses/$safePackageName/$($licenseFile.Name)"
+        }
+        $licensePaths[$dependency.Name] = @($copiedPaths)
+    }
+
     $dependencyLines = @(
         "Hatchspire Windows dependency inventory"
         "Generated: $stamp"
@@ -153,9 +189,11 @@ try {
         "These are Cargo license expressions, not a substitute for required license texts or legal review."
         ""
     )
-    $dependencyLines += $dependencies.GetEnumerator() |
-        Sort-Object Name |
-        ForEach-Object { "$($_.Name) | $($_.Value)" }
+    $dependencyLines += $dependencies.GetEnumerator() | Sort-Object Name | ForEach-Object {
+        $texts = @($licensePaths[$_.Name])
+        $textLabel = if ($texts.Count -gt 0) { $texts -join ", " } else { "NO BUNDLED LICENSE FILE" }
+        "$($_.Name) | $($_.Value) | $textLabel"
+    }
     Set-Content -LiteralPath (Join-Path $docsDir "THIRD_PARTY_COMPONENTS.txt") -Value $dependencyLines -Encoding utf8
 
     $payloadFiles = @(Get-ChildItem -LiteralPath $workDir -Recurse -File |
@@ -171,6 +209,7 @@ try {
         working_tree_dirty = $isDirty
         built_utc = $stamp
         platform = "Windows 10/11 x64"
+        dependency_license_file_gaps = @($licenseFileGaps)
         payload_files = $payloadFiles
     }
     $buildInfo | ConvertTo-Json -Depth 6 |
@@ -194,6 +233,7 @@ try {
         git_commit = $commit
         working_tree_dirty = $isDirty
         built_utc = $stamp
+        dependency_license_file_gaps = @($licenseFileGaps)
         included_files = $allFiles
     }
     $manifestPath = Join-Path $distDir "hatchspire_windows_manifest.json"

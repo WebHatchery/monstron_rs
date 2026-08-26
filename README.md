@@ -99,10 +99,12 @@ Run the required publisher first, then add the player-facing drafts and exact bu
 .\publish.ps1
 .\scripts\package_windows_preview.ps1
 .\scripts\release_smoke.ps1
+.\publish.ps1 -DeployOnly
 ```
 
 The packager requires a clean working tree, replaces `dist/hatchspire_windows.zip`, verifies its
 contents, and writes `dist/hatchspire_windows_manifest.json` plus `dist/hatchspire_windows.sha256`.
 The smoke gate then proves the packaged EXE matches the release build and renders all 16 seeded
-scenes at 1280×720. The result remains an internal preview; it does not waive the human scope,
-rights, support, visual-review, device-testing, or release approvals.
+scenes at 1280×720. The deploy-only pass synchronizes that sealed archive, rather than the initial
+executable-only base ZIP, to the local preview. The result remains an internal preview; it does not
+waive the human scope, rights, support, visual-review, device-testing, or release approvals.

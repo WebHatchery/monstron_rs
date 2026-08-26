@@ -18,8 +18,9 @@ Audit date: 26 August 2026
   supported historical saves normalize and rewrite at the current version. Each successful
   replacement save now retains one restorable previous state without discarding the file it replaces;
   native panics also append a local, manually shareable crash log beside the save. A post-publish
-  packager now produces a self-identifying nine-file internal Windows preview with player/support/
-  legal drafts and an exact checksum. A regression gate covers all 37 embedded project inputs.
+  packager now produces a self-identifying internal Windows preview with player/support/legal
+  drafts, an exact checksum, and 92 available dependency license/notice texts. A regression gate
+  covers all 37 embedded project inputs.
   A 240-cycle accelerated soak now stresses town, tower, combat, recovery, backup, and native reload.
   The exact packaged optimized EXE now passes a 16-scene 1280×720 boot/render smoke gate.
   Catalog metadata now labels the build as an internal preview, leads with visible controls, and
@@ -86,8 +87,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   implemented, together with a separately confirmed save reset and native save-location help.
   One-step backup restore is also available from the recovery screen and preserves the displaced file.
 - Draft credits, third-party notices, privacy, support, player readme, and known-issues files now
-  exist. No project license has been chosen, dependency license texts are not yet bundled, and
-  human approval is still required.
+  exist. The exact Windows dependency inventory bundles 92 available registry-crate license/notice
+  texts. No project/toolkit license has been chosen, `quad-rand 0.2.3` ships no top-level license
+  file despite declaring MIT, required notice selection is unreviewed, and human approval remains.
 - A regression-tested ledger now identifies the 24 visual and 13 JSON inputs embedded in the
   executable, distinguishing them from the much larger experimental asset tree. Every visual row
   still lacks sufficient provenance and rights-holder approval for public distribution.
@@ -96,9 +98,10 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   development-only browser build, leads with visible mouse/touch controls, and omits the inherited
   `monstron_rs` link. Final approved public-demo copy and repository choice remain human gates.
 - The ordinary publisher still creates an executable-only base ZIP. The post-publish preview
-  packager replaces it with a verified nine-file internal archive containing the executable,
-  build identity, readme, support, known issues, credits, privacy, dependency inventory, and notice
-  drafts, plus external manifest and SHA-256 sidecars. Final approved content remains gated.
+  packager replaces it with a verified internal archive containing the executable, build identity,
+  readme, support, known issues, credits, privacy, dependency inventory, available license texts,
+  and notice drafts, plus external manifest and SHA-256 sidecars. A deploy-only follow-up has been
+  verified to synchronize that exact archive to local preview. Final approved content remains gated.
 - Cargo remains at generic version `0.1.0`, which is now displayed in Help & Support. Assigning the
   approved demo version and richer build identifier remains a release-candidate task.
 - Native panics now append a local crash log beside the save. Windows icon/version metadata,
