@@ -83,6 +83,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   exact build identity, per-file hashes, and an external archive checksum. Public approval remains.
 - The 37 embedded project inputs have a regression-tested provenance ledger; all visual approvals
   remain pending.
+- A 240-cycle accelerated soak covers town, tower, combat, recovery, backup-saving, and native
+  reload boundaries. Real-time rendering, OS-event, and physical-device soak testing remains.
 - No full-demo deterministic test currently spans the numbered path above.
 
 ## Feature freeze

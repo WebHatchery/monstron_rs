@@ -20,6 +20,7 @@ Audit date: 26 August 2026
   native panics also append a local, manually shareable crash log beside the save. A post-publish
   packager now produces a self-identifying nine-file internal Windows preview with player/support/
   legal drafts and an exact checksum. A regression gate covers all 37 embedded project inputs.
+  A 240-cycle accelerated soak now stresses town, tower, combat, recovery, backup, and native reload.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -56,9 +57,10 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 19,703 lines across 109 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 113 tests: 101 unit tests, 9 end-to-end game-flow tests,
-  one asset-registry test, one release-inventory test, and one code-standards test.
+- The implementation contains 19,865 lines across 110 Rust files; every Rust file is below the 800-line project limit.
+- The automated suite currently passes 114 tests: 101 unit tests, 9 end-to-end game-flow tests,
+  one asset-registry test, one release-inventory test, one accelerated-soak test, and one
+  code-standards test.
 - Formatting and strict lint checks pass.
 - The Windows release already packages successfully as a self-contained 51.3 MB `hatchspire_windows.zip` containing `hatchspire.exe`.
 - GitHub CI checks formatting, linting, tests, WebGL compilation, and a Windows release build.
@@ -94,7 +96,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   approved demo version and richer build identifier remains a release-candidate task.
 - Native panics now append a local crash log beside the save. Windows icon/version metadata,
   clean-machine launch tests, antivirus/SmartScreen records, gamepad support, a performance budget,
-  and a long-session soak gate remain absent.
+  and a 2–4 hour real-time render/device soak remain absent. A deterministic 240-cycle engine and
+  native-persistence soak now covers 180 victories and 60 recovery returns without deadlock.
 - Current automated flows prove systems in isolation and in short chains, not that a new player can understand, enjoy, and finish the demo.
 
 ## Agent-owned work
@@ -205,6 +208,8 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
 
 - Add release-profile smoke tests and a seeded headless run covering the full demo path.
 - Add a 2–4 hour soak scenario that repeatedly enters town, facilities, tower, combat, save/load, and quit/restart.
+- Implemented independently: a 240-cycle accelerated soak repeatedly crosses town, tower, combat,
+  recovery, atomic backup-save, and native reload boundaries. It does not replace the real-time soak.
 - Track frame time and memory at supported resolutions; investigate sustained degradation.
 - Test fresh install, paths containing spaces and non-ASCII characters, read-only launch folder, missing/corrupt save, Alt+Tab, resizing, fullscreen toggling, and repeated restart.
 - Verify on integrated graphics or an equivalent low-spec machine when the human provides access.

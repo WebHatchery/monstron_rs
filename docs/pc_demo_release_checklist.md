@@ -55,6 +55,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] Release manifest records version, commit, build date, file list, archive size, and SHA-256.
 - [x] Internal preview packager adds all draft documents, per-file hashes, build identity, and exact archive checksum.
 - [x] A regression-tested ledger identifies all 37 embedded project art/data inputs.
+- [x] A 240-cycle accelerated soak covers repeated town/tower/combat/recovery and native save reloads.
 - [ ] Restricted itch download matches the recorded checksum and completes on a clean machine.
 - [ ] No blocking or unaccepted important issue remains open.
 - [ ] Human owner records GO and explicitly authorizes the public action.
