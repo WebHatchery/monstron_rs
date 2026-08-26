@@ -7,6 +7,9 @@ use crate::state::{CombatOutcome, CombatSide, CombatState, Combatant, GameState}
 use crate::ui;
 use macroquad_toolkit::ui::draw_ui_text_ex;
 
+#[cfg(test)]
+mod tests;
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum CombatAction {
     Command(CombatCommand),
@@ -162,19 +165,14 @@ fn draw_formation(combat: &CombatState, data: &GameData) {
         },
     );
 
+    if combat.outcome.is_none() {
+        assets::draw_combat_vfx(combat.round as usize, 422.0, 276.0, 32.0);
+    }
     for combatant in &combat.allies {
         draw_combatant(data, combatant, true, ally_slot_rect(combatant.slot));
     }
     for combatant in &combat.enemies {
         draw_combatant(data, combatant, false, enemy_slot_rect(combatant.slot));
-    }
-    if combat.outcome.is_none() {
-        assets::draw_combat_vfx(
-            combat.round as usize,
-            rect.x + rect.w * 0.47,
-            rect.y + 150.0,
-            72.0,
-        );
     }
 }
 
@@ -188,10 +186,10 @@ fn draw_combatant(data: &GameData, combatant: &Combatant, is_ally: bool, rect: R
     draw_rectangle_lines(rect.x, rect.y, rect.w, rect.h, 1.5, ui::PANEL_EDGE);
 
     if is_ally {
-        assets::draw_monster_badge(&combatant.source_id, rect.x + 10.0, rect.y + 16.0, 34.0);
+        assets::draw_monster_badge(&combatant.source_id, rect.x + 8.0, rect.y + 8.0, 30.0);
     } else {
         if let Some(enemy) = data.enemy(&combatant.source_id) {
-            assets::draw_enemy_badge_visual(enemy.visual, rect.x + 10.0, rect.y + 18.0, 34.0);
+            assets::draw_enemy_badge_visual(enemy.visual, rect.x + 8.0, rect.y + 8.0, 30.0);
         }
     }
 
@@ -202,27 +200,36 @@ fn draw_combatant(data: &GameData, combatant: &Combatant, is_ally: bool, rect: R
     };
     draw_ui_text_ex(
         &combatant.name,
-        rect.x + 54.0,
-        rect.y + 28.0,
+        rect.x + 43.0,
+        rect.y + 22.0,
         TextParams {
-            font_size: 18,
+            font_size: 15,
             color: name_color,
             ..Default::default()
         },
     );
-    draw_hp_bar(combatant, rect.x + 54.0, rect.y + 42.0, rect.w - 66.0);
+    draw_hp_bar(combatant, rect.x + 43.0, rect.y + 29.0, rect.w - 50.0);
+    draw_ui_text_ex(
+        &format!("HP {}/{}", combatant.hp.max(0), combatant.max_hp),
+        rect.x + 43.0,
+        rect.y + 51.0,
+        TextParams {
+            font_size: 11,
+            color: ui::TEXT_DIM,
+            ..Default::default()
+        },
+    );
     let row = if combatant.slot < 3 { "F" } else { "B" };
     draw_ui_text_ex(
         &format!(
-            "{}{} {} ATK {} DEF {}",
+            "{}{} {}{}",
             row,
             combatant.slot + 1,
             role_label(combatant, is_ally),
-            combatant.attack,
-            combatant.defense
+            status_label(combatant)
         ),
-        rect.x + 10.0,
-        rect.y + rect.h - 22.0,
+        rect.x + 8.0,
+        rect.y + 67.0,
         TextParams {
             font_size: 12,
             color: ui::TEXT_DIM,
@@ -230,14 +237,19 @@ fn draw_combatant(data: &GameData, combatant: &Combatant, is_ally: bool, rect: R
         },
     );
     draw_ui_text_ex(
-        &format!(
-            "SPD {} MOR {}{}",
-            combatant.speed,
-            combatant.morale,
-            status_suffix(combatant)
-        ),
-        rect.x + 10.0,
-        rect.y + rect.h - 8.0,
+        &format!("ATK {}  DEF {}", combatant.attack, combatant.defense),
+        rect.x + 8.0,
+        rect.y + 84.0,
+        TextParams {
+            font_size: 12,
+            color: ui::TEXT_DIM,
+            ..Default::default()
+        },
+    );
+    draw_ui_text_ex(
+        &format!("SPD {}  MOR {}", combatant.speed, combatant.morale),
+        rect.x + 8.0,
+        rect.y + 100.0,
         TextParams {
             font_size: 12,
             color: ui::TEXT_DIM,
@@ -256,16 +268,6 @@ fn draw_hp_bar(combatant: &Combatant, x: f32, y: f32, width: f32) {
     };
     draw_rectangle(x, y, width * ratio.clamp(0.0, 1.0), 12.0, color);
     draw_rectangle_lines(x, y, width, 12.0, 1.0, ui::PANEL_EDGE);
-    draw_ui_text_ex(
-        &format!("{}/{}", combatant.hp.max(0), combatant.max_hp),
-        x,
-        y + 28.0,
-        TextParams {
-            font_size: 13,
-            color: ui::TEXT_DIM,
-            ..Default::default()
-        },
-    );
 }
 
 fn draw_actions(combat: &CombatState) {
@@ -380,9 +382,9 @@ fn ally_slot_rect(slot: usize) -> Rect {
     let row = slot / 3;
     Rect::new(
         52.0 + column as f32 * 124.0,
-        236.0 - row as f32 * 92.0,
+        220.0 + row as f32 * 110.0,
         116.0,
-        76.0,
+        104.0,
     )
 }
 
@@ -391,9 +393,9 @@ fn enemy_slot_rect(slot: usize) -> Rect {
     let row = slot / 3;
     Rect::new(
         460.0 + column as f32 * 124.0,
-        236.0 - row as f32 * 92.0,
+        220.0 + row as f32 * 110.0,
         116.0,
-        76.0,
+        104.0,
     )
 }
 
@@ -456,13 +458,13 @@ fn role_label(combatant: &Combatant, is_ally: bool) -> &'static str {
     }
 }
 
-fn status_suffix(combatant: &Combatant) -> &'static str {
+fn status_label(combatant: &Combatant) -> &'static str {
     if combatant.is_guarding {
-        " GUARD"
+        " Gd"
     } else if combatant.is_defending {
-        " DEF"
+        " Def"
     } else if combatant.is_marked {
-        " MARK"
+        " Mark"
     } else {
         ""
     }

@@ -530,7 +530,7 @@ fn asset_bytes(asset: &str) -> &'static [u8] {
         ROOMS => include_bytes!(
             "../../assets/generated/dungeon/dungeon_deep_room_vignettes_v5_atlas.png"
         ),
-        VFX => include_bytes!("../../assets/generated/combat/combat_vfx_atlas_chroma_v1.png"),
+        VFX => include_bytes!("../../assets/generated/combat/combat_vfx_atlas_v1.png"),
         DUNGEON_FEATURES => {
             include_bytes!("../../assets/generated/dungeon/dungeon_sprite_atlas_v1.png")
         }
@@ -582,3 +582,6 @@ fn asset_bytes(asset: &str) -> &'static [u8] {
         _ => unreachable!("unknown visual asset"),
     }
 }
+
+#[cfg(test)]
+mod tests;

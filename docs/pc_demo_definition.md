@@ -97,6 +97,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   identity; choosing the public demo version remains a human release-candidate decision.
 - Catalog metadata is explicitly an internal preview, leads with visible mouse/touch controls, and
   makes no inherited repository or approved public-demo claim. Final store copy remains gated.
+- Combat embeds the processed transparent VFX atlas and separates portrait, HP, role/status, and
+  stat rows on every unit card. Broader intent, target, outcome, and small-window readability remain.
 - No full-demo deterministic test currently spans the numbered path above.
 
 ## Feature freeze

@@ -30,6 +30,8 @@ Audit date: 26 August 2026
   Help, package manifests, and release smoke now share an exact `version+g<commit>` build identity.
   Catalog metadata now labels the build as an internal preview, leads with visible controls, and
   carries no inherited repository link or approved public-demo claim.
+  Combat now embeds the processed transparent VFX atlas and gives every compact unit card separate
+  portrait, HP, role/status, and stat rows; broader intent/target/outcome readability remains.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -66,8 +68,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 20,065 physical lines across 116 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 118 tests: 104 unit tests, 9 end-to-end game-flow tests,
+- The implementation contains 20,122 physical lines across 118 Rust files; every Rust file is below the 800-line project limit.
+- The automated suite currently passes 121 tests: 107 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, one release-inventory test, one release-metadata test, one
   accelerated-soak test, and one code-standards test.
 - Formatting and strict lint checks pass.
@@ -83,7 +85,10 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 
 - There is no first-time tutorial or guided opening. New Game drops directly into the town.
 - Defeating the floor-10 guardian does not produce an ending; the player only reaches a message that the stairs end. A shorter demo also has no authored finish line.
-- The current combat verification capture visibly contains magenta/chroma sprite backgrounds, overlapping statistics, tiny text, and a presentation drop from the polished title/tower screens.
+- The initial combat capture contained a magenta VFX background and overlapping statistics. Combat
+  now uses the processed transparent atlas and distinct card rows at all four structural capture
+  sizes. Text remains small at 960×540, and intent, target, damage, status, and outcome presentation
+  still need dedicated captures and review.
 - Audio assets are absent. Settings now persist master/music/SFX levels, mute, fullscreen, and
   reduced motion independently from saves. Windowed UI scale preserves the full fixed canvas at
   90%, 100%, 110%, and 125%. Application of volume groups to approved audio remains.

@@ -9,7 +9,7 @@ const VISUAL_INPUTS: [&str; 24] = [
     "assets/generated/monster_art/monster_party_context_portrait_v3_atlas_v1.png",
     "assets/generated/town/town_facility_landmarks_v4_atlas.png",
     "assets/generated/town/town_service_npcs_v5_atlas.png",
-    "assets/generated/combat/combat_vfx_atlas_chroma_v1.png",
+    "assets/generated/combat/combat_vfx_atlas_v1.png",
     "assets/generated/dungeon/dungeon_deep_room_vignettes_v5_atlas.png",
     "assets/generated/dungeon/dungeon_sprite_atlas_v1.png",
     "assets/generated/dungeon/dungeon_enemy_atlas_v1.png",

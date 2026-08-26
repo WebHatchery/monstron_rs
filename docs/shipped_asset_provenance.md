@@ -21,7 +21,7 @@ presence in the repository is not proof that it may be published.
 | `assets/generated/monster_art/monster_party_context_portrait_v3_atlas_v1.png` | Unresolved | Generated; tool/model record required | Unresolved | Unresolved | Pending |
 | `assets/generated/town/town_facility_landmarks_v4_atlas.png` | Unresolved | Generated; tool/model record required | Unresolved | Unresolved | Pending |
 | `assets/generated/town/town_service_npcs_v5_atlas.png` | Unresolved | Generated; tool/model record required | Unresolved | Unresolved | Pending |
-| `assets/generated/combat/combat_vfx_atlas_chroma_v1.png` | Unresolved | Generated; tool/model record required | Unresolved | Chroma processing unresolved | Pending |
+| `assets/generated/combat/combat_vfx_atlas_v1.png` | Unresolved | Generated; tool/model record required | Unresolved | Magenta keyed to alpha; visual review required | Pending |
 | `assets/generated/dungeon/dungeon_deep_room_vignettes_v5_atlas.png` | Unresolved | Generated; tool/model record required | Unresolved | Unresolved | Pending |
 | `assets/generated/dungeon/dungeon_sprite_atlas_v1.png` | Unresolved | Generated; tool/model record required | Unresolved | Unresolved | Pending |
 | `assets/generated/dungeon/dungeon_enemy_atlas_v1.png` | Unresolved | Generated; tool/model record required | Unresolved | Unresolved | Pending |
