@@ -30,4 +30,41 @@ fn main() {
         .is_some_and(|status| !status.is_empty());
     let dirty_suffix = if dirty { "-dirty" } else { "" };
     println!("cargo:rustc-env=HATCHSPIRE_BUILD_ID={version}+g{commit}{dirty_suffix}");
+
+    let windows_target = std::env::var("TARGET")
+        .map(|target| target.contains("windows"))
+        .unwrap_or(false);
+    if cfg!(windows) && windows_target {
+        let mut resource = winres::WindowsResource::new();
+        resource
+            .set_language(0x0409)
+            .set_version_info(winres::VersionInfo::FILEVERSION, packed_version(&version))
+            .set_version_info(
+                winres::VersionInfo::PRODUCTVERSION,
+                packed_version(&version),
+            )
+            .set("FileDescription", "Hatchspire")
+            .set("ProductName", "Hatchspire")
+            .set("OriginalFilename", "hatchspire.exe")
+            .set("InternalName", "hatchspire")
+            .set("ProductVersion", &version)
+            .set("FileVersion", &version)
+            .set(
+                "Comments",
+                "Internal preview; public release approval required",
+            );
+        resource
+            .compile()
+            .expect("Windows application resource compilation failed");
+    }
+}
+
+fn packed_version(version: &str) -> u64 {
+    let mut parts = version
+        .split('.')
+        .map(|part| part.parse::<u64>().unwrap_or(0));
+    (parts.next().unwrap_or(0) << 48)
+        | (parts.next().unwrap_or(0) << 32)
+        | (parts.next().unwrap_or(0) << 16)
+        | parts.next().unwrap_or(0)
 }

@@ -138,6 +138,20 @@ try {
     if ($packagedExeHash -ne $releaseExeHash) {
         throw "Packaged executable differs from the release executable."
     }
+    $versionInfo = (Get-Item -LiteralPath $releaseExe).VersionInfo
+    $expectedVersionFields = [ordered]@{
+        FileDescription = "Hatchspire"
+        ProductName = "Hatchspire"
+        OriginalFilename = "hatchspire.exe"
+        InternalName = "hatchspire"
+        FileVersion = [string]$package.version
+        ProductVersion = [string]$package.version
+    }
+    foreach ($field in $expectedVersionFields.Keys) {
+        if ([string]$versionInfo.$field -ne $expectedVersionFields[$field]) {
+            throw "Windows version field $field is '$($versionInfo.$field)'; expected '$($expectedVersionFields[$field])'."
+        }
+    }
 
     $scenes = @(
         "mainmenu", "new_game_warning", "save_recovery", "autosave_notice",
@@ -310,6 +324,7 @@ try {
     Write-Host "  Commit: $commit"
     Write-Host "  Build ID: $expectedBuildId"
     Write-Host "  Executable SHA-256: $releaseExeHash"
+    Write-Host "  Windows metadata: Hatchspire $($package.version), filename and internal name verified"
     Write-Host "  Scenes: $($scenes.Count) at 1280x720, 1366x768, 1920x1080, and 960x540"
     Write-Host "  Worst p95 update+draw: $($worstP95.scene) $($worstP95.p95_cpu_micros) us"
     Write-Host "  Worst single update+draw: $($worstSingle.scene) $($worstSingle.max_cpu_micros) us"

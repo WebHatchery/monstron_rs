@@ -133,7 +133,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - Cargo remains at generic version `0.1.0`, but Help, manifests, and smoke output now append the
   exact Git revision and mark dirty builds. Assigning the approved demo version remains a
   release-candidate task.
-- Native panics now append a local crash log beside the save. Windows icon/version metadata,
+- Native panics now append a local crash log beside the save. The exact EXE now carries verified
+  Hatchspire product/file identity and Cargo-derived Windows version metadata. A custom Windows icon,
   clean-machine launch tests, a write-denying launch-directory ACL test, antivirus/SmartScreen
   records, gamepad support, GPU profiling, stable ordinary-play memory profiling, and a 2–4 hour real-time render/device soak remain
   absent. The exact EXE does pass a read-only spaces/Unicode relocation test and a provisional

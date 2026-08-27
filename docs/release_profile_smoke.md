@@ -11,15 +11,16 @@ The gate:
 2. reads `BUILD_INFO.json` from `dist/hatchspire_windows.zip`;
 3. requires the package commit and version to match Git HEAD and Cargo;
 4. hashes `hatchspire.exe` inside the ZIP and requires it to match the release build byte-for-byte;
-5. boots that optimized build through all 19 deterministic capture scenes in one process;
-6. records 30 update+draw CPU samples per scene, enforces a 16.667 ms p95 ceiling, and reports the
+5. verifies the exact executable's Windows product/file name and Cargo-derived version fields;
+6. boots that optimized build through all 19 deterministic capture scenes in one process;
+7. records 30 update+draw CPU samples per scene, enforces a 16.667 ms p95 ceiling, and reports the
    diagnostic maximum without treating noisy first-use work as a release threshold;
-7. requires nonzero sampled and OS-peak working-set reports from each of the four resolution
+8. requires nonzero sampled and OS-peak working-set reports from each of the four resolution
    processes, with an optional explicit sampled-memory ceiling but no unstable default cap;
-8. requires a successful process exit within the capture timeout;
-9. boots the same executable again in 1366×768 and 960×540 windows plus 1920×1080 fullscreen,
+9. requires a successful process exit within the capture timeout;
+10. boots the same executable again in 1366×768 and 960×540 windows plus 1920×1080 fullscreen,
    validating all 76 scene outputs as nontrivial PNGs with exact dimensions; then
-10. launches the identical EXE from a working path containing spaces and Unicode, marks the EXE
+11. launches the identical EXE from a working path containing spaces and Unicode, marks the EXE
    read-only, and fails if the game writes any sidecar beside it.
 
 Run the complete internal package sequence with:

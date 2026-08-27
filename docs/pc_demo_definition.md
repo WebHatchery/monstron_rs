@@ -105,6 +105,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   verifying archive hashes and embedded build identities; remote channel processing remains manual.
 - Help, crash-report guidance, package manifests, and release smoke share a `version+g<commit>` build
   identity; choosing the public demo version remains a human release-candidate decision.
+- The exact packaged EXE exposes Cargo-derived Windows file/product versions plus Hatchspire product,
+  description, original-filename, and internal-name fields. A custom executable icon remains pending.
 - Catalog metadata is explicitly an internal preview, leads with visible mouse/touch controls, and
   makes no inherited repository or approved public-demo claim. Final store copy remains gated.
 - Combat embeds the processed transparent VFX atlas and separates portrait, HP, role/status, and

@@ -44,6 +44,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Help & Support displays the running version, native save path, and recovery/report guidance.
 - [x] The main menu provides a visible native Exit Game control.
 - [x] Help and package manifests identify the exact Git build, including dirty working builds.
+- [x] The packaged EXE carries verified Windows product, filename, internal-name, and version fields.
 - [x] Master/music/SFX values, mute, fullscreen, and reduced motion persist outside game saves.
 - [x] Windowed UI scale persists and preserves the complete canvas at 90%, 100%, 110%, and 125%.
 - [x] Supported historical saves normalize and rewrite fully; unreadable partial saves enter recovery.
