@@ -26,17 +26,19 @@ nothing over the network, and does not treat the output as telemetry.
 ## Capture-process memory
 
 The shared capture harness samples the exact executable's resident working set every 25 ms while
-each resolution batch is alive. It writes a local JSON report containing both the largest sampled
-working set and Windows' lifetime peak working set. Release smoke requires a nonzero, correctly
-shaped report for each of the 1280×720, 1366×768, 1920×1080 fullscreen, and 960×540 processes.
+each resolution batch is alive. It writes a local JSON report containing sample count, first,
+median, p95, final, and largest sampled working sets plus Windows' lifetime peak. Release smoke
+requires a nonzero, internally ordered report for each of the 1280×720, 1366×768, 1920×1080
+fullscreen, and 960×540 processes.
 
-The reports live at `target/release-smoke/memory_<resolution>.json`. A ceiling can be supplied with
+The reports live at `target/release-smoke/memory_<resolution>.json`. The command summary separates
+the worst p95/final samples from transient sampled/OS maxima. A ceiling can be supplied with
 `-MaxSampledWorkingSetMb`, but there is deliberately no default memory threshold yet. Identical
-short capture runs produced roughly 260–295 MB normally while cold OS-reported peaks varied as high
-as about 1.04 GB; one split-counter run also sampled a 694 MB fullscreen peak. A fixed 512 MB limit
-was therefore rejected as flaky, while a ceiling high enough to admit every observation would not
-be a meaningful release claim. The values remain mandatory diagnostics until a sustained ordinary-
-play baseline supports a defensible threshold.
+short capture runs produced roughly 260–295 MB maxima normally while cold peaks varied above 1 GB;
+one later fullscreen run reached about 1.61 GB. A fixed 512 MB limit was therefore rejected as
+flaky, while a ceiling high enough to admit every observation would not be a meaningful release
+claim. Distribution evidence now makes transient and sustained behavior distinguishable, but the
+values remain diagnostics until a real-time ordinary-play baseline supports a defensible threshold.
 
 ## What this does not prove
 

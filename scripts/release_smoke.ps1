@@ -397,9 +397,19 @@ try {
     foreach ($memorySample in $memoryReports) {
         if ($memorySample.scenes -ne $scenes.Count -or
             $memorySample.frames_per_scene -ne 30 -or
+            $memorySample.sample_count -le 0 -or
+            $memorySample.first_sampled_working_set_bytes -le 0 -or
+            $memorySample.median_sampled_working_set_bytes -le 0 -or
+            $memorySample.p95_sampled_working_set_bytes -le 0 -or
+            $memorySample.final_sampled_working_set_bytes -le 0 -or
             $memorySample.max_sampled_working_set_bytes -le 0 -or
             $memorySample.os_peak_working_set_bytes -le 0) {
             throw "Invalid capture-process memory report."
+        }
+        if ($memorySample.median_sampled_working_set_bytes -gt $memorySample.p95_sampled_working_set_bytes -or
+            $memorySample.p95_sampled_working_set_bytes -gt $memorySample.max_sampled_working_set_bytes -or
+            $memorySample.max_sampled_working_set_bytes -gt $memorySample.os_peak_working_set_bytes) {
+            throw "Capture-process memory distribution is internally inconsistent."
         }
         if ($MaxSampledWorkingSetMb -gt 0 -and
             $memorySample.max_sampled_working_set_bytes -gt $sampledWorkingSetLimitBytes) {
@@ -408,8 +418,12 @@ try {
         }
     }
     $worstSampledMemory = $memoryReports | Sort-Object max_sampled_working_set_bytes -Descending | Select-Object -First 1
+    $worstP95Memory = $memoryReports | Sort-Object p95_sampled_working_set_bytes -Descending | Select-Object -First 1
+    $worstFinalMemory = $memoryReports | Sort-Object final_sampled_working_set_bytes -Descending | Select-Object -First 1
     $worstOsPeakMemory = $memoryReports | Sort-Object os_peak_working_set_bytes -Descending | Select-Object -First 1
     $worstSampledMemoryMb = [Math]::Round($worstSampledMemory.max_sampled_working_set_bytes / 1MB, 1)
+    $worstP95MemoryMb = [Math]::Round($worstP95Memory.p95_sampled_working_set_bytes / 1MB, 1)
+    $worstFinalMemoryMb = [Math]::Round($worstFinalMemory.final_sampled_working_set_bytes / 1MB, 1)
     $worstOsPeakMemoryMb = [Math]::Round($worstOsPeakMemory.os_peak_working_set_bytes / 1MB, 1)
 
     $targetRoot = [IO.Path]::GetFullPath((Join-Path $projectDir "target"))
@@ -484,8 +498,8 @@ try {
     Write-Host "  Worst p95 update+draw: $($worstP95.scene) $($worstP95.p95_cpu_micros) us"
     Write-Host "  Worst single update+draw: $($worstSingle.scene) $($worstSingle.max_cpu_micros) us"
     Write-Host "  Enforced CPU limit: p95 $p95LimitMicros us"
-    Write-Host "  Max sampled working set: $worstSampledMemoryMb MB across four capture processes"
-    Write-Host "  Diagnostic OS peak working set: $worstOsPeakMemoryMb MB"
+    Write-Host "  Sampled working set: worst p95 $worstP95MemoryMb MB; worst final $worstFinalMemoryMb MB"
+    Write-Host "  Diagnostic transient peaks: sampled $worstSampledMemoryMb MB; OS $worstOsPeakMemoryMb MB"
     if ($MaxSampledWorkingSetMb -gt 0) {
         Write-Host "  Enforced memory limit: sampled $MaxSampledWorkingSetMb MB per capture process"
     } else {

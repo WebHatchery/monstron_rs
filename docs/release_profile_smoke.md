@@ -20,8 +20,9 @@ The gate:
 8. boots that optimized build through all 19 deterministic capture scenes in one process;
 9. records 30 update+draw CPU samples per scene, enforces a 16.667 ms p95 ceiling, and reports the
    diagnostic maximum without treating noisy first-use work as a release threshold;
-10. requires nonzero sampled and OS-peak working-set reports from each of the four resolution
-   processes, with an optional explicit sampled-memory ceiling but no unstable default cap;
+10. requires internally ordered first/median/p95/final/maximum sampled working sets and an OS peak
+   from each resolution process, with an optional explicit sampled-memory ceiling but no unstable
+   default cap;
 11. requires a successful process exit within the capture timeout;
 12. boots the same executable again in 1366×768 and 960×540 windows plus 1920×1080 fullscreen,
    validating all 76 scene outputs as nontrivial PNGs with exact dimensions; then

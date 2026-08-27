@@ -29,7 +29,8 @@ Audit date: 26 August 2026
   1366×768, 1920×1080 fullscreen, and a deliberately small 960×540 window.
   That gate also records opt-in local update+draw CPU samples, enforces a provisional 16.667 ms p95
   budget, and reports diagnostic maxima. All four resolution processes now emit mandatory local
-  sampled/OS-peak working-set reports; GPU memory, a stable ordinary-play memory threshold, and
+  first/median/p95/final/max sampled and OS-peak working-set reports; GPU memory, a stable
+  ordinary-play memory threshold, and
   sustained pacing remain unmeasured.
   It also completes five consecutive rendered starts/exits while read-only from a working path
   containing spaces and Unicode without sidecar writes.
@@ -273,7 +274,7 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
 - Track frame time and memory at supported resolutions; investigate sustained degradation.
 - Implemented independently: all 19 optimized 1280×720 capture scenes enforce a provisional
   16.667 ms p95 update+draw CPU budget and report diagnostic maxima. Four resolution processes also
-  require nonzero sampled and OS-peak working-set reports. Cold capture peaks are too volatile for
+  require internally ordered sampled-memory distributions and OS peaks. Cold capture peaks are too volatile for
   a defensible default memory cap; GPU presentation, ordinary-play memory, sustained real-time
   behavior, and CPU performance at other resolutions remain.
 - Test fresh install, paths containing spaces and non-ASCII characters, read-only launch folder, missing/corrupt save, Alt+Tab, resizing, fullscreen toggling, and repeated restart.
