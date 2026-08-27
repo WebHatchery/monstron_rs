@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 
 const GAME_NAME: &str = "hatchspire";
 const SETTINGS_KEY: &str = "settings";
+const SETTINGS_PATH_ENV: &str = "HATCHSPIRE_SETTINGS_TEST_PATH";
 const UI_SCALES: [u16; 4] = [90, 100, 110, 125];
 
 #[cfg(test)]
@@ -35,17 +36,29 @@ impl Default for AppSettings {
 
 impl AppSettings {
     pub fn load() -> Result<Self, String> {
-        if !macroquad_toolkit::persistence::json_key_exists(GAME_NAME, SETTINGS_KEY) {
+        if !macroquad_toolkit::persistence::json_key_exists_configured(
+            GAME_NAME,
+            SETTINGS_KEY,
+            Some(SETTINGS_PATH_ENV),
+        ) {
             return Ok(Self::default());
         }
-        let mut settings: Self =
-            macroquad_toolkit::persistence::load_json_key(GAME_NAME, SETTINGS_KEY)?;
+        let mut settings: Self = macroquad_toolkit::persistence::load_json_key_configured(
+            GAME_NAME,
+            SETTINGS_KEY,
+            Some(SETTINGS_PATH_ENV),
+        )?;
         settings.normalize();
         Ok(settings)
     }
 
     pub fn save(&self) -> Result<(), String> {
-        macroquad_toolkit::persistence::save_json_key(GAME_NAME, SETTINGS_KEY, self)
+        macroquad_toolkit::persistence::save_json_key_configured(
+            GAME_NAME,
+            SETTINGS_KEY,
+            self,
+            Some(SETTINGS_PATH_ENV),
+        )
     }
 
     pub fn adjust_master(&mut self, delta: i8) {

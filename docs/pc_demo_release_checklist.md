@@ -52,7 +52,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Each successful replacement save retains one rollback point; recovery preserves the displaced file before restoring it.
 - [x] Native panics append a local crash log beside the save and Help explains how to report it manually.
 - [ ] No crash, hang, progress loss, chroma leak, overlap, clipping, or missing asset exists on the route.
-- [ ] Master/music/SFX volume, mute, fullscreen/windowed, UI scale, and reduced motion persist.
+- [x] Master/music/SFX volume, mute, fullscreen/windowed, UI scale, and reduced motion pass an isolated production-path save/load round trip.
 - [ ] Full-demo deterministic run, release smoke test, and soak gate pass.
 - [ ] Exact release ZIP passes on two clean physical Windows PCs and one modest-spec machine.
 - [ ] Every shipped asset and dependency has an approved rights basis and required attribution.

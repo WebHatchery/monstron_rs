@@ -80,7 +80,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   implemented. Eight major completed-action boundaries survive native save/restart cycles, while a
   structural gate requires all ten mutating screen routes to use the autosave wrapper.
 - Settings persist audio groups, mute, fullscreen, reduced motion, and whole-canvas windowed UI
-  scale independently; approved audio playback remains.
+  scale independently. An isolated native round-trip test exercises the same production key path
+  without touching real app data; approved audio playback remains.
 - A self-identifying internal Windows preview package can be generated with player/support/legal
   drafts, exact build identity, per-file hashes, an external archive checksum, the exact Windows
   dependency list, 120 available registry-crate license/notice texts, and four hash-verified

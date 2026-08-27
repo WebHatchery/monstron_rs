@@ -17,7 +17,8 @@ Audit date: 27 August 2026
   save reset; in-game build, save-location, recovery help, and visible native quit; independently
   persisted audio/display/motion preferences.
   Windowed UI scale now resizes the complete canvas across four tested sizes without cropping;
-  supported historical saves normalize and rewrite at the current version. Each successful
+  all seven settings fields pass an isolated round trip through their production persistence path.
+  Supported historical saves normalize and rewrite at the current version. Each successful
   replacement save now retains one restorable previous state without discarding the file it replaces;
   native panics also append a local, manually shareable crash log beside the save. A post-publish
   packager now produces a self-identifying internal Windows preview with player/support/legal
@@ -114,8 +115,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,611 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 140 tests: 121 unit tests, 9 end-to-end game-flow tests,
+- The implementation contains 21,650 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The automated suite currently passes 141 tests: 122 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, two release-inventory tests, three release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
 - Formatting and strict lint checks pass.
@@ -140,7 +141,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   the deliberately small 960×540 size without clipping or overlap.
 - Audio assets are absent. Settings now persist master/music/SFX levels, mute, fullscreen, and
   reduced motion independently from saves. Windowed UI scale preserves the full fixed canvas at
-  90%, 100%, 110%, and 125%. Application of volume groups to approved audio remains.
+  90%, 100%, 110%, and 125%. A native round-trip test now saves and reloads every setting through
+  the production key API at an isolated path. Application of volume groups to approved audio remains.
 - Save/load remains a single slot. The initial audit found no autosave or recovery shell; New Game
   confirmation, change-aware autosave, corrupt-save quarantine, and newer-save protection are now
   implemented, together with a separately confirmed save reset and native save-location help.

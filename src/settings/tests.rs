@@ -42,3 +42,29 @@ fn ui_scale_cycles_supported_whole_canvas_sizes_and_normalizes_old_values() {
     settings.normalize();
     assert_eq!(settings.ui_scale_percent, 110);
 }
+
+#[test]
+#[cfg(not(target_arch = "wasm32"))]
+fn every_setting_survives_the_production_persistence_round_trip() {
+    let path = std::env::temp_dir().join(format!(
+        "hatchspire_settings_round_trip_{}.json",
+        std::process::id()
+    ));
+    let _ = std::fs::remove_file(&path);
+    std::env::set_var(SETTINGS_PATH_ENV, &path);
+
+    let expected = AppSettings {
+        master_volume: 31,
+        music_volume: 42,
+        sfx_volume: 53,
+        muted: true,
+        fullscreen: true,
+        reduced_motion: true,
+        ui_scale_percent: 125,
+    };
+    expected.save().unwrap();
+    assert_eq!(AppSettings::load().unwrap(), expected);
+
+    std::fs::remove_file(path).unwrap();
+    std::env::remove_var(SETTINGS_PATH_ENV);
+}
