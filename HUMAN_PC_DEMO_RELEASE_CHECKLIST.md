@@ -112,6 +112,11 @@ Automated tests cannot prove onboarding, fun, pacing, or emotional clarity. The 
 - [ ] Keep personal data out of the repository unless there is a clear, consented reason.
 - [ ] Run at least two rounds, with fixes between them.
 
+Generate an exact-candidate packet with `scripts/create_playtest_packet.ps1`. Keep identity keys,
+consent records, recordings, and narrative notes outside Git; use only anonymous `T01`-style IDs in
+the structured session JSON. `scripts/summarize_playtest_cohort.ps1` calculates the target counts but
+cannot determine consent, independence, comprehension, fun, issue acceptance, or release readiness.
+
 Minimum human evidence before release:
 
 | Measure | Target | Result |

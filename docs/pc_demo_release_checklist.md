@@ -80,6 +80,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] A candidate-stamped physical-test packet verifies the exact ZIP, executable, source identities, and Authenticode state before leaving all device observations blank for humans.
 - [x] Exact-package smoke hashes all 76 captures, and a candidate-stamped gallery generator re-verifies them before leaving visual decisions blank for humans.
 - [x] Proposed itch page, FAQ, release notes, invitation, launch post, and patch-post copy exist; a clean-candidate packet fills only technical facts and leaves all public claims for human approval.
+- [x] A candidate-stamped independent-playtest packet provides anonymous consent-safe session records, a neutral observer protocol, and mechanical 5/4/3/4/0 cohort summarization without release authority.
 - [x] Internal catalog metadata removes the inherited repository link and unsupported public platform claim.
 - [x] A deploy-only follow-up makes the local preview download byte-match the sealed archive checksum.
 - [ ] Restricted itch download matches the recorded checksum and completes on a clean machine.

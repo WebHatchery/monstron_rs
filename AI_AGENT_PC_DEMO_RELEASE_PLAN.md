@@ -72,6 +72,9 @@ Audit date: 26 August 2026
   Proposed itch page, FAQ, release notes, restricted invitation, launch post, and first-patch post
   drafts now separate verified facts from conspicuous human decisions. A clean-package generator
   fills only exact candidate identities and leaves copy approval, upload, and release authority false.
+  A candidate-bound independent-playtest packet now supplies a neutral observer protocol, anonymous
+  session schema, consent boundary, and deterministic unique-tester cohort summary for the 5/4/3/4/0
+  targets. It cannot infer human observations or turn those counts into release approval.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -108,7 +111,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,578 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The implementation contains 21,600 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
 - The automated suite currently passes 140 tests: 121 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, two release-inventory tests, three release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
@@ -180,6 +183,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - Current automated flows prove systems in isolation and in short chains, not that a new player can understand, enjoy, and finish the demo.
 - A local opt-in tester summary now exports saved pacing and balance counters without telemetry.
   Human coaching, comprehension, enjoyment, and skill-band evidence still require real testers.
+  The new playtest packet and cohort summarizer bind those future human records to one exact ZIP,
+  reject non-anonymous schema additions, and preserve every human observation and consent gate.
 
 ## Agent-owned work
 

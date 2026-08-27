@@ -199,4 +199,26 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
     assert!(release_messages.contains("Restricted test invitation"));
     assert!(release_messages.contains("Public demo launch post"));
     assert!(release_messages.contains("First-patch update post"));
+
+    let playtest_packet = fs::read_to_string(root.join("scripts/create_playtest_packet.ps1"))
+        .expect("independent-playtest packet generator should be readable");
+    assert!(playtest_packet.contains("awaiting_independent_playtests"));
+    assert!(playtest_packet.contains("distribution_instructions_approved = $false"));
+    assert!(playtest_packet.contains("refusing to overwrite possible human evidence"));
+    assert!(playtest_packet.contains("Storefront instructions no longer match"));
+
+    let cohort = fs::read_to_string(root.join("scripts/summarize_playtest_cohort.ps1"))
+        .expect("playtest cohort summarizer should be readable");
+    assert!(cohort.contains("insufficient_evidence"));
+    assert!(cohort.contains("targets_not_met"));
+    assert!(cohort.contains("targets_met"));
+    assert!(cohort.contains("^T[0-9]{2,4}$"));
+    assert!(cohort.contains("record fields differ from the anonymous session schema"));
+    assert!(cohort.contains("release_approval_granted = $false"));
+
+    let playtest_docs = fs::read_to_string(root.join("docs/independent_playtest_packet.md"))
+        .expect("independent-playtest packet instructions should be readable");
+    assert!(playtest_docs.contains("at least five eligible independent testers"));
+    assert!(playtest_docs.contains("Would play more"));
+    assert!(playtest_docs.contains("no forced pass threshold"));
 }
