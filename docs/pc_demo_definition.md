@@ -100,12 +100,14 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   Its full visible run, interaction path, OS-event, and physical-device soak testing remain.
 - The exact packaged release-profile EXE byte-matches the build and boots/renders all 19 seeded
   scenes in 1280×720, 1366×768, and 960×540 windows plus 1920×1080 fullscreen. The registry includes
-  active combat targeting/intent, a damaged status state, victory, and defeat. Its opt-in 30-frame-per-scene CPU report
-  enforces a provisional 16.667 ms p95 update+draw budget and reports diagnostic maxima. Each
+  active combat targeting/intent, a damaged status state, victory, and defeat. Its opt-in CPU reports
+  collect 30 frames for all 76 scene/resolution pairs, enforce a provisional 16.667 ms p95
+  update+draw budget, and report diagnostic maxima. Each
   resolution process also emits first/median/p95/final/max sampled and OS-peak working-set
-  diagnostics; GPU memory, stable
-  ordinary-play memory thresholds, sustained pacing, interaction,
-  visual correctness, and clean-device testing remain.
+  diagnostics plus available process-scoped Windows dedicated/shared GPU-memory distributions and
+  aggregate 3D-engine utilization. Portable VRAM thresholds, GPU presentation timing, stable
+  ordinary-play memory thresholds, sustained pacing, interaction, visual correctness, and
+  clean-device testing remain.
 - The same EXE completes five consecutive rendered starts/exits from a spaces/Unicode working
   directory after its NTFS ACL is proven to deny file creation, without writing beside itself. Clean
   physical PCs remain manual gates.

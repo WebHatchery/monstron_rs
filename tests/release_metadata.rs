@@ -3,6 +3,22 @@ use std::fs;
 use std::path::Path;
 
 #[test]
+fn release_documents_keep_technical_evidence_distinct_from_human_approval() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let definition = fs::read_to_string(root.join("docs/pc_demo_definition.md"))
+        .expect("demo definition should be readable");
+    let human = fs::read_to_string(root.join("HUMAN_PC_DEMO_RELEASE_CHECKLIST.md"))
+        .expect("human release checklist should be readable");
+
+    assert!(definition.contains("all 76 scene/resolution pairs"));
+    assert!(definition.contains("dedicated/shared GPU-memory distributions"));
+    assert!(definition.contains("Portable VRAM thresholds, GPU presentation timing"));
+    assert!(!definition.contains("diagnostics; GPU memory, stable"));
+    assert!(human.contains("have not received human visual approval"));
+    assert!(!human.contains("current verification capture is not release-ready"));
+}
+
+#[test]
 fn catalog_metadata_is_explicitly_internal_and_has_no_inherited_repository_claim() {
     let root = Path::new(env!("CARGO_MANIFEST_DIR"));
     let raw =

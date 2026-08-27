@@ -115,9 +115,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,650 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 141 tests: 122 unit tests, 9 end-to-end game-flow tests,
-  one asset-registry test, two release-inventory tests, three release-metadata tests, one
+- The implementation contains 21,666 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The automated suite currently passes 142 tests: 122 unit tests, 9 end-to-end game-flow tests,
+  one asset-registry test, two release-inventory tests, four release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
 - Formatting and strict lint checks pass.
 - The Windows release already packages successfully as a self-contained 51.3 MB `hatchspire_windows.zip` containing `hatchspire.exe`.

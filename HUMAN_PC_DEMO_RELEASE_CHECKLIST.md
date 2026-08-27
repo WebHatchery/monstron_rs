@@ -57,7 +57,8 @@ An agent can generate candidates and perform consistency checks. A human must de
 - [ ] Approve music and sound choices after listening on speakers and headphones.
 - [ ] Decide whether generated assets are acceptable for this commercial/public release and public disclosure policy.
 - [ ] Approve the final writing voice, names, tutorial tone, ending text, content warnings, and marketing claims.
-- [ ] Confirm the combat screen is understandable at a glance; the current verification capture is not release-ready.
+- [ ] Confirm the combat screen is understandable at a glance; the four-size structural captures
+  pass automated checks but have not received human visual approval.
 
 Do not delegate “looks good enough” to the same system that produced or implemented the candidates. Human taste is a release gate.
 
