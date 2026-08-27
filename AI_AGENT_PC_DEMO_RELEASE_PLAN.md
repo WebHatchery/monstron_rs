@@ -61,6 +61,8 @@ Audit date: 26 August 2026
   A non-remediating Microsoft Defender harness now verifies and scans the exact sealed ZIP plus its
   manifest-matched EXE with active, age-bounded signatures, while explicitly leaving SmartScreen and
   other-machine antivirus behavior open.
+  A separate visible exact-package probe now drives real Win32 resize, minimize, and restore events,
+  verifies the resulting 960×540 client/render size, and requires a clean exit.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -97,7 +99,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,499 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The implementation contains 21,507 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
 - The automated suite currently passes 140 tests: 121 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, two release-inventory tests, three release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
@@ -300,7 +302,11 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
 - Implemented independently: the exact packaged EXE completes five consecutive rendered starts/exits
   from a spaces/Unicode working directory whose NTFS ACL denies file creation. The gate first proves
   its write probe fails, then verifies every boot and confirms no sidecar appears. Clean-install and
-  OS-event tests remain.
+  physical-machine tests remain.
+- Implemented independently: `scripts/window_event_smoke.ps1` verifies and extracts the clean exact
+  package, drives its visible client from 1280×720 to 960×540, observes minimize and restore states,
+  and requires the restored-size render and clean exit. Interactive Alt+Tab/fullscreen, sleep/wake,
+  display-scale, multi-monitor, and physical-device behavior remain.
 - Implemented independently: `scripts/defender_scan.ps1` verifies the clean package/manifests and
   scans both the exact ZIP and manifest-matched EXE using active Microsoft Defender signatures no
   more than three days old. It uses non-remediating custom scans and records local engine/signature,

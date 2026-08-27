@@ -106,8 +106,12 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   ordinary-play memory thresholds, sustained pacing, interaction,
   visual correctness, and clean-device testing remain.
 - The same EXE completes five consecutive rendered starts/exits from a spaces/Unicode working
-  directory after its NTFS ACL is proven to deny file creation, without writing beside itself. Live
-  window events and clean physical PCs remain manual gates.
+  directory after its NTFS ACL is proven to deny file creation, without writing beside itself. Clean
+  physical PCs remain manual gates.
+- A visible exact-package host probe resizes the live client from 1280×720 to 960×540, observes
+  minimize and restore states, verifies the resulting 960×540 render, and requires a clean exit.
+  Interactive Alt+Tab/fullscreen, sleep/wake, display-scale, multi-monitor, and physical-PC behavior
+  remain manual gates.
 - A non-remediating Microsoft Defender custom scan verifies the exact clean ZIP and manifest-matched
   EXE with active, age-bounded signatures and records local evidence. SmartScreen reputation, other
   antivirus products, and clean physical machines remain manual gates.

@@ -76,6 +76,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] The identical EXE launches from a spaces/Unicode directory whose NTFS ACL is proven to deny file creation, without sidecar writes.
 - [x] The identical EXE completes five consecutive rendered starts/exits from that write-denied path.
 - [x] Active Microsoft Defender signatures scan the exact clean ZIP and manifest-matched EXE in non-remediating mode; local evidence records engine, signatures, hashes, and results.
+- [x] A visible exact-package host probe passes live 1280×720 → 960×540 resize, minimize, restore, resized render, and clean exit.
 - [x] Internal catalog metadata removes the inherited repository link and unsupported public platform claim.
 - [x] A deploy-only follow-up makes the local preview download byte-match the sealed archive checksum.
 - [ ] Restricted itch download matches the recorded checksum and completes on a clean machine.

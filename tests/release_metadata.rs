@@ -120,4 +120,12 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
     assert!(defender.contains("$manifest.included_files"));
     assert!(defender.contains("MaxSignatureAgeDays"));
     assert!(defender.contains("host_diagnostic_only"));
+
+    let window_events = fs::read_to_string(root.join("scripts/window_event_smoke.ps1"))
+        .expect("Windows event smoke script should be readable");
+    assert!(window_events.contains("MoveWindow"));
+    assert!(window_events.contains("IsIconic"));
+    assert!(window_events.contains("HATCHSPIRE_HEADLESS \"0\""));
+    assert!(window_events.contains("resized_client_width"));
+    assert!(window_events.contains("host_diagnostic_only"));
 }
