@@ -90,6 +90,24 @@ if ($checksumText -notmatch '^([0-9A-Fa-f]{64})\s+(.+)$' -or
 if ([string]$manifest.git_commit -ne $commit -or [bool]$manifest.working_tree_dirty -ne $isDirty) {
     throw "Archive identity does not match the current Git candidate."
 }
+$toolkitDir = [IO.Path]::GetFullPath((Join-Path (Split-Path -Parent $projectDir) "macroquad-toolkit"))
+$toolkitCommit = (& git -C $toolkitDir rev-parse HEAD).Trim()
+if ($LASTEXITCODE -ne 0 -or $toolkitCommit -notmatch '^[0-9a-f]{40}$') {
+    throw "Could not resolve the macroquad-toolkit commit."
+}
+$toolkitDirtyLines = @(& git -C $toolkitDir status --porcelain)
+if ($LASTEXITCODE -ne 0) { throw "Could not inspect the macroquad-toolkit working tree." }
+$toolkitIsDirty = $toolkitDirtyLines.Count -gt 0
+if ($toolkitIsDirty -and -not $AllowDirty) {
+    throw "The macroquad-toolkit working tree is dirty. Commit it or pass -AllowDirty for harness validation."
+}
+$toolkitDirtySuffix = if ($toolkitIsDirty) { "-dirty" } else { "" }
+$toolkitBuildId = "g$($toolkitCommit.Substring(0, [Math]::Min(12, $toolkitCommit.Length)))$toolkitDirtySuffix"
+if ([string]$manifest.toolkit_git_commit -ne $toolkitCommit -or
+    [bool]$manifest.toolkit_working_tree_dirty -ne $toolkitIsDirty -or
+    [string]$manifest.toolkit_build_id -ne $toolkitBuildId) {
+    throw "Archive toolkit identity does not match the current compiled dependency tree."
+}
 
 $scenes = @(
     "mainmenu", "new_game_warning", "save_recovery", "autosave_notice",
@@ -201,6 +219,8 @@ try {
         version = $manifest.version
         build_id = $manifest.build_id
         git_commit = $manifest.git_commit
+        toolkit_build_id = $manifest.toolkit_build_id
+        toolkit_git_commit = $manifest.toolkit_git_commit
         archive_sha256 = $archiveHash
         executable_sha256 = $exeHash
         requested_duration_seconds = $DurationSeconds
@@ -231,6 +251,7 @@ try {
     Write-Host "Sustained exact-package render probe passed:" -ForegroundColor Green
     Write-Host "  Status: $status"
     Write-Host "  Build ID: $($manifest.build_id)"
+    Write-Host "  Toolkit: $($manifest.toolkit_build_id)"
     Write-Host "  Archive SHA-256: $archiveHash"
     Write-Host "  Elapsed: $elapsedMinutes minutes across $($scenes.Count) scenes / $([long]$framesPerScene * $scenes.Count) frames"
     Write-Host "  Worst p95 update+draw: $($worstP95.scene) $($worstP95.p95_cpu_micros) us"

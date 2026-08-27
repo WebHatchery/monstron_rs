@@ -112,7 +112,9 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   isolated first-patch rehearsal has passed patch → preserved rollback → patch restoration while
   verifying archive hashes and embedded build identities; remote channel processing remains manual.
 - Help, crash-report guidance, package manifests, and release smoke share a `version+g<commit>` build
-  identity; choosing the public demo version remains a human release-candidate decision.
+  identity. Both manifests also record the full `macroquad-toolkit` commit and dirty state; release
+  smoke verifies that the executable's Windows metadata embeds the matching short toolkit identity.
+  Choosing the public demo version remains a human release-candidate decision.
 - The exact packaged EXE exposes Cargo-derived Windows file/product versions plus Hatchspire product,
   description, original-filename, and internal-name fields. It also embeds a multi-resolution custom
   icon derived from the title art, which release smoke compares pixel-for-pixel with its source.

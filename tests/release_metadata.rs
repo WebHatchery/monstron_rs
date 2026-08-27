@@ -94,4 +94,19 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
     assert!(soak.contains("$manifest.included_files"));
     assert!(soak.contains("$process.elapsed_wall_milliseconds"));
     assert!(soak.contains("$timing.frames -ne $framesPerScene"));
+    assert!(soak.contains("$manifest.toolkit_git_commit"));
+
+    let packager = fs::read_to_string(root.join("scripts/package_windows_preview.ps1"))
+        .expect("Windows preview packager should be readable");
+    let smoke = fs::read_to_string(root.join("scripts/release_smoke.ps1"))
+        .expect("release smoke script should be readable");
+    for field in [
+        "toolkit_build_id",
+        "toolkit_git_commit",
+        "toolkit_working_tree_dirty",
+    ] {
+        assert!(packager.contains(field), "packager omits {field}");
+        assert!(smoke.contains(field), "release smoke omits {field}");
+    }
+    assert!(smoke.contains("$versionInfo.Comments"));
 }

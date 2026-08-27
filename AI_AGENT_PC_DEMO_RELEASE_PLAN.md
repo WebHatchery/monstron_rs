@@ -37,6 +37,8 @@ Audit date: 26 August 2026
   It also completes five consecutive rendered starts/exits while read-only from a working path
   containing spaces and Unicode without sidecar writes.
   Help, package manifests, and release smoke now share an exact `version+g<commit>` build identity.
+  Both package manifests additionally identify the full shared `macroquad-toolkit` commit and dirty
+  state, while release smoke verifies the short toolkit identity embedded in the Windows executable.
   Catalog metadata now labels the build as an internal preview, leads with visible controls, and
   carries no inherited repository link or approved public-demo claim.
   Combat now embeds the processed transparent VFX atlas, gives every compact unit card separate
@@ -92,8 +94,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,430 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 139 tests: 120 unit tests, 9 end-to-end game-flow tests,
+- The implementation contains 21,488 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The automated suite currently passes 140 tests: 121 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, two release-inventory tests, three release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
 - Formatting and strict lint checks pass.
@@ -148,6 +150,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - Cargo remains at generic version `0.1.0`, but Help, manifests, and smoke output now append the
   exact Git revision and mark dirty builds. Assigning the approved demo version remains a
   release-candidate task.
+- The internal and external package manifests record the exact path-dependent `macroquad-toolkit`
+  commit and dirty state. Windows version metadata embeds the same short toolkit identity, and both
+  release smoke and the sustained runner reject mismatches against the current dependency checkout.
 - Native panics now append a local crash log beside the save. The exact EXE now carries verified
   Hatchspire product/file identity, Cargo-derived Windows version metadata, and a custom icon.
   Clean-machine launch tests, a write-denying launch-directory ACL test, antivirus/SmartScreen

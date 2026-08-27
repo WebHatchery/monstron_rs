@@ -73,6 +73,21 @@ try {
         Select-Object -First 1
     if ($null -eq $package) { throw "Could not find Hatchspire in Cargo metadata." }
     $version = [string]$package.version
+    $toolkitPackage = @($metadata.packages | Where-Object { $_.name -eq "macroquad-toolkit" })
+    if ($toolkitPackage.Count -ne 1) {
+        throw "Cargo metadata must identify exactly one macroquad-toolkit package."
+    }
+    $toolkitDir = [IO.Path]::GetFullPath((Split-Path $toolkitPackage[0].manifest_path -Parent))
+    $toolkitCommit = (& git -C $toolkitDir rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or $toolkitCommit -notmatch '^[0-9a-f]{40}$') {
+        throw "Could not resolve the macroquad-toolkit commit."
+    }
+    $toolkitDirtyLines = @(& git -C $toolkitDir status --porcelain)
+    if ($LASTEXITCODE -ne 0) { throw "Could not inspect the macroquad-toolkit working tree." }
+    $toolkitIsDirty = $toolkitDirtyLines.Count -gt 0
+    if ($toolkitIsDirty -and -not $AllowDirty) {
+        throw "The macroquad-toolkit working tree is dirty. Commit it or pass -AllowDirty for an internal test."
+    }
 
     $treeLines = @(& cargo tree -p hatchspire --target x86_64-pc-windows-msvc -e normal --prefix none --format "{p}|{l}")
     if ($LASTEXITCODE -ne 0) { throw "Could not inventory Windows dependencies." }
@@ -84,6 +99,9 @@ $stamp = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
 $shortCommit = $commit.Substring(0, [Math]::Min(12, $commit.Length))
 $dirtySuffix = if ($isDirty) { "-dirty" } else { "" }
 $displayBuildId = "$version+g$shortCommit$dirtySuffix"
+$toolkitShortCommit = $toolkitCommit.Substring(0, [Math]::Min(12, $toolkitCommit.Length))
+$toolkitDirtySuffix = if ($toolkitIsDirty) { "-dirty" } else { "" }
+$toolkitBuildId = "g$toolkitShortCommit$toolkitDirtySuffix"
 $workDir = Join-Path $distDir (".windows-preview-" + [Guid]::NewGuid().ToString("N"))
 $candidateArchive = Join-Path $distDir (".hatchspire-windows-" + [Guid]::NewGuid().ToString("N") + ".zip")
 Assert-ChildPath $distDir $workDir
@@ -243,6 +261,9 @@ try {
         build_id = $displayBuildId
         git_commit = $commit
         working_tree_dirty = $isDirty
+        toolkit_build_id = $toolkitBuildId
+        toolkit_git_commit = $toolkitCommit
+        toolkit_working_tree_dirty = $toolkitIsDirty
         built_utc = $stamp
         platform = "Windows 10/11 x64"
         dependency_license_file_gaps = @($licenseFileGaps)
@@ -269,6 +290,9 @@ try {
         build_id = $displayBuildId
         git_commit = $commit
         working_tree_dirty = $isDirty
+        toolkit_build_id = $toolkitBuildId
+        toolkit_git_commit = $toolkitCommit
+        toolkit_working_tree_dirty = $toolkitIsDirty
         built_utc = $stamp
         dependency_license_file_gaps = @($licenseFileGaps)
         included_files = $allFiles
@@ -297,6 +321,7 @@ try {
     Write-Host "  Archive: $archive"
     Write-Host "  Version: $version"
     Write-Host "  Commit: $commit"
+    Write-Host "  Toolkit: $toolkitBuildId"
     Write-Host "  Files: $($allFiles.Count)"
     Write-Host "  Bytes: $($archiveInfo.Length)"
     Write-Host "  SHA-256: $archiveHash"

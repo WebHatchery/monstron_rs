@@ -202,7 +202,7 @@ if ($LASTEXITCODE -ne 0) { throw "Could not resolve the Hatchspire commit." }
 
 Push-Location $projectDir
 try {
-    $metadata = (& cargo metadata --manifest-path Cargo.toml --no-deps --format-version 1) |
+    $metadata = (& cargo metadata --manifest-path Cargo.toml --format-version 1) |
         ConvertFrom-Json
     if ($LASTEXITCODE -ne 0) { throw "Could not read Cargo metadata." }
     $manifest = (Resolve-Path Cargo.toml).Path
@@ -210,6 +210,23 @@ try {
         Where-Object { [IO.Path]::GetFullPath($_.manifest_path) -eq $manifest } |
         Select-Object -First 1
     if ($null -eq $package) { throw "Could not find Hatchspire in Cargo metadata." }
+    $toolkitPackage = @($metadata.packages | Where-Object { $_.name -eq "macroquad-toolkit" })
+    if ($toolkitPackage.Count -ne 1) {
+        throw "Cargo metadata must identify exactly one macroquad-toolkit package."
+    }
+    $toolkitDir = [IO.Path]::GetFullPath((Split-Path $toolkitPackage[0].manifest_path -Parent))
+    $toolkitCommit = (& git -C $toolkitDir rev-parse HEAD).Trim()
+    if ($LASTEXITCODE -ne 0 -or $toolkitCommit -notmatch '^[0-9a-f]{40}$') {
+        throw "Could not resolve the macroquad-toolkit commit."
+    }
+    $toolkitDirtyLines = @(& git -C $toolkitDir status --porcelain)
+    if ($LASTEXITCODE -ne 0) { throw "Could not inspect the macroquad-toolkit working tree." }
+    $toolkitIsDirty = $toolkitDirtyLines.Count -gt 0
+    if ($toolkitIsDirty -and -not $AllowDirty) {
+        throw "The macroquad-toolkit working tree is dirty. Commit it or pass -AllowDirty for an internal test."
+    }
+    $toolkitDirtySuffix = if ($toolkitIsDirty) { "-dirty" } else { "" }
+    $expectedToolkitBuildId = "g$($toolkitCommit.Substring(0, [Math]::Min(12, $toolkitCommit.Length)))$toolkitDirtySuffix"
     $releaseExe = Join-Path $metadata.target_directory "release\hatchspire.exe"
     if (-not (Test-Path -LiteralPath $releaseExe -PathType Leaf)) {
         throw "Release executable is missing. Run .\publish.ps1 first: $releaseExe"
@@ -261,7 +278,15 @@ try {
     if ($buildInfo.build_id -ne $expectedBuildId) {
         throw "Package build ID $($buildInfo.build_id) does not match $expectedBuildId."
     }
-    foreach ($field in @("package_status", "version", "build_id", "git_commit", "working_tree_dirty", "built_utc")) {
+    if ([string]$buildInfo.toolkit_git_commit -ne $toolkitCommit -or
+        [bool]$buildInfo.toolkit_working_tree_dirty -ne $toolkitIsDirty -or
+        [string]$buildInfo.toolkit_build_id -ne $expectedToolkitBuildId) {
+        throw "Package toolkit identity does not match the compiled dependency tree."
+    }
+    foreach ($field in @(
+        "package_status", "version", "build_id", "git_commit", "working_tree_dirty",
+        "toolkit_build_id", "toolkit_git_commit", "toolkit_working_tree_dirty", "built_utc"
+    )) {
         if ([string]$externalManifest.$field -ne [string]$buildInfo.$field) {
             throw "External and embedded manifests disagree on $field."
         }
@@ -294,6 +319,10 @@ try {
         if ([string]$versionInfo.$field -ne $expectedVersionFields[$field]) {
             throw "Windows version field $field is '$($versionInfo.$field)'; expected '$($expectedVersionFields[$field])'."
         }
+    }
+    $expectedComments = "Internal preview; macroquad-toolkit $expectedToolkitBuildId; public release approval required"
+    if ([string]$versionInfo.Comments -ne $expectedComments) {
+        throw "Windows Comments field does not identify the compiled toolkit revision."
     }
     Add-Type -AssemblyName System.Drawing
     $sourceIconPath = Join-Path $projectDir "assets\branding\hatchspire.ico"
@@ -502,6 +531,7 @@ try {
     Write-Host "Release-profile smoke passed:" -ForegroundColor Green
     Write-Host "  Commit: $commit"
     Write-Host "  Build ID: $expectedBuildId"
+    Write-Host "  Toolkit: $expectedToolkitBuildId"
     Write-Host "  Executable SHA-256: $releaseExeHash"
     Write-Host "  Windows metadata: Hatchspire $($package.version), identity fields and custom icon verified"
     Write-Host "  Package contract: $($archiveRecords.Count) entry hashes, required documents, UTC manifest, sidecar, and exact license-gap list verified"

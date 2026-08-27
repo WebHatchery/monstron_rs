@@ -3,7 +3,8 @@
 Audit date: 27 August 2026
 
 `scripts/realtime_render_soak.ps1` runs the exact `hatchspire.exe` from the sealed Windows ZIP for
-real wall-clock time. It verifies the external manifest and checksum, extracts the archive into an
+real wall-clock time. It verifies the external manifest, Hatchspire and shared-toolkit revisions,
+and checksum, extracts the archive into an
 isolated temporary directory, rehashes the executable, and then cycles all 19 release scenes in one
 process. The capture harness holds each deterministic frame for a configured minimum duration so the
 process remains alive long enough to expose sustained resource growth instead of finishing an
