@@ -75,6 +75,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Exact-package sustained-soak tooling enforces wall-clock duration across all 19 scenes and marks short/headless runs as validation-only.
 - [x] The identical EXE launches from a spaces/Unicode directory whose NTFS ACL is proven to deny file creation, without sidecar writes.
 - [x] The identical EXE completes five consecutive rendered starts/exits from that write-denied path.
+- [x] Active Microsoft Defender signatures scan the exact clean ZIP and manifest-matched EXE in non-remediating mode; local evidence records engine, signatures, hashes, and results.
 - [x] Internal catalog metadata removes the inherited repository link and unsupported public platform claim.
 - [x] A deploy-only follow-up makes the local preview download byte-match the sealed archive checksum.
 - [ ] Restricted itch download matches the recorded checksum and completes on a clean machine.
@@ -89,7 +90,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Local opt-in tester summary reports saved pacing and balance measures without telemetry.
 - [ ] Real-time frame pacing and memory checks show no sustained degradation during the 2–4 hour soak run.
 - [ ] Alt+Tab, interactive resize, and fullscreen toggle pass on physical Windows hardware.
-- [ ] Antivirus/SmartScreen behavior and unsigned-build decision are recorded.
+- [ ] SmartScreen, other-machine antivirus behavior, and the unsigned-build decision are recorded.
 - [ ] At least five independent testers participate; required coaching/completion targets are met.
 - [ ] Store copy, screenshots, system requirements, controls, limitations, and support path are approved.
 - [x] Local rollback and first-patch switching are rehearsed with preserved exact builds; restricted-channel upload/download remains human-owned.

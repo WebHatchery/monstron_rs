@@ -112,4 +112,12 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
     assert!(smoke.contains("Invoke-Icacls"));
     assert!(smoke.contains("/inheritance:r"));
     assert!(smoke.contains("The relocated launch directory did not deny file creation."));
+
+    let defender = fs::read_to_string(root.join("scripts/defender_scan.ps1"))
+        .expect("Defender exact-package scanner should be readable");
+    assert!(defender.contains("-DisableRemediation"));
+    assert!(defender.contains("$manifest.toolkit_git_commit"));
+    assert!(defender.contains("$manifest.included_files"));
+    assert!(defender.contains("MaxSignatureAgeDays"));
+    assert!(defender.contains("host_diagnostic_only"));
 }

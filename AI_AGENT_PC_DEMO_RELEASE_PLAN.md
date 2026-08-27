@@ -58,6 +58,9 @@ Audit date: 26 August 2026
   The Windows executable now embeds a multi-resolution Hatchspire icon derived from the title art;
   exact-package smoke compares its rendered 32 px pixels with the tracked icon source.
   That repeated relocated-start gate uses the exact packaged executable and validates every boot.
+  A non-remediating Microsoft Defender harness now verifies and scans the exact sealed ZIP plus its
+  manifest-matched EXE with active, age-bounded signatures, while explicitly leaving SmartScreen and
+  other-machine antivirus behavior open.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -94,7 +97,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,491 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The implementation contains 21,499 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
 - The automated suite currently passes 140 tests: 121 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, two release-inventory tests, three release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
@@ -155,8 +158,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   release smoke and the sustained runner reject mismatches against the current dependency checkout.
 - Native panics now append a local crash log beside the save. The exact EXE now carries verified
   Hatchspire product/file identity, Cargo-derived Windows version metadata, and a custom icon.
-  Clean-machine launch tests, antivirus/SmartScreen records, gamepad support, GPU profiling, stable
-  ordinary-play memory profiling, and a human-observed
+  Clean-machine launch tests, SmartScreen and other-machine antivirus records, gamepad support, GPU
+  profiling, stable ordinary-play memory profiling, and a human-observed
   2–4 hour real-time play/device soak remain absent. An exact-package render-soak harness now enforces
   real elapsed time across all 19 scenes and records CPU and memory evidence; its full visible run
   remains pending. The exact EXE does pass five consecutive starts from a write-denying spaces/Unicode
@@ -298,6 +301,11 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
   from a spaces/Unicode working directory whose NTFS ACL denies file creation. The gate first proves
   its write probe fails, then verifies every boot and confirms no sidecar appears. Clean-install and
   OS-event tests remain.
+- Implemented independently: `scripts/defender_scan.ps1` verifies the clean package/manifests and
+  scans both the exact ZIP and manifest-matched EXE using active Microsoft Defender signatures no
+  more than three days old. It uses non-remediating custom scans and records local engine/signature,
+  hash, timing, exit-code, and console evidence. SmartScreen, other antivirus products, and required
+  physical machines remain human gates.
 - Verify on integrated graphics or an equivalent low-spec machine when the human provides access.
 - Add a release manifest containing version, commit, build date, SHA-256, archive size, and included files.
 - Add Windows application icon/version metadata if the chosen packaging path supports it cleanly.

@@ -108,6 +108,9 @@ This is the route the tutorial, deterministic test fixture, and release capture 
 - The same EXE completes five consecutive rendered starts/exits from a spaces/Unicode working
   directory after its NTFS ACL is proven to deny file creation, without writing beside itself. Live
   window events and clean physical PCs remain manual gates.
+- A non-remediating Microsoft Defender custom scan verifies the exact clean ZIP and manifest-matched
+  EXE with active, age-bounded signatures and records local evidence. SmartScreen reputation, other
+  antivirus products, and clean physical machines remain manual gates.
 - Clean preview archives can be preserved by full commit without replacing differing evidence. An
   isolated first-patch rehearsal has passed patch → preserved rollback → patch restoration while
   verifying archive hashes and embedded build identities; remote channel processing remains manual.
