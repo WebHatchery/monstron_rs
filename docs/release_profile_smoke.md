@@ -12,7 +12,8 @@ The gate:
    SHA-256, clean/dirty state, version, commit, build identity, and strict UTC build date;
 3. hashes every ZIP entry and independently checks the external file list plus the embedded
    `BUILD_INFO.json` payload list;
-4. requires the versioned executable and all player/support/legal documents in the ZIP;
+4. requires the versioned executable and all player/support/legal documents in the ZIP, and requires
+   both manifests to identify exactly `quad-rand 0.2.3` as the sole missing dependency license file;
 5. requires the package commit and version to match Git HEAD and Cargo;
 6. hashes `hatchspire.exe` inside the ZIP and requires it to match the release build byte-for-byte;
 7. verifies the exact executable's Windows product/file name and Cargo-derived version fields, then

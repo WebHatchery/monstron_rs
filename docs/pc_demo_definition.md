@@ -84,7 +84,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
 - A self-identifying internal Windows preview package can be generated with player/support/legal
   drafts, exact build identity, per-file hashes, an external archive checksum, the exact Windows
   dependency list, 120 available registry-crate license/notice texts, and four hash-verified
-  exact-tag GilRs license copies. Public approval remains.
+  exact-tag GilRs license copies. Both manifests must identify exactly `quad-rand 0.2.3` as the
+  remaining dependency license-file gap. Public approval remains.
   Release smoke independently rehashes every ZIP entry and cross-checks both manifests, the checksum
   sidecar, strict UTC build date, and required document set against the exact candidate.
 - The 38 embedded project inputs have a regression-tested provenance ledger; all visual approvals

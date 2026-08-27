@@ -128,7 +128,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   texts. Hash-verified files from the exact upstream tags now fill the registry-package omissions
   for `gilrs 0.10.10` and `gilrs-core 0.5.15`. No project/toolkit license has been chosen;
   `quad-rand 0.2.3` still has no license file in its crate or declared repository; required notice
-  selection is unreviewed; and human approval remains.
+  selection is unreviewed; and human approval remains. Exact-package smoke fails unless both
+  manifests keep `quad-rand 0.2.3` as the sole dependency license-file gap.
 - A regression-tested ledger now identifies the 24 runtime visuals, one Windows icon resource, and
   13 JSON inputs embedded in the executable, distinguishing them from the much larger experimental
   asset tree. Every visual/resource row

@@ -266,6 +266,17 @@ try {
             throw "External and embedded manifests disagree on $field."
         }
     }
+    $expectedLicenseGapKey = "quad-rand 0.2.3"
+    $externalLicenseGapKey = @($externalManifest.dependency_license_file_gaps |
+        ForEach-Object { [string]$_ } | Sort-Object) -join "`n"
+    $embeddedLicenseGapKey = @($buildInfo.dependency_license_file_gaps |
+        ForEach-Object { [string]$_ } | Sort-Object) -join "`n"
+    if ($externalLicenseGapKey -ne $embeddedLicenseGapKey) {
+        throw "External and embedded manifests disagree on dependency license-file gaps."
+    }
+    if ($embeddedLicenseGapKey -ne $expectedLicenseGapKey) {
+        throw "Unexpected dependency license-file gaps: $embeddedLicenseGapKey"
+    }
     $releaseExeHash = (Get-FileHash -LiteralPath $releaseExe -Algorithm SHA256).Hash.ToLowerInvariant()
     if ($packagedExeHash -ne $releaseExeHash) {
         throw "Packaged executable differs from the release executable."
@@ -493,7 +504,7 @@ try {
     Write-Host "  Build ID: $expectedBuildId"
     Write-Host "  Executable SHA-256: $releaseExeHash"
     Write-Host "  Windows metadata: Hatchspire $($package.version), identity fields and custom icon verified"
-    Write-Host "  Package contract: $($archiveRecords.Count) entry hashes, required documents, UTC manifest, and sidecar verified"
+    Write-Host "  Package contract: $($archiveRecords.Count) entry hashes, required documents, UTC manifest, sidecar, and exact license-gap list verified"
     Write-Host "  Scenes: $($scenes.Count) at 1280x720, 1366x768, 1920x1080, and 960x540"
     Write-Host "  Worst p95 update+draw: $($worstP95.scene) $($worstP95.p95_cpu_micros) us"
     Write-Host "  Worst single update+draw: $($worstSingle.scene) $($worstSingle.max_cpu_micros) us"

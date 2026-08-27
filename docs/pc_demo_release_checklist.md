@@ -61,6 +61,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Packaged support/privacy drafts disclose local tester counters/export; known issues no longer claim resolved combat defects.
 - [x] Package audit lists the exact Windows dependency graph and bundles 120 registry texts plus four hash-verified exact-tag GilRs license copies.
 - [x] Exact-tag license texts fill the `gilrs`/`gilrs-core` crate omissions; project/toolkit metadata, `quad-rand`, selection, and approval remain explicit blockers.
+- [x] Release smoke fails unless both package manifests name exactly `quad-rand 0.2.3` as the sole missing dependency license file.
 - [x] A regression-tested ledger identifies all 38 embedded project art/data/resource inputs.
 - [x] A 240-cycle accelerated soak covers repeated town/tower/combat/recovery and native save reloads.
 - [x] The packaged optimized EXE byte-matches the release build and renders all 19 seeded scenes at 1280×720.
