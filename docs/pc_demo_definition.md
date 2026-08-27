@@ -105,9 +105,9 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   diagnostics; GPU memory, stable
   ordinary-play memory thresholds, sustained pacing, interaction,
   visual correctness, and clean-device testing remain.
-- The same EXE completes five consecutive rendered starts/exits from a working path with spaces and
-  Unicode while read-only, without writing beside itself. A write-denying directory ACL, live window
-  events, and clean physical PCs remain manual gates.
+- The same EXE completes five consecutive rendered starts/exits from a spaces/Unicode working
+  directory after its NTFS ACL is proven to deny file creation, without writing beside itself. Live
+  window events and clean physical PCs remain manual gates.
 - Clean preview archives can be preserved by full commit without replacing differing evidence. An
   isolated first-patch rehearsal has passed patch → preserved rollback → patch restoration while
   verifying archive hashes and embedded build identities; remote channel processing remains manual.

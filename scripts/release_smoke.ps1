@@ -83,6 +83,15 @@ function Assert-ChildPath {
     }
 }
 
+function Invoke-Icacls {
+    param([string[]]$Arguments)
+
+    $output = @(& icacls.exe @Arguments 2>&1)
+    if ($LASTEXITCODE -ne 0) {
+        throw "icacls failed: $($output -join [Environment]::NewLine)"
+    }
+}
+
 function Resolve-ProjectPath {
     param([string]$ProjectDir, [string]$Path)
 
@@ -473,10 +482,28 @@ try {
     $relocatedManifest = Join-Path $captureDir ".relocated_manifest_$PID.tsv"
     $relocatedStdout = Join-Path $captureDir ".relocated_stdout_$PID.log"
     $relocatedStderr = Join-Path $captureDir ".relocated_stderr_$PID.log"
+    $aclRestricted = $false
     try {
         New-Item -ItemType Directory -Path $relocatedDir | Out-Null
         Copy-Item -LiteralPath $releaseExe -Destination $relocatedExe
         (Get-Item -LiteralPath $relocatedExe).IsReadOnly = $true
+        $currentSid = [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+        Invoke-Icacls @($relocatedDir, "/grant:r", "*${currentSid}:(OI)(CI)(RX)")
+        $aclRestricted = $true
+        Invoke-Icacls @($relocatedDir, "/inheritance:r")
+
+        $writeProbe = Join-Path $relocatedDir "write-probe.tmp"
+        $writeDenied = $false
+        try {
+            [IO.File]::WriteAllText($writeProbe, "This file must not be created.")
+        } catch [UnauthorizedAccessException] {
+            $writeDenied = $true
+        }
+        if (-not $writeDenied) {
+            Remove-Item -LiteralPath $writeProbe -Force -ErrorAction SilentlyContinue
+            throw "The relocated launch directory did not deny file creation."
+        }
+
         Set-Item Env:HATCHSPIRE_CAPTURE_MANIFEST $relocatedManifest
         Set-Item Env:HATCHSPIRE_CAPTURE_FRAMES "30"
         Set-Item Env:HATCHSPIRE_WINDOW_WIDTH "1280"
@@ -519,6 +546,10 @@ try {
             Env:HATCHSPIRE_HEADLESS -ErrorAction SilentlyContinue
         Remove-Item -LiteralPath $relocatedManifest, $relocatedStdout, $relocatedStderr `
             -Force -ErrorAction SilentlyContinue
+        if ($aclRestricted -and (Test-Path -LiteralPath $relocatedDir)) {
+            Invoke-Icacls @($relocatedDir, "/grant:r", "*${currentSid}:(OI)(CI)(F)")
+            Invoke-Icacls @($relocatedDir, "/inheritance:e")
+        }
         if (Test-Path -LiteralPath $relocatedExe) {
             (Get-Item -LiteralPath $relocatedExe).IsReadOnly = $false
         }
@@ -546,7 +577,7 @@ try {
     } else {
         Write-Host "  Memory limit: diagnostic only; no stable capture-process ceiling established"
     }
-    Write-Host "  Relocated restarts: $RelocatedRestartCount clean starts/exits from a spaces + Unicode path, read-only EXE, no sidecar writes"
+    Write-Host "  Relocated restarts: $RelocatedRestartCount clean starts/exits from a spaces + Unicode write-denied directory, no sidecar writes"
     Write-Host "  Package status: internal preview; public approval still required" -ForegroundColor Yellow
 } finally {
     Pop-Location

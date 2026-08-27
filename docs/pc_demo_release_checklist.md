@@ -73,8 +73,8 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Release capture enforces a local, opt-in 16.667 ms p95 update+draw CPU budget across all 19 scenes.
 - [x] Exact-package capture records first/median/p95/final/max sampled and OS-peak memory diagnostics at all four resolutions.
 - [x] Exact-package sustained-soak tooling enforces wall-clock duration across all 19 scenes and marks short/headless runs as validation-only.
-- [x] The identical EXE launches read-only from a spaces/Unicode working path without sidecar writes.
-- [x] The identical EXE completes five consecutive rendered starts/exits from that relocated path.
+- [x] The identical EXE launches from a spaces/Unicode directory whose NTFS ACL is proven to deny file creation, without sidecar writes.
+- [x] The identical EXE completes five consecutive rendered starts/exits from that write-denied path.
 - [x] Internal catalog metadata removes the inherited repository link and unsupported public platform claim.
 - [x] A deploy-only follow-up makes the local preview download byte-match the sealed archive checksum.
 - [ ] Restricted itch download matches the recorded checksum and completes on a clean machine.
@@ -88,7 +88,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] Audio feedback is restrained, normalized, attributable, and the game remains clear while muted.
 - [x] Local opt-in tester summary reports saved pacing and balance measures without telemetry.
 - [ ] Real-time frame pacing and memory checks show no sustained degradation during the 2–4 hour soak run.
-- [ ] Alt+Tab, resize, fullscreen toggle, restart, non-ASCII path, spaces, and read-only launch folder pass.
+- [ ] Alt+Tab, interactive resize, and fullscreen toggle pass on physical Windows hardware.
 - [ ] Antivirus/SmartScreen behavior and unsigned-build decision are recorded.
 - [ ] At least five independent testers participate; required coaching/completion targets are met.
 - [ ] Store copy, screenshots, system requirements, controls, limitations, and support path are approved.

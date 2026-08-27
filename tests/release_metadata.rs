@@ -109,4 +109,7 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
         assert!(smoke.contains(field), "release smoke omits {field}");
     }
     assert!(smoke.contains("$versionInfo.Comments"));
+    assert!(smoke.contains("Invoke-Icacls"));
+    assert!(smoke.contains("/inheritance:r"));
+    assert!(smoke.contains("The relocated launch directory did not deny file creation."));
 }

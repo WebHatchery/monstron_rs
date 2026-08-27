@@ -34,8 +34,8 @@ Audit date: 26 August 2026
   exact-package harness can now keep one process rendering all 19 scenes for a real two-to-four-hour
   wall-clock interval while recording per-scene CPU and process-memory distributions; only a visible
   full-duration run counts as release evidence.
-  It also completes five consecutive rendered starts/exits while read-only from a working path
-  containing spaces and Unicode without sidecar writes.
+  It also completes five consecutive rendered starts/exits from a genuinely write-denying NTFS
+  working directory containing spaces and Unicode without sidecar writes.
   Help, package manifests, and release smoke now share an exact `version+g<commit>` build identity.
   Both package manifests additionally identify the full shared `macroquad-toolkit` commit and dirty
   state, while release smoke verifies the short toolkit identity embedded in the Windows executable.
@@ -94,7 +94,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,488 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The implementation contains 21,491 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
 - The automated suite currently passes 140 tests: 121 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, two release-inventory tests, three release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
@@ -155,11 +155,12 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   release smoke and the sustained runner reject mismatches against the current dependency checkout.
 - Native panics now append a local crash log beside the save. The exact EXE now carries verified
   Hatchspire product/file identity, Cargo-derived Windows version metadata, and a custom icon.
-  Clean-machine launch tests, a write-denying launch-directory ACL test, antivirus/SmartScreen
-  records, gamepad support, GPU profiling, stable ordinary-play memory profiling, and a human-observed
+  Clean-machine launch tests, antivirus/SmartScreen records, gamepad support, GPU profiling, stable
+  ordinary-play memory profiling, and a human-observed
   2–4 hour real-time play/device soak remain absent. An exact-package render-soak harness now enforces
   real elapsed time across all 19 scenes and records CPU and memory evidence; its full visible run
-  remains pending. The exact EXE does pass five consecutive read-only spaces/Unicode relocated starts and a provisional
+  remains pending. The exact EXE does pass five consecutive starts from a write-denying spaces/Unicode
+  launch directory and a provisional
   16.667 ms p95 update+draw CPU gate across all release-capture scenes, while a deterministic
   240-cycle engine/native-persistence soak covers 180 victories and 60 recovery returns without deadlock.
 - Current automated flows prove systems in isolation and in short chains, not that a new player can understand, enjoy, and finish the demo.
@@ -294,8 +295,9 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
   behavior, and CPU performance at other resolutions remain.
 - Test fresh install, paths containing spaces and non-ASCII characters, read-only launch folder, missing/corrupt save, Alt+Tab, resizing, fullscreen toggling, and repeated restart.
 - Implemented independently: the exact packaged EXE completes five consecutive rendered starts/exits
-  while read-only from a spaces/Unicode working path and writes no sidecars there. Clean-install,
-  write-denying ACL, and OS-event tests remain.
+  from a spaces/Unicode working directory whose NTFS ACL denies file creation. The gate first proves
+  its write probe fails, then verifies every boot and confirms no sidecar appears. Clean-install and
+  OS-event tests remain.
 - Verify on integrated graphics or an equivalent low-spec machine when the human provides access.
 - Add a release manifest containing version, commit, build date, SHA-256, archive size, and included files.
 - Add Windows application icon/version metadata if the chosen packaging path supports it cleanly.
