@@ -40,12 +40,21 @@ flaky, while a ceiling high enough to admit every observation would not be a mea
 claim. Distribution evidence now makes transient and sustained behavior distinguishable, but the
 values remain diagnostics until a real-time ordinary-play baseline supports a defensible threshold.
 
+## Sustained exact-package harness
+
+`scripts/realtime_render_soak.ps1` complements the short matrix by keeping one exact packaged process
+alive while it cycles all 19 scenes for a measured wall-clock interval. The default is a visible
+two-hour run; only visible runs lasting two to four hours are labelled release evidence. Short and
+headless modes validate the harness without closing the release gate. It writes ignored evidence to
+`target/realtime-render-soak/`; see `docs/realtime_render_soak.md` for the command and limitations.
+
 ## What this does not prove
 
 The CPU timer stops before `next_frame`, so it excludes GPU command execution, presentation,
 display sync, driver latency, PNG export, and waiting between frames. The process-memory sample
 includes screenshot readback/export overhead and sequential fixture loading, so it is not a normal-
 play memory profile. Thirty deterministic frames per scene do not measure sustained pacing, GPU
-memory, resource growth, input latency, OS events, audio, or thermal behavior. These are short
-regression diagnostics, not a substitute for the required 2–4 hour real-time run and tests on clean
-physical Windows machines, including a modest-spec machine.
+memory, resource growth, input latency, OS events, audio, or thermal behavior. The sustained harness
+adds elapsed-time and resource-growth evidence but still renders deterministic fixtures without
+player interaction. Neither probe substitutes for the required human-observed 2–4 hour play/device
+run and tests on clean physical Windows machines, including a modest-spec machine.

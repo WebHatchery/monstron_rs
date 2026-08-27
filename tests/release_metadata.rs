@@ -79,3 +79,19 @@ fn packaged_player_documents_match_current_local_data_and_known_issue_facts() {
     assert!(packager.contains("gilrs-core 0.5.15"));
     assert!(packager.contains("supplementalLicenseHashes"));
 }
+
+#[test]
+fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let soak = fs::read_to_string(root.join("scripts/realtime_render_soak.ps1"))
+        .expect("sustained render-soak script should be readable");
+
+    assert!(soak.contains("[int]$DurationSeconds = 7200"));
+    assert!(soak.contains("$DurationSeconds -le 14400"));
+    assert!(soak.contains("$releaseEvidence = $releaseDurationMet -and -not $Headless"));
+    assert!(soak.contains("validation_only"));
+    assert!(soak.contains("ExecutablePath = $executable"));
+    assert!(soak.contains("$manifest.included_files"));
+    assert!(soak.contains("$process.elapsed_wall_milliseconds"));
+    assert!(soak.contains("$timing.frames -ne $framesPerScene"));
+}

@@ -94,7 +94,9 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   pacing/balance counters; opening Help writes nothing and the game has no automatic upload path.
   Older saves begin these new counters at zero, so complete evidence requires a fresh tester save.
 - A 240-cycle accelerated soak covers town, tower, combat, recovery, backup-saving, and native
-  reload boundaries. Real-time rendering, OS-event, and physical-device soak testing remains.
+  reload boundaries. A separate exact-package harness can keep all 19 release scenes rendering in one
+  process for a measured two-to-four-hour interval while recording CPU and memory distributions.
+  Its full visible run, interaction path, OS-event, and physical-device soak testing remain.
 - The exact packaged release-profile EXE byte-matches the build and boots/renders all 19 seeded
   scenes in 1280×720, 1366×768, and 960×540 windows plus 1920×1080 fullscreen. The registry includes
   active combat targeting/intent, a damaged status state, victory, and defeat. Its opt-in 30-frame-per-scene CPU report

@@ -30,8 +30,10 @@ Audit date: 26 August 2026
   That gate also records opt-in local update+draw CPU samples, enforces a provisional 16.667 ms p95
   budget, and reports diagnostic maxima. All four resolution processes now emit mandatory local
   first/median/p95/final/max sampled and OS-peak working-set reports; GPU memory, a stable
-  ordinary-play memory threshold, and
-  sustained pacing remain unmeasured.
+  ordinary-play memory threshold, and sustained player-path pacing remain unmeasured. A separate
+  exact-package harness can now keep one process rendering all 19 scenes for a real two-to-four-hour
+  wall-clock interval while recording per-scene CPU and process-memory distributions; only a visible
+  full-duration run counts as release evidence.
   It also completes five consecutive rendered starts/exits while read-only from a working path
   containing spaces and Unicode without sidecar writes.
   Help, package manifests, and release smoke now share an exact `version+g<commit>` build identity.
@@ -90,9 +92,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,251 physical lines across 124 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 138 tests: 120 unit tests, 9 end-to-end game-flow tests,
-  one asset-registry test, two release-inventory tests, two release-metadata tests, one
+- The implementation contains 21,430 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The automated suite currently passes 139 tests: 120 unit tests, 9 end-to-end game-flow tests,
+  one asset-registry test, two release-inventory tests, three release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
 - Formatting and strict lint checks pass.
 - The Windows release already packages successfully as a self-contained 51.3 MB `hatchspire_windows.zip` containing `hatchspire.exe`.
@@ -149,8 +151,10 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - Native panics now append a local crash log beside the save. The exact EXE now carries verified
   Hatchspire product/file identity, Cargo-derived Windows version metadata, and a custom icon.
   Clean-machine launch tests, a write-denying launch-directory ACL test, antivirus/SmartScreen
-  records, gamepad support, GPU profiling, stable ordinary-play memory profiling, and a 2–4 hour real-time render/device soak remain
-  absent. The exact EXE does pass five consecutive read-only spaces/Unicode relocated starts and a provisional
+  records, gamepad support, GPU profiling, stable ordinary-play memory profiling, and a human-observed
+  2–4 hour real-time play/device soak remain absent. An exact-package render-soak harness now enforces
+  real elapsed time across all 19 scenes and records CPU and memory evidence; its full visible run
+  remains pending. The exact EXE does pass five consecutive read-only spaces/Unicode relocated starts and a provisional
   16.667 ms p95 update+draw CPU gate across all release-capture scenes, while a deterministic
   240-cycle engine/native-persistence soak covers 180 victories and 60 recovery returns without deadlock.
 - Current automated flows prove systems in isolation and in short chains, not that a new player can understand, enjoy, and finish the demo.
@@ -272,6 +276,11 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
 - Add a 2–4 hour soak scenario that repeatedly enters town, facilities, tower, combat, save/load, and quit/restart.
 - Implemented independently: a 240-cycle accelerated soak repeatedly crosses town, tower, combat,
   recovery, atomic backup-save, and native reload boundaries. It does not replace the real-time soak.
+- Implemented independently: `scripts/realtime_render_soak.ps1` verifies and extracts the exact
+  Windows archive, keeps one process cycling all 19 release scenes for a measured wall-clock interval,
+  and records CPU and working-set distributions. Its default is a visible two-hour run; short or
+  headless executions are explicitly validation-only, and the human-observed interaction/device gate
+  remains open.
 - Track frame time and memory at supported resolutions; investigate sustained degradation.
 - Implemented independently: all 19 optimized 1280×720 capture scenes enforce a provisional
   16.667 ms p95 update+draw CPU budget and report diagnostic maxima. Four resolution processes also
