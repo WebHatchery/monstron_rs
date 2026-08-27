@@ -22,7 +22,7 @@ Audit date: 26 August 2026
   native panics also append a local, manually shareable crash log beside the save. A post-publish
   packager now produces a self-identifying internal Windows preview with player/support/legal
   drafts, an exact checksum, and 120 available dependency license/notice texts. A regression gate
-  covers all 37 embedded project inputs.
+  covers all 38 embedded project inputs.
   A 240-cycle accelerated soak now stresses town, tower, combat, recovery, backup, and native reload.
   The exact packaged optimized EXE now passes a 19-scene boot/render smoke gate at 1280×720,
   1366×768, 1920×1080 fullscreen, and a deliberately small 960×540 window.
@@ -48,6 +48,8 @@ Audit date: 26 August 2026
   summary and no longer claim that resolved combat chroma/overlap defects are still present.
   Release smoke now independently rehashes all 129 ZIP entries and cross-checks the external and
   embedded manifests, checksum sidecar, strict UTC build date, and required document set.
+  The Windows executable now embeds a multi-resolution Hatchspire icon derived from the title art;
+  exact-package smoke compares its rendered 32 px pixels with the tracked icon source.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -85,8 +87,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
 - The implementation contains 21,251 physical lines across 124 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 137 tests: 120 unit tests, 9 end-to-end game-flow tests,
-  one asset-registry test, one release-inventory test, two release-metadata tests, one
+- The automated suite currently passes 138 tests: 120 unit tests, 9 end-to-end game-flow tests,
+  one asset-registry test, two release-inventory tests, two release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
 - Formatting and strict lint checks pass.
 - The Windows release already packages successfully as a self-contained 51.3 MB `hatchspire_windows.zip` containing `hatchspire.exe`.
@@ -122,8 +124,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   texts. No project/toolkit license has been chosen; `gilrs 0.10.10`, `gilrs-core 0.5.15`, and
   `quad-rand 0.2.3` ship no top-level license file despite declaring Apache/MIT or MIT; required
   notice selection is unreviewed; and human approval remains.
-- A regression-tested ledger now identifies the 24 visual and 13 JSON inputs embedded in the
-  executable, distinguishing them from the much larger experimental asset tree. Every visual row
+- A regression-tested ledger now identifies the 24 runtime visuals, one Windows icon resource, and
+  13 JSON inputs embedded in the executable, distinguishing them from the much larger experimental
+  asset tree. Every visual/resource row
   still lacks sufficient provenance and rights-holder approval for public distribution.
 - `publish-itch.ps1` exists, but the required `itch.json` does not. The publisher cannot target an itch.io project yet.
 - `game_page.json` now labels the build as an internal preview, describes the Windows target and
@@ -138,8 +141,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   exact Git revision and mark dirty builds. Assigning the approved demo version remains a
   release-candidate task.
 - Native panics now append a local crash log beside the save. The exact EXE now carries verified
-  Hatchspire product/file identity and Cargo-derived Windows version metadata. A custom Windows icon,
-  clean-machine launch tests, a write-denying launch-directory ACL test, antivirus/SmartScreen
+  Hatchspire product/file identity, Cargo-derived Windows version metadata, and a custom icon.
+  Clean-machine launch tests, a write-denying launch-directory ACL test, antivirus/SmartScreen
   records, gamepad support, GPU profiling, stable ordinary-play memory profiling, and a 2–4 hour real-time render/device soak remain
   absent. The exact EXE does pass a read-only spaces/Unicode relocation test and a provisional
   16.667 ms p95 update+draw CPU gate across all release-capture scenes, while a deterministic

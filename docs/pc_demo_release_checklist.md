@@ -44,7 +44,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Help & Support displays the running version, native save path, and recovery/report guidance.
 - [x] The main menu provides a visible native Exit Game control.
 - [x] Help and package manifests identify the exact Git build, including dirty working builds.
-- [x] The packaged EXE carries verified Windows product, filename, internal-name, and version fields.
+- [x] The packaged EXE carries verified Windows product, filename, internal-name, version, and custom-icon resources.
 - [x] Master/music/SFX values, mute, fullscreen, and reduced motion persist outside game saves.
 - [x] Windowed UI scale persists and preserves the complete canvas at 90%, 100%, 110%, and 125%.
 - [x] Supported historical saves normalize and rewrite fully; unreadable partial saves enter recovery.
@@ -61,7 +61,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Packaged support/privacy drafts disclose local tester counters/export; known issues no longer claim resolved combat defects.
 - [x] Package audit lists the exact Windows dependency graph and bundles 120 available license/notice texts.
 - [x] Missing project/toolkit license metadata and absent `gilrs`, `gilrs-core`, and `quad-rand` license files remain explicit blockers.
-- [x] A regression-tested ledger identifies all 37 embedded project art/data inputs.
+- [x] A regression-tested ledger identifies all 38 embedded project art/data/resource inputs.
 - [x] A 240-cycle accelerated soak covers repeated town/tower/combat/recovery and native save reloads.
 - [x] The packaged optimized EXE byte-matches the release build and renders all 19 seeded scenes at 1280×720.
 - [x] Automated structural capture passes for all 19 scenes at 1366×768, 1920×1080, and 960×540.

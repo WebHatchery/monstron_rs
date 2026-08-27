@@ -9,6 +9,7 @@ fn git_output(arguments: &[&str]) -> Option<String> {
 }
 
 fn main() {
+    println!("cargo:rerun-if-changed=assets/branding/hatchspire.ico");
     println!("cargo:rerun-if-changed=.git/HEAD");
     println!("cargo:rerun-if-changed=.git/index");
     if let Some(head_ref) = git_output(&["symbolic-ref", "-q", "HEAD"]) {
@@ -37,6 +38,7 @@ fn main() {
     if cfg!(windows) && windows_target {
         let mut resource = winres::WindowsResource::new();
         resource
+            .set_icon("assets/branding/hatchspire.ico")
             .set_language(0x0409)
             .set_version_info(winres::VersionInfo::FILEVERSION, packed_version(&version))
             .set_version_info(

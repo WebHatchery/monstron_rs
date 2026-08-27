@@ -28,6 +28,8 @@ const VISUAL_INPUTS: [&str; 24] = [
     "assets/generated/dungeon/dungeon_secret_discovery_v2_atlas_v1.png",
 ];
 
+const WINDOWS_RESOURCE_INPUTS: [&str; 1] = ["assets/branding/hatchspire.ico"];
+
 const DATA_INPUTS: [&str; 13] = [
     "assets/data/config.json",
     "assets/data/resources.json",
@@ -55,6 +57,7 @@ fn every_embedded_project_input_exists_and_is_in_the_provenance_ledger() {
     let root = Path::new(env!("CARGO_MANIFEST_DIR"));
     let visual_sources = format!("{}\n{}", read("src/assets/mod.rs"), read("src/game.rs"));
     let data_source = read("src/data/loader.rs");
+    let build_source = read("build.rs");
     let ledger = read("docs/shipped_asset_provenance.md");
 
     assert_eq!(
@@ -80,4 +83,49 @@ fn every_embedded_project_input_exists_and_is_in_the_provenance_ledger() {
             "provenance ledger omits: {relative}"
         );
     }
+
+    for relative in WINDOWS_RESOURCE_INPUTS {
+        assert!(
+            root.join(relative).is_file(),
+            "Windows resource input is missing: {relative}"
+        );
+        assert!(
+            build_source.contains(relative),
+            "inventory names a Windows resource that is not embedded: {relative}"
+        );
+        assert!(
+            ledger.contains(relative),
+            "provenance ledger omits Windows resource: {relative}"
+        );
+    }
+}
+
+#[test]
+fn windows_icon_contains_the_supported_resolution_set() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let bytes = fs::read(root.join(WINDOWS_RESOURCE_INPUTS[0])).expect("icon must be readable");
+    assert!(bytes.len() >= 6, "icon header is truncated");
+    assert_eq!(u16::from_le_bytes([bytes[0], bytes[1]]), 0);
+    assert_eq!(u16::from_le_bytes([bytes[2], bytes[3]]), 1);
+    let count = usize::from(u16::from_le_bytes([bytes[4], bytes[5]]));
+    assert!(bytes.len() >= 6 + count * 16, "icon directory is truncated");
+
+    let mut sizes = Vec::with_capacity(count);
+    for index in 0..count {
+        let offset = 6 + index * 16;
+        let width = if bytes[offset] == 0 {
+            256
+        } else {
+            u16::from(bytes[offset])
+        };
+        let height = if bytes[offset + 1] == 0 {
+            256
+        } else {
+            u16::from(bytes[offset + 1])
+        };
+        assert_eq!(width, height, "icon entry must be square");
+        sizes.push(width);
+    }
+    sizes.sort_unstable();
+    assert_eq!(sizes, [16, 24, 32, 48, 64, 128, 256]);
 }

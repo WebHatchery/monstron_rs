@@ -15,7 +15,8 @@ The gate:
 4. requires the versioned executable and all player/support/legal documents in the ZIP;
 5. requires the package commit and version to match Git HEAD and Cargo;
 6. hashes `hatchspire.exe` inside the ZIP and requires it to match the release build byte-for-byte;
-7. verifies the exact executable's Windows product/file name and Cargo-derived version fields;
+7. verifies the exact executable's Windows product/file name and Cargo-derived version fields, then
+   compares its rendered 32 px icon pixels with the tracked multi-resolution source;
 8. boots that optimized build through all 19 deterministic capture scenes in one process;
 9. records 30 update+draw CPU samples per scene, enforces a 16.667 ms p95 ceiling, and reports the
    diagnostic maximum without treating noisy first-use work as a release threshold;

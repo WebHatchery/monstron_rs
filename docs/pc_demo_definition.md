@@ -86,7 +86,7 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   dependency list, and 120 available registry-crate license/notice texts. Public approval remains.
   Release smoke independently rehashes every ZIP entry and cross-checks both manifests, the checksum
   sidecar, strict UTC build date, and required document set against the exact candidate.
-- The 37 embedded project inputs have a regression-tested provenance ledger; all visual approvals
+- The 38 embedded project inputs have a regression-tested provenance ledger; all visual approvals
   remain pending.
 - The Windows Help screen explicitly exports a local-only plain-text tester summary with saved
   pacing/balance counters; opening Help writes nothing and the game has no automatic upload path.
@@ -108,7 +108,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
 - Help, crash-report guidance, package manifests, and release smoke share a `version+g<commit>` build
   identity; choosing the public demo version remains a human release-candidate decision.
 - The exact packaged EXE exposes Cargo-derived Windows file/product versions plus Hatchspire product,
-  description, original-filename, and internal-name fields. A custom executable icon remains pending.
+  description, original-filename, and internal-name fields. It also embeds a multi-resolution custom
+  icon derived from the title art, which release smoke compares pixel-for-pixel with its source.
 - Catalog metadata is explicitly an internal preview, leads with visible mouse/touch controls, and
   makes no inherited repository or approved public-demo claim. Final store copy remains gated.
 - Combat embeds the processed transparent VFX atlas and separates portrait, HP, role/status, and

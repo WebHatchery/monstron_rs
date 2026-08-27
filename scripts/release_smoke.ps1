@@ -116,6 +116,34 @@ function Assert-FileRecords {
     }
 }
 
+function Get-IconPixelHash {
+    param([Drawing.Icon]$Icon)
+
+    $bitmap = $Icon.ToBitmap()
+    $hasher = [Security.Cryptography.SHA256]::Create()
+    try {
+        if ($bitmap.Width -ne 32 -or $bitmap.Height -ne 32) {
+            throw "Expected a 32x32 Windows icon; found $($bitmap.Width)x$($bitmap.Height)."
+        }
+        $pixels = [byte[]]::new($bitmap.Width * $bitmap.Height * 4)
+        $offset = 0
+        for ($y = 0; $y -lt $bitmap.Height; $y++) {
+            for ($x = 0; $x -lt $bitmap.Width; $x++) {
+                $pixel = $bitmap.GetPixel($x, $y)
+                $pixels[$offset] = $pixel.A
+                $pixels[$offset + 1] = $pixel.R
+                $pixels[$offset + 2] = $pixel.G
+                $pixels[$offset + 3] = $pixel.B
+                $offset += 4
+            }
+        }
+        [Convert]::ToHexString($hasher.ComputeHash($pixels)).ToLowerInvariant()
+    } finally {
+        $hasher.Dispose()
+        $bitmap.Dispose()
+    }
+}
+
 $projectDir = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
 $archive = if ([IO.Path]::IsPathRooted($ArchivePath)) {
     [IO.Path]::GetFullPath($ArchivePath)
@@ -251,6 +279,26 @@ try {
         if ([string]$versionInfo.$field -ne $expectedVersionFields[$field]) {
             throw "Windows version field $field is '$($versionInfo.$field)'; expected '$($expectedVersionFields[$field])'."
         }
+    }
+    Add-Type -AssemblyName System.Drawing
+    $sourceIconPath = Join-Path $projectDir "assets\branding\hatchspire.ico"
+    if (-not (Test-Path -LiteralPath $sourceIconPath -PathType Leaf)) {
+        throw "Windows icon source is missing: $sourceIconPath"
+    }
+    $expectedIcon = [Drawing.Icon]::new($sourceIconPath, [Drawing.Size]::new(32, 32))
+    $embeddedIcon = [Drawing.Icon]::ExtractAssociatedIcon($releaseExe)
+    try {
+        if ($null -eq $embeddedIcon) {
+            throw "Packaged executable has no extractable Windows icon."
+        }
+        $expectedIconHash = Get-IconPixelHash -Icon $expectedIcon
+        $embeddedIconHash = Get-IconPixelHash -Icon $embeddedIcon
+        if ($embeddedIconHash -ne $expectedIconHash) {
+            throw "Packaged executable icon does not match assets/branding/hatchspire.ico."
+        }
+    } finally {
+        $expectedIcon.Dispose()
+        if ($null -ne $embeddedIcon) { $embeddedIcon.Dispose() }
     }
 
     $scenes = @(
@@ -424,7 +472,7 @@ try {
     Write-Host "  Commit: $commit"
     Write-Host "  Build ID: $expectedBuildId"
     Write-Host "  Executable SHA-256: $releaseExeHash"
-    Write-Host "  Windows metadata: Hatchspire $($package.version), filename and internal name verified"
+    Write-Host "  Windows metadata: Hatchspire $($package.version), identity fields and custom icon verified"
     Write-Host "  Package contract: $($archiveRecords.Count) entry hashes, required documents, UTC manifest, and sidecar verified"
     Write-Host "  Scenes: $($scenes.Count) at 1280x720, 1366x768, 1920x1080, and 960x540"
     Write-Host "  Worst p95 update+draw: $($worstP95.scene) $($worstP95.p95_cpu_micros) us"

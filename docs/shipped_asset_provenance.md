@@ -15,6 +15,7 @@ presence in the repository is not proof that it may be published.
 | Embedded file | Creator/source | Method | Rights basis / attribution | Modifications | Human approval |
 | --- | --- | --- | --- | --- | --- |
 | `hatchspire_title.png` | Unresolved | Unresolved | Unresolved | Unresolved | Pending |
+| `assets/branding/hatchspire.ico` | Derived from `hatchspire_title.png` | Local crop and multi-resolution conversion | Inherits unresolved title-art basis | Cropped to the hatchery egg and encoded at 16–256 px | Pending |
 | `assets/generated/monster_art/monster_sprite_atlas_v1.png` | Unresolved | Generated; tool/model record required | Unresolved | Unresolved | Pending |
 | `assets/generated/monster_art/canonical_egg_atlas_v1.png` | Unresolved | Generated; tool/model record required | Unresolved | Unresolved | Pending |
 | `assets/generated/monster_art/enemy_boss_sprite_v2_atlas.png` | Unresolved | Generated; tool/model record required | Unresolved | Unresolved | Pending |
@@ -62,8 +63,8 @@ and inherited-source status.
 
 ## Findings
 
-- 37 project inputs are embedded: 24 visual files and 13 JSON data files.
+- 38 project inputs are embedded: 24 runtime visual files, one Windows icon resource, and 13 JSON data files.
 - No audio file is embedded.
 - `asset_registry.json` correctly remains empty because no external runtime asset is required.
-- All 24 visual rows lack sufficient provenance and approval for a public release.
+- All 25 visual/resource rows lack sufficient provenance and approval for a public release.
 - The repository and internal macroquad-toolkit do not declare license metadata.
