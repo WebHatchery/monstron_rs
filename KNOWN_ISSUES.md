@@ -6,9 +6,10 @@ This is an internal development build, not the approved public demo.
 - Floors 1–3 do not yet end in an authored demo finale or progression boundary.
 - No music or sound effects ship in the build. Audio settings are present but have no approved
   audio content to control.
-- The combat presentation is not release-ready; the current verification scene includes visible
-  chroma/magenta art defects, overlap, and small text.
+- Combat has deterministic four-size clarity captures, but final human visual review is pending.
 - Gamepad support is not implemented.
+- The executable has verified Windows version/product fields but no approved custom icon or code
+  signature. Windows may show a generic icon or an unsigned-app warning.
 - The build uses one local save slot and has no cloud save or account support.
 - Version `0.1.0` is a development placeholder, not an approved demo version. The `+g<commit>`
   suffix identifies the exact build for testing.

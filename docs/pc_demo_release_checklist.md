@@ -58,6 +58,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] ZIP includes versioned executable, readme, support, known issues, credits, notices, and privacy text.
 - [ ] Release manifest records version, commit, build date, file list, archive size, and SHA-256.
 - [x] Internal preview packager adds all draft documents, per-file hashes, build identity, and exact archive checksum.
+- [x] Packaged support/privacy drafts disclose local tester counters/export; known issues no longer claim resolved combat defects.
 - [x] Package audit lists the exact Windows dependency graph and bundles 120 available license/notice texts.
 - [x] Missing project/toolkit license metadata and absent `gilrs`, `gilrs-core`, and `quad-rand` license files remain explicit blockers.
 - [x] A regression-tested ledger identifies all 37 embedded project art/data inputs.

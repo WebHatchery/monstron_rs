@@ -11,6 +11,7 @@ When reporting a problem, include:
 - your Windows version, display resolution, and display scale;
 - whether the problem still happens after restarting;
 - `crash_log.txt`, if it exists beside the saved-camp file; and
+- the optional `tester_summary.txt` pacing/balance snapshot, after inspecting it; and
 - the saved-camp file only when you are comfortable sharing its local gameplay data.
 
 The game never uploads logs or saves automatically. Remove any material you do not want to share.

@@ -4,7 +4,7 @@ Hatchspire is a monster-raising town RPG about rebuilding a camp beneath a ruine
 for tower-born companions, and preparing them for increasingly dangerous expeditions.
 
 This archive is an internal pre-release preview. It is not yet the approved public demo: onboarding,
-the authored demo finale, audio, final combat presentation, rights approval, and outside testing
+the authored demo finale, audio, a custom executable icon, rights approval, and outside testing
 remain incomplete.
 
 ## Install and start
@@ -29,5 +29,8 @@ preserving the file it replaces. New Game and Save Reset both require visible co
 
 Settings and saves are kept in the current Windows user's local application-data folder. Open
 **Settings → Help & Support** in the game to see the exact saved-camp path and running version.
+That screen can also create `tester_summary.txt` beside the save when you tap **EXPORT LOCAL
+SUMMARY**. The plain-text pacing/balance summary is never uploaded automatically; inspect it before
+choosing whether to share it with the private test team.
 
 See `docs/SUPPORT.md`, `docs/KNOWN_ISSUES.md`, and `docs/PRIVACY.md` before testing.

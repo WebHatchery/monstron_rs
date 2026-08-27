@@ -36,3 +36,38 @@ fn catalog_metadata_is_explicitly_internal_and_has_no_inherited_repository_claim
         .any(|control| control["key"] == "Tower actions"));
     assert!(controls.iter().any(|control| control["key"] == "Combat"));
 }
+
+#[test]
+fn packaged_player_documents_match_current_local_data_and_known_issue_facts() {
+    let root = Path::new(env!("CARGO_MANIFEST_DIR"));
+    let read = |name: &str| {
+        fs::read_to_string(root.join(name)).unwrap_or_else(|error| panic!("{name}: {error}"))
+    };
+    let player_readme = read("PLAYER_README.md");
+    let support = read("SUPPORT.md");
+    let known_issues = read("KNOWN_ISSUES.md");
+    let privacy = read("PRIVACY.md");
+    let packager = read("scripts/package_windows_preview.ps1");
+    let normalized = |text: &str| text.split_whitespace().collect::<Vec<_>>().join(" ");
+
+    for required in [
+        "PLAYER_README.md",
+        "SUPPORT.md",
+        "KNOWN_ISSUES.md",
+        "PRIVACY.md",
+        "CREDITS.md",
+        "THIRD_PARTY_NOTICES.md",
+    ] {
+        assert!(packager.contains(required), "packager omits {required}");
+    }
+
+    assert!(normalized(&player_readme).contains("EXPORT LOCAL SUMMARY"));
+    assert!(support.contains("tester_summary.txt"));
+    let privacy = normalized(&privacy);
+    assert!(privacy.contains("saved local pacing/balance counters"));
+    assert!(privacy.contains("only when the player taps"));
+    assert!(privacy.contains("never uploaded automatically"));
+    assert!(!known_issues.contains("chroma/magenta art defects"));
+    assert!(known_issues.contains("final human visual review is pending"));
+    assert!(normalized(&known_issues).contains("no approved custom icon or code"));
+}

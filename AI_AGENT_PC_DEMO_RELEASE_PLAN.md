@@ -44,6 +44,8 @@ Audit date: 26 August 2026
   Clean preview archives can now be preserved under their full commits without replacing different
   evidence. A real local first-patch rehearsal passed patch → preserved predecessor → patch while
   verifying archive sizes, SHA-256 sidecars, and embedded build identities at every switch.
+  Packaged support, privacy, readme, and known-issues drafts now describe the opt-in local tester
+  summary and no longer claim that resolved combat chroma/overlap defects are still present.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -81,8 +83,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
 - The implementation contains 21,251 physical lines across 124 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 136 tests: 120 unit tests, 9 end-to-end game-flow tests,
-  one asset-registry test, one release-inventory test, one release-metadata test, one
+- The automated suite currently passes 137 tests: 120 unit tests, 9 end-to-end game-flow tests,
+  one asset-registry test, one release-inventory test, two release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
 - Formatting and strict lint checks pass.
 - The Windows release already packages successfully as a self-contained 51.3 MB `hatchspire_windows.zip` containing `hatchspire.exe`.
