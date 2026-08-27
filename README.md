@@ -93,6 +93,7 @@ Standing design constraints:
 - `docs/release_profile_smoke.md` — exact-package optimized boot/render smoke gate across all 19 scenes.
 - `docs/performance_probe.md` — opt-in optimized CPU budget plus four-resolution process-memory diagnostics.
 - `docs/local_tester_summary.md` — explicit local-only pacing/balance export and migration boundary.
+- `docs/windows_rollback_procedure.md` — preserved-build rollback and first-patch rehearsal.
 - `TODO.md` — open implementation, testing, and verification work.
 
 ## Internal Windows preview package
