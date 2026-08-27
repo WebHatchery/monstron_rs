@@ -368,7 +368,11 @@ try {
     $captureSummaryPath = Join-Path $captureDir "capture_summary.json"
     Remove-Item -LiteralPath $captureSummaryPath -Force -ErrorAction SilentlyContinue
     $captureRecords = [Collections.Generic.List[object]]::new()
+    $performanceReports = @()
     $performanceReport = Join-Path $captureDir "performance.jsonl"
+    $performanceReports += [pscustomobject]@{
+        Path = $performanceReport; Label = "1280x720"; Width = 1280; Height = 720
+    }
     $memoryReports = @()
     $memoryReport = Join-Path $captureDir "memory_1280x720.json"
     if (Test-Path -LiteralPath $performanceReport) {
@@ -382,26 +386,7 @@ try {
         Remove-Item Env:HATCHSPIRE_PERF_REPORT -ErrorAction SilentlyContinue
     }
 
-    if (-not (Test-Path -LiteralPath $performanceReport -PathType Leaf)) {
-        throw "Release capture did not write its performance report."
-    }
-    $performanceSamples = @(Get-Content -LiteralPath $performanceReport |
-        Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
-        ForEach-Object { $_ | ConvertFrom-Json })
-    if ($performanceSamples.Count -ne $scenes.Count) {
-        throw "Performance report contains $($performanceSamples.Count) scenes; expected $($scenes.Count)."
-    }
     $p95LimitMicros = [Math]::Round($MaxP95CpuMs * 1000.0)
-    foreach ($sample in $performanceSamples) {
-        if ($sample.frames -ne 30 -or $sample.width -ne 1280 -or $sample.height -ne 720) {
-            throw "Invalid performance sample shape for $($sample.scene)."
-        }
-        if ($sample.p95_cpu_micros -gt $p95LimitMicros) {
-            throw "$($sample.scene) p95 CPU time is $($sample.p95_cpu_micros) us; limit is $p95LimitMicros us."
-        }
-    }
-    $worstP95 = $performanceSamples | Sort-Object p95_cpu_micros -Descending | Select-Object -First 1
-    $worstSingle = $performanceSamples | Sort-Object max_cpu_micros -Descending | Select-Object -First 1
     $memoryReports += Get-Content -LiteralPath $memoryReport -Raw | ConvertFrom-Json
 
     foreach ($scene in $scenes) {
@@ -434,12 +419,25 @@ try {
     foreach ($resolution in $additionalResolutions) {
         $matrixOutputDir = Join-Path $outputDir $resolution.Label
         $matrixMemoryReport = Join-Path $captureDir ("memory_{0}.json" -f $resolution.Label)
-        & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 `
-            -WindowWidth $resolution.Width -WindowHeight $resolution.Height `
-            -OutputDir $matrixOutputDir -MinBytes 20000 -SkipBuild -Release `
-            -ProcessReportPath $matrixMemoryReport -SampleWindowsGpuCounters `
-            -Fullscreen:$resolution.Fullscreen
-        if (-not $?) { throw "Release capture failed at $($resolution.Label)." }
+        $matrixPerformanceReport = Join-Path $captureDir ("performance_{0}.jsonl" -f $resolution.Label)
+        Remove-Item -LiteralPath $matrixPerformanceReport -Force -ErrorAction SilentlyContinue
+        $performanceReports += [pscustomobject]@{
+            Path = $matrixPerformanceReport
+            Label = $resolution.Label
+            Width = $resolution.Width
+            Height = $resolution.Height
+        }
+        Set-Item Env:HATCHSPIRE_PERF_REPORT $matrixPerformanceReport
+        try {
+            & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 `
+                -WindowWidth $resolution.Width -WindowHeight $resolution.Height `
+                -OutputDir $matrixOutputDir -MinBytes 20000 -SkipBuild -Release `
+                -ProcessReportPath $matrixMemoryReport -SampleWindowsGpuCounters `
+                -Fullscreen:$resolution.Fullscreen
+            if (-not $?) { throw "Release capture failed at $($resolution.Label)." }
+        } finally {
+            Remove-Item Env:HATCHSPIRE_PERF_REPORT -ErrorAction SilentlyContinue
+        }
         $memoryReports += Get-Content -LiteralPath $matrixMemoryReport -Raw | ConvertFrom-Json
 
         $matrixCaptureDir = Join-Path $projectDir $matrixOutputDir
@@ -465,6 +463,31 @@ try {
             })
         }
     }
+
+    $performanceSamples = @()
+    foreach ($report in $performanceReports) {
+        if (-not (Test-Path -LiteralPath $report.Path -PathType Leaf)) {
+            throw "Release capture did not write the $($report.Label) performance report."
+        }
+        $resolutionSamples = @(Get-Content -LiteralPath $report.Path |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+            ForEach-Object { $_ | ConvertFrom-Json })
+        if ($resolutionSamples.Count -ne $scenes.Count) {
+            throw "$($report.Label) performance report contains $($resolutionSamples.Count) scenes; expected $($scenes.Count)."
+        }
+        foreach ($sample in $resolutionSamples) {
+            if ($sample.frames -ne 30 -or $sample.width -ne $report.Width -or $sample.height -ne $report.Height) {
+                throw "Invalid $($report.Label) performance sample shape for $($sample.scene)."
+            }
+            if ($sample.p95_cpu_micros -gt $p95LimitMicros) {
+                throw "$($report.Label) $($sample.scene) p95 CPU time is $($sample.p95_cpu_micros) us; limit is $p95LimitMicros us."
+            }
+            $sample | Add-Member -NotePropertyName resolution_label -NotePropertyValue $report.Label
+            $performanceSamples += $sample
+        }
+    }
+    $worstP95 = $performanceSamples | Sort-Object p95_cpu_micros -Descending | Select-Object -First 1
+    $worstSingle = $performanceSamples | Sort-Object max_cpu_micros -Descending | Select-Object -First 1
 
     $sampledWorkingSetLimitBytes = [Math]::Round($MaxSampledWorkingSetMb * 1MB)
     foreach ($memorySample in $memoryReports) {
@@ -623,6 +646,13 @@ try {
         scene_count = $scenes.Count
         resolution_count = 4
         capture_count = $captureRecords.Count
+        performance_sample_count = $performanceSamples.Count
+        worst_p95_cpu_resolution = $worstP95.resolution_label
+        worst_p95_cpu_scene = $worstP95.scene
+        worst_p95_cpu_micros = [long]$worstP95.p95_cpu_micros
+        worst_single_cpu_resolution = $worstSingle.resolution_label
+        worst_single_cpu_scene = $worstSingle.scene
+        worst_single_cpu_micros = [long]$worstSingle.max_cpu_micros
         scenes = $scenes
         resolutions = @(
             [ordered]@{ label = "1280x720"; width = 1280; height = 720; fullscreen = $false }
@@ -647,8 +677,9 @@ try {
     Write-Host "  Windows metadata: Hatchspire $($package.version), identity fields and custom icon verified"
     Write-Host "  Package contract: $($archiveRecords.Count) entry hashes, required documents, UTC manifest, sidecar, and exact license-gap list verified"
     Write-Host "  Scenes: $($scenes.Count) at 1280x720, 1366x768, 1920x1080, and 960x540"
-    Write-Host "  Worst p95 update+draw: $($worstP95.scene) $($worstP95.p95_cpu_micros) us"
-    Write-Host "  Worst single update+draw: $($worstSingle.scene) $($worstSingle.max_cpu_micros) us"
+    Write-Host "  CPU evidence: $($performanceSamples.Count) scene/resolution records"
+    Write-Host "  Worst p95 update+draw: $($worstP95.resolution_label) $($worstP95.scene) $($worstP95.p95_cpu_micros) us"
+    Write-Host "  Worst single update+draw: $($worstSingle.resolution_label) $($worstSingle.scene) $($worstSingle.max_cpu_micros) us"
     Write-Host "  Enforced CPU limit: p95 $p95LimitMicros us"
     Write-Host "  Sampled working set: worst p95 $worstP95MemoryMb MB; worst final $worstFinalMemoryMb MB"
     Write-Host "  Diagnostic transient peaks: sampled $worstSampledMemoryMb MB; OS $worstOsPeakMemoryMb MB"

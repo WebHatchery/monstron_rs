@@ -121,6 +121,9 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
     assert!(smoke.contains("-SampleWindowsGpuCounters"));
     assert!(smoke.contains("[switch]$RequireGpuCounters"));
     assert!(smoke.contains("gpu_counter_reports_sampled"));
+    assert!(smoke.contains("performance_sample_count = $performanceSamples.Count"));
+    assert!(smoke.contains("performance_{0}.jsonl"));
+    assert!(smoke.contains("worst_p95_cpu_resolution"));
 
     let defender = fs::read_to_string(root.join("scripts/defender_scan.ps1"))
         .expect("Defender exact-package scanner should be readable");

@@ -70,7 +70,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Combat VFX uses the processed transparent atlas; unit-card portrait, HP, role, and stat rows do not overlap.
 - [x] Deterministic combat captures cover active, victory, and defeat states with visible continuation wording.
 - [x] Combat capture names rules-backed automatic Attack/Skill targets, the next enemy intent/target, damage, and status effects.
-- [x] Release capture enforces a local, opt-in 16.667 ms p95 update+draw CPU budget across all 19 scenes.
+- [x] Release capture enforces a local, opt-in 16.667 ms p95 update+draw CPU budget across all 76 scene/resolution records.
 - [x] Exact-package capture records first/median/p95/final/max sampled and OS-peak memory diagnostics at all four resolutions.
 - [x] Exact-package smoke and sustained probes record process-scoped Windows dedicated/shared GPU-memory distributions and aggregate 3D-engine diagnostics when the host exposes them.
 - [x] Exact-package sustained-soak tooling enforces wall-clock duration across all 19 scenes and marks short/headless runs as validation-only.

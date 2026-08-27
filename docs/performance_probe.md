@@ -3,8 +3,9 @@
 Audit date: 27 August 2026
 
 The exact packaged optimized Windows executable records a local performance sample while
-`scripts/release_smoke.ps1` renders its 19 deterministic scenes. Each scene contributes 30 frames
-at 1280x720. The sample contains the average, 95th-percentile, and maximum CPU time spent inside
+`scripts/release_smoke.ps1` renders its 19 deterministic scenes at 1280×720, 1366×768,
+1920×1080 fullscreen, and 960×540. Every scene/resolution pair contributes 30 frames, producing 76
+records. Each sample contains the average, 95th-percentile, and maximum CPU time spent inside
 Hatchspire's `update` and `draw` calls.
 
 The smoke gate requires every scene's p95 update+draw time to be at most 16.667 ms, a provisional
@@ -19,9 +20,10 @@ Maximum samples are retained for diagnosis but are not a release threshold: one 
 host scheduling make a single cold-frame cap too noisy for this short probe. These values are local
 regression evidence, not minimum-system-requirement claims.
 
-The opt-in JSON Lines report is written to the ignored file
-`target/release-smoke/performance.jsonl`. Hatchspire creates no report during ordinary play, sends
-nothing over the network, and does not treat the output as telemetry.
+The opt-in JSON Lines reports are written to ignored files under `target/release-smoke/`, with
+`performance.jsonl` for 1280×720 and a resolution suffix for each additional size. Hatchspire
+creates no report during ordinary play, sends nothing over the network, and does not treat the
+output as telemetry.
 
 ## Capture-process memory
 

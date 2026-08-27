@@ -27,8 +27,9 @@ Audit date: 27 August 2026
   A 240-cycle accelerated soak now stresses town, tower, combat, recovery, backup, and native reload.
   The exact packaged optimized EXE now passes a 19-scene boot/render smoke gate at 1280×720,
   1366×768, 1920×1080 fullscreen, and a deliberately small 960×540 window.
-  That gate also records opt-in local update+draw CPU samples, enforces a provisional 16.667 ms p95
-  budget, and reports diagnostic maxima. All four resolution processes now emit mandatory local
+  That gate also records opt-in local update+draw CPU samples at all four resolutions, enforces a
+  provisional 16.667 ms p95 budget across all 76 scene/resolution records, and reports diagnostic
+  maxima. All four resolution processes now emit mandatory local
   first/median/p95/final/max sampled and OS-peak working-set reports. They now also request Windows
   process-scoped dedicated/shared GPU-memory distributions and aggregate 3D-engine diagnostics, with
   explicit unavailable states and an optional availability gate. A portable VRAM threshold, GPU
@@ -113,7 +114,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,608 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The implementation contains 21,611 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
 - The automated suite currently passes 140 tests: 121 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, two release-inventory tests, three release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
@@ -313,13 +314,13 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
   headless executions are explicitly validation-only, and the human-observed interaction/device gate
   remains open.
 - Track frame time and memory at supported resolutions; investigate sustained degradation.
-- Implemented independently: all 19 optimized 1280×720 capture scenes enforce a provisional
-  16.667 ms p95 update+draw CPU budget and report diagnostic maxima. Four resolution processes also
+- Implemented independently: all 76 optimized scene/resolution records enforce a provisional
+  16.667 ms p95 update+draw CPU budget and report diagnostic maxima. All four processes also
   require internally ordered sampled-memory distributions and OS peaks. Both smoke and sustained
   probes request dedicated/shared GPU-memory and aggregate 3D-engine counters, explicitly record
   unavailable hosts, and can require counter availability. Cold capture peaks are too volatile for
-  a defensible default memory cap; portable VRAM limits, GPU presentation timing, ordinary-play memory, sustained real-time
-  behavior, and CPU performance at other resolutions remain.
+  a defensible default memory cap; portable VRAM limits, GPU presentation timing, ordinary-play
+  memory, and sustained real-time behavior remain.
 - Test fresh install, paths containing spaces and non-ASCII characters, read-only launch folder, missing/corrupt save, Alt+Tab, resizing, fullscreen toggling, and repeated restart.
 - Implemented independently: the exact packaged EXE completes five consecutive rendered starts/exits
   from a spaces/Unicode working directory whose NTFS ACL denies file creation. The gate first proves

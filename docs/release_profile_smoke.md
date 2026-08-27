@@ -21,8 +21,9 @@ The gate:
    embedded shared-toolkit identity, then compares its rendered 32 px icon pixels with the tracked
    multi-resolution source;
 8. boots that optimized build through all 19 deterministic capture scenes in one process;
-9. records 30 update+draw CPU samples per scene, enforces a 16.667 ms p95 ceiling, and reports the
-   diagnostic maximum without treating noisy first-use work as a release threshold;
+9. records 30 update+draw CPU samples for every scene at all four resolutions, enforces a 16.667 ms
+   p95 ceiling across all 76 scene/resolution records, and reports the diagnostic maximum without
+   treating noisy first-use work as a release threshold;
 10. requires internally ordered first/median/p95/final/maximum sampled working sets and an OS peak
    from each resolution process, with an optional explicit sampled-memory ceiling but no unstable
    default cap;
@@ -54,7 +55,7 @@ and executable SHA-256. See `docs/performance_probe.md` for the measurement boun
 
 ## What this does not prove
 
-The smoke gate verifies startup, seeded update/draw CPU time, short-batch process and available GPU-memory reporting,
+The smoke gate verifies startup, seeded update/draw CPU time across the complete four-size matrix, short-batch process and available GPU-memory reporting,
 capture output, and clean process completion. It does not play the controls, compare visual
 correctness, or traverse the
 scope-dependent full demo,
