@@ -69,6 +69,9 @@ Audit date: 26 August 2026
   Exact-package smoke now records identity and SHA-256 evidence for all 76 four-size PNGs. A separate
   visual-review generator rehashes that matrix into a self-contained candidate gallery and blank
   scene-by-scene decision record without claiming human taste approval.
+  Proposed itch page, FAQ, release notes, restricted invitation, launch post, and first-patch post
+  drafts now separate verified facts from conspicuous human decisions. A clean-package generator
+  fills only exact candidate identities and leaves copy approval, upload, and release authority false.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -105,7 +108,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,549 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The implementation contains 21,578 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
 - The automated suite currently passes 140 tests: 121 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, two release-inventory tests, three release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
@@ -360,6 +363,10 @@ Estimated agent effort: 3–6 working days after provenance information is avail
 - Package a clean Windows ZIP with the executable and approved player-facing documents.
 - Run the project publisher with no parameters, then the itch publisher in dry-run/preview mode.
 - Draft the itch page description, short description, tags, system requirements, installation instructions, content notes, known issues, release notes, FAQ, and update post.
+- Implemented independently: `docs/itch_store_page_draft.md` and
+  `docs/demo_release_messages_draft.md` cover that copy without presenting proposed scope, playtime,
+  requirements, support, disclosures, price, or accepted issues as approved. A candidate-stamped
+  packet generator fills exact build/hashes while preserving every human decision marker.
 - Prepare approved screenshots, cover art, thumbnail, and optional short trailer assets.
 - Generate checksums and archive the exact release candidate.
 

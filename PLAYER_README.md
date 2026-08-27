@@ -4,8 +4,7 @@ Hatchspire is a monster-raising town RPG about rebuilding a camp beneath a ruine
 for tower-born companions, and preparing them for increasingly dangerous expeditions.
 
 This archive is an internal pre-release preview. It is not yet the approved public demo: onboarding,
-the authored demo finale, audio, a custom executable icon, rights approval, and outside testing
-remain incomplete.
+the authored demo finale, audio, rights approval, and outside testing remain incomplete.
 
 ## Install and start
 

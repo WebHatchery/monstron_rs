@@ -62,6 +62,7 @@ fn packaged_player_documents_match_current_local_data_and_known_issue_facts() {
     }
 
     assert!(normalized(&player_readme).contains("EXPORT LOCAL SUMMARY"));
+    assert!(!normalized(&player_readme).contains("custom executable icon, rights approval"));
     assert!(support.contains("tester_summary.txt"));
     let privacy = normalized(&privacy);
     assert!(privacy.contains("saved local pacing/balance counters"));
@@ -170,4 +171,32 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
         .collect::<Vec<_>>()
         .join(" ")
         .contains("agent judgment do not pass the visual gate"));
+
+    let storefront_packet =
+        fs::read_to_string(root.join("scripts/create_storefront_review_packet.ps1"))
+            .expect("storefront packet generator should be readable");
+    assert!(storefront_packet.contains("awaiting_human_storefront_approval"));
+    assert!(storefront_packet.contains("status --porcelain"));
+    assert!(storefront_packet.contains("copy HEAD does not match the sealed package commit"));
+    assert!(storefront_packet.contains("refusing to overwrite possible human evidence"));
+    assert!(storefront_packet.contains("human_storefront_review_recorded = $false"));
+    assert!(storefront_packet.contains("upload_authorized = $false"));
+    assert!(storefront_packet.contains("release_approval_granted = $false"));
+
+    let store_draft = fs::read_to_string(root.join("docs/itch_store_page_draft.md"))
+        .expect("itch store-page draft should be readable");
+    assert!(store_draft.contains("{{ZIP_SHA256}}"));
+    assert!(store_draft.contains("[[HUMAN APPROVAL REQUIRED:"));
+    assert!(store_draft
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+        .contains("Do not invent CPU, RAM, GPU, storage"));
+    assert!(store_draft.contains("do not select HTML5"));
+
+    let release_messages = fs::read_to_string(root.join("docs/demo_release_messages_draft.md"))
+        .expect("release-message drafts should be readable");
+    assert!(release_messages.contains("Restricted test invitation"));
+    assert!(release_messages.contains("Public demo launch post"));
+    assert!(release_messages.contains("First-patch update post"));
 }
