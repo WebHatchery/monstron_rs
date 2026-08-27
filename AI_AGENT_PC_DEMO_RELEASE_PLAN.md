@@ -46,6 +46,8 @@ Audit date: 26 August 2026
   verifying archive sizes, SHA-256 sidecars, and embedded build identities at every switch.
   Packaged support, privacy, readme, and known-issues drafts now describe the opt-in local tester
   summary and no longer claim that resolved combat chroma/overlap defects are still present.
+  Release smoke now independently rehashes all 129 ZIP entries and cross-checks the external and
+  embedded manifests, checksum sidecar, strict UTC build date, and required document set.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.

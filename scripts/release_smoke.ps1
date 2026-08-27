@@ -11,6 +11,8 @@
 #>
 param(
     [string]$ArchivePath = "dist\hatchspire_windows.zip",
+    [string]$ManifestPath = "",
+    [string]$ChecksumPath = "",
     [double]$MaxP95CpuMs = 16.667,
     [double]$MaxSampledWorkingSetMb = 0,
     [switch]$AllowDirty
@@ -77,6 +79,43 @@ function Assert-ChildPath {
     }
 }
 
+function Resolve-ProjectPath {
+    param([string]$ProjectDir, [string]$Path)
+
+    if ([IO.Path]::IsPathRooted($Path)) {
+        [IO.Path]::GetFullPath($Path)
+    } else {
+        [IO.Path]::GetFullPath((Join-Path $ProjectDir $Path))
+    }
+}
+
+function Assert-FileRecords {
+    param([object[]]$Actual, [object[]]$Expected, [string]$Label)
+
+    if ($Actual.Count -ne $Expected.Count) {
+        throw "$Label records $($Expected.Count) files; archive contains $($Actual.Count)."
+    }
+    $expectedByPath = @{}
+    foreach ($record in $Expected) {
+        $path = [string]$record.path
+        if ([string]::IsNullOrWhiteSpace($path) -or $expectedByPath.ContainsKey($path)) {
+            throw "$Label contains an empty or duplicate file path: $path"
+        }
+        $expectedByPath[$path] = $record
+    }
+    foreach ($record in $Actual) {
+        $path = [string]$record.path
+        if (-not $expectedByPath.ContainsKey($path)) {
+            throw "$Label omits archive file: $path"
+        }
+        $expected = $expectedByPath[$path]
+        if ([long]$expected.bytes -ne [long]$record.bytes -or
+            [string]$expected.sha256 -ne [string]$record.sha256) {
+            throw "$Label has the wrong size or SHA-256 for $path."
+        }
+    }
+}
+
 $projectDir = [IO.Path]::GetFullPath((Join-Path $PSScriptRoot ".."))
 $archive = if ([IO.Path]::IsPathRooted($ArchivePath)) {
     [IO.Path]::GetFullPath($ArchivePath)
@@ -85,6 +124,39 @@ $archive = if ([IO.Path]::IsPathRooted($ArchivePath)) {
 }
 if (-not (Test-Path -LiteralPath $archive -PathType Leaf)) {
     throw "Windows package not found: $archive"
+}
+$archiveDir = Split-Path -Parent $archive
+$manifestFile = if ([string]::IsNullOrWhiteSpace($ManifestPath)) {
+    Join-Path $archiveDir "hatchspire_windows_manifest.json"
+} else {
+    Resolve-ProjectPath $projectDir $ManifestPath
+}
+$checksumFile = if ([string]::IsNullOrWhiteSpace($ChecksumPath)) {
+    Join-Path $archiveDir "hatchspire_windows.sha256"
+} else {
+    Resolve-ProjectPath $projectDir $ChecksumPath
+}
+if (-not (Test-Path -LiteralPath $manifestFile -PathType Leaf) -or
+    -not (Test-Path -LiteralPath $checksumFile -PathType Leaf)) {
+    throw "External package manifest or checksum sidecar is missing."
+}
+$externalManifestRaw = Get-Content -LiteralPath $manifestFile -Raw
+if ($externalManifestRaw -notmatch '"built_utc"\s*:\s*"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z"') {
+    throw "External package manifest has an invalid UTC build date."
+}
+$externalManifest = $externalManifestRaw | ConvertFrom-Json
+$archiveInfo = Get-Item -LiteralPath $archive
+$archiveHash = (Get-FileHash -LiteralPath $archive -Algorithm SHA256).Hash.ToLowerInvariant()
+$sidecarParts = (Get-Content -LiteralPath $checksumFile -Raw).Trim() -split '\s+'
+if ($sidecarParts.Count -lt 2 -or $sidecarParts[0].ToLowerInvariant() -ne $archiveHash -or
+    $sidecarParts[-1] -ne $archiveInfo.Name) {
+    throw "Checksum sidecar does not identify the exact archive."
+}
+if ($externalManifest.schema_version -ne 1 -or
+    $externalManifest.archive -ne $archiveInfo.Name -or
+    [long]$externalManifest.archive_bytes -ne $archiveInfo.Length -or
+    [string]$externalManifest.archive_sha256 -ne $archiveHash) {
+    throw "External package manifest does not identify the exact archive."
 }
 
 $dirtyLines = @(& git -C $projectDir status --porcelain)
@@ -116,8 +188,31 @@ try {
     try {
         $buildInfo = (Get-ZipEntryText $zip "BUILD_INFO.json") | ConvertFrom-Json
         $packagedExeHash = Get-ZipEntryHash $zip "hatchspire.exe"
+        $archiveRecords = @($zip.Entries |
+            Where-Object { -not [string]::IsNullOrEmpty($_.Name) } |
+            ForEach-Object {
+                [PSCustomObject]@{
+                    path = $_.FullName.Replace('\', '/')
+                    bytes = $_.Length
+                    sha256 = Get-ZipEntryHash $zip $_.FullName
+                }
+            })
     } finally {
         $zip.Dispose()
+    }
+
+    Assert-FileRecords $archiveRecords @($externalManifest.included_files) "External manifest"
+    $payloadRecords = @($archiveRecords | Where-Object { $_.path -ne "BUILD_INFO.json" })
+    Assert-FileRecords $payloadRecords @($buildInfo.payload_files) "Embedded build manifest"
+    $requiredPackageFiles = @(
+        "hatchspire.exe", "BUILD_INFO.json", "docs/README.md", "docs/SUPPORT.md",
+        "docs/KNOWN_ISSUES.md", "docs/CREDITS.md", "docs/THIRD_PARTY_NOTICES.md",
+        "docs/PRIVACY.md", "docs/THIRD_PARTY_COMPONENTS.txt"
+    )
+    foreach ($requiredFile in $requiredPackageFiles) {
+        if (-not ($archiveRecords.path -contains $requiredFile)) {
+            throw "Required package file is missing: $requiredFile"
+        }
     }
 
     if ($buildInfo.package_status -ne "internal_preview_not_publicly_approved") {
@@ -133,6 +228,11 @@ try {
     $expectedBuildId = "$($package.version)+g$($commit.Substring(0, [Math]::Min(12, $commit.Length)))$dirtySuffix"
     if ($buildInfo.build_id -ne $expectedBuildId) {
         throw "Package build ID $($buildInfo.build_id) does not match $expectedBuildId."
+    }
+    foreach ($field in @("package_status", "version", "build_id", "git_commit", "working_tree_dirty", "built_utc")) {
+        if ([string]$externalManifest.$field -ne [string]$buildInfo.$field) {
+            throw "External and embedded manifests disagree on $field."
+        }
     }
     $releaseExeHash = (Get-FileHash -LiteralPath $releaseExe -Algorithm SHA256).Hash.ToLowerInvariant()
     if ($packagedExeHash -ne $releaseExeHash) {
@@ -325,6 +425,7 @@ try {
     Write-Host "  Build ID: $expectedBuildId"
     Write-Host "  Executable SHA-256: $releaseExeHash"
     Write-Host "  Windows metadata: Hatchspire $($package.version), filename and internal name verified"
+    Write-Host "  Package contract: $($archiveRecords.Count) entry hashes, required documents, UTC manifest, and sidecar verified"
     Write-Host "  Scenes: $($scenes.Count) at 1280x720, 1366x768, 1920x1080, and 960x540"
     Write-Host "  Worst p95 update+draw: $($worstP95.scene) $($worstP95.p95_cpu_micros) us"
     Write-Host "  Worst single update+draw: $($worstSingle.scene) $($worstSingle.max_cpu_micros) us"

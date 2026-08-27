@@ -55,8 +55,8 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] Full-demo deterministic run, release smoke test, and soak gate pass.
 - [ ] Exact release ZIP passes on two clean physical Windows PCs and one modest-spec machine.
 - [ ] Every shipped asset and dependency has an approved rights basis and required attribution.
-- [ ] ZIP includes versioned executable, readme, support, known issues, credits, notices, and privacy text.
-- [ ] Release manifest records version, commit, build date, file list, archive size, and SHA-256.
+- [x] Internal ZIP includes the versioned executable, readme, support, known issues, credits, notices, and privacy text; human document approval remains separate.
+- [x] Release smoke verifies manifest version, commit, UTC build date, every file hash, archive size, and SHA-256 against the exact ZIP.
 - [x] Internal preview packager adds all draft documents, per-file hashes, build identity, and exact archive checksum.
 - [x] Packaged support/privacy drafts disclose local tester counters/export; known issues no longer claim resolved combat defects.
 - [x] Package audit lists the exact Windows dependency graph and bundles 120 available license/notice texts.

@@ -84,6 +84,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
 - A self-identifying internal Windows preview package can be generated with player/support/legal
   drafts, exact build identity, per-file hashes, an external archive checksum, the exact Windows
   dependency list, and 120 available registry-crate license/notice texts. Public approval remains.
+  Release smoke independently rehashes every ZIP entry and cross-checks both manifests, the checksum
+  sidecar, strict UTC build date, and required document set against the exact candidate.
 - The 37 embedded project inputs have a regression-tested provenance ledger; all visual approvals
   remain pending.
 - The Windows Help screen explicitly exports a local-only plain-text tester summary with saved
