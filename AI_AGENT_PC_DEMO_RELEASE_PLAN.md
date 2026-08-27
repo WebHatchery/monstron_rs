@@ -63,6 +63,9 @@ Audit date: 26 August 2026
   other-machine antivirus behavior open.
   A separate visible exact-package probe now drives real Win32 resize, minimize, and restore events,
   verifies the resulting 960×540 client/render size, and requires a clean exit.
+  A physical-Windows evidence packet generator now verifies the sealed ZIP, packaged executable,
+  source identities, and Authenticode state, then produces an ignored candidate-stamped record with
+  every clean-machine, device, security, audio, soak, and full-demo observation left blank for humans.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -99,7 +102,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,507 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The implementation contains 21,528 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
 - The automated suite currently passes 140 tests: 121 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, two release-inventory tests, three release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
@@ -312,6 +315,10 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
   more than three days old. It uses non-remediating custom scans and records local engine/signature,
   hash, timing, exit-code, and console evidence. SmartScreen, other antivirus products, and required
   physical machines remain human gates.
+- Implemented independently: `scripts/create_physical_test_packet.ps1` verifies the exact sealed
+  ZIP, manifest, sidecar, packaged executable, clean Hatchspire/toolkit identities, and Authenticode
+  state before generating an ignored candidate-stamped JSON identity and blank human record. It
+  cannot record a device pass or authorize release.
 - Verify on integrated graphics or an equivalent low-spec machine when the human provides access.
 - Add a release manifest containing version, commit, build date, SHA-256, archive size, and included files.
 - Add Windows application icon/version metadata if the chosen packaging path supports it cleanly.

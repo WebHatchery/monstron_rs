@@ -66,7 +66,9 @@ An agent can make a provenance ledger, scan dependencies, and draft notices. Onl
 - [ ] Identify the legal person or entity publishing Hatchspire.
 - [ ] Confirm ownership or a valid commercial license for the title, logo, source code, generated images, edited images, fonts, sound effects, music, and marketing material.
 - [ ] Provide source URLs, invoices, license texts, model/tool terms, commission agreements, and creator names where applicable.
-- [ ] Resolve the repository metadata that currently points to `monstron_rs`; confirm whether any inherited Monstron material is authorized and whether the public link is correct.
+- [ ] Confirm whether any inherited Monstron material is authorized and decide whether Hatchspire
+  should expose a public repository. The stale `monstron_rs` catalog link has been removed; do not
+  add a replacement until its ownership and destination are approved.
 - [ ] Decide the game’s license and whether the source repository is public.
 - [ ] Review and approve credits and third-party notices.
 - [ ] Review the dependency-license report and resolve anything unclear.
@@ -136,6 +138,8 @@ An agent can produce a matrix and diagnose results, but it cannot claim tests on
 - [ ] Complete the entire demo from a fresh save on the release candidate.
 
 Record machine, Windows version, GPU, display scale, result, tester, date, and build checksum for every physical test.
+Generate a candidate-stamped blank record with `scripts/create_physical_test_packet.ps1`; complete
+the generated copy outside Git so tester identity and machine details are not committed accidentally.
 
 ## 7. Approve the public promise
 

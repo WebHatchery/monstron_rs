@@ -128,4 +128,25 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
     assert!(window_events.contains("HATCHSPIRE_HEADLESS \"0\""));
     assert!(window_events.contains("resized_client_width"));
     assert!(window_events.contains("host_diagnostic_only"));
+
+    let physical_packet = fs::read_to_string(root.join("scripts/create_physical_test_packet.ps1"))
+        .expect("physical Windows packet generator should be readable");
+    assert!(physical_packet.contains("awaiting_human_evidence"));
+    assert!(physical_packet.contains("Get-AuthenticodeSignature"));
+    assert!(physical_packet.contains("$manifest.included_files"));
+    assert!(physical_packet.contains("$manifest.toolkit_git_commit"));
+    assert!(physical_packet.contains("release_approval_granted = $false"));
+
+    let physical_record = fs::read_to_string(root.join("docs/physical_windows_test_record.md"))
+        .expect("physical Windows test instructions should be readable");
+    assert!(
+        physical_record.contains("downloaded from the restricted/unlisted distribution channel")
+    );
+    assert!(physical_record.contains("at least two clean Windows machines"));
+    assert!(physical_record.contains("does not count as a clean-PC result"));
+
+    let human_checklist = fs::read_to_string(root.join("HUMAN_PC_DEMO_RELEASE_CHECKLIST.md"))
+        .expect("human release checklist should be readable");
+    assert!(!human_checklist.contains("currently points to `monstron_rs`"));
+    assert!(human_checklist.contains("stale `monstron_rs` catalog link has been removed"));
 }
