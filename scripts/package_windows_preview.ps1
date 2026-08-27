@@ -152,6 +152,15 @@ try {
     New-Item -ItemType Directory -Path $licensesDir -Force | Out-Null
     $licensePaths = @{}
     $licenseFileGaps = [Collections.Generic.List[string]]::new()
+    $gilrsLicenseRoot = Join-Path $projectDir "docs\dependency_license_sources\gilrs-project"
+    $supplementalLicenseRoots = @{
+        "gilrs 0.10.10" = $gilrsLicenseRoot
+        "gilrs-core 0.5.15" = $gilrsLicenseRoot
+    }
+    $supplementalLicenseHashes = @{
+        "LICENSE-APACHE" = "a60eea817514531668d7e00765731449fe14d059d3249e0bc93b36de45f759f2"
+        "LICENSE-MIT" = "74497fa3c93ebb5ec32d85de117469cb3fab3276f7c02426f14c0f19f31f4424"
+    }
     foreach ($dependency in $dependencies.GetEnumerator()) {
         $parts = $dependency.Name.Split(' ', 2)
         $dependencyPackage = $metadata.packages |
@@ -166,6 +175,26 @@ try {
         $licenseFiles = @(Get-ChildItem -LiteralPath $sourceDir -File |
             Where-Object { $_.Name -match '^(LICENSE|LICENCE|COPYING|NOTICE|UNLICENSE|COPYRIGHT)($|[._-])' } |
             Sort-Object Name)
+        $usesSupplementalSource = $false
+        if ($licenseFiles.Count -eq 0 -and $supplementalLicenseRoots.ContainsKey($dependency.Name)) {
+            $supplementalRoot = $supplementalLicenseRoots[$dependency.Name]
+            if (-not (Test-Path -LiteralPath $supplementalRoot -PathType Container)) {
+                throw "Supplemental license source is missing for $($dependency.Name): $supplementalRoot"
+            }
+            $licenseFiles = @(Get-ChildItem -LiteralPath $supplementalRoot -File |
+                Where-Object { $supplementalLicenseHashes.ContainsKey($_.Name) } |
+                Sort-Object Name)
+            foreach ($licenseFile in $licenseFiles) {
+                $actualHash = (Get-FileHash -LiteralPath $licenseFile.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+                if ($actualHash -ne $supplementalLicenseHashes[$licenseFile.Name]) {
+                    throw "Supplemental license hash mismatch for $($dependency.Name)/$($licenseFile.Name)."
+                }
+            }
+            if ($licenseFiles.Count -ne $supplementalLicenseHashes.Count) {
+                throw "Supplemental license set is incomplete for $($dependency.Name)."
+            }
+            $usesSupplementalSource = $true
+        }
         if ($licenseFiles.Count -eq 0) {
             $licenseFileGaps.Add($dependency.Name)
             $licensePaths[$dependency.Name] = @()
@@ -182,6 +211,9 @@ try {
             "licenses/$safePackageName/$($licenseFile.Name)"
         }
         $licensePaths[$dependency.Name] = @($copiedPaths)
+        if ($usesSupplementalSource) {
+            Write-Host "  Added exact-tag supplemental licenses: $($dependency.Name)"
+        }
     }
 
     $dependencyLines = @(

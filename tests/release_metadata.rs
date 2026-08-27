@@ -69,5 +69,13 @@ fn packaged_player_documents_match_current_local_data_and_known_issue_facts() {
     assert!(privacy.contains("never uploaded automatically"));
     assert!(!known_issues.contains("chroma/magenta art defects"));
     assert!(known_issues.contains("final human visual review is pending"));
-    assert!(normalized(&known_issues).contains("no approved custom icon or code"));
+    assert!(normalized(&known_issues).contains("a custom icon derived from the title art"));
+    assert!(normalized(&known_issues).contains("a code signature remain absent"));
+
+    let notices = normalized(&read("THIRD_PARTY_NOTICES.md"));
+    assert!(notices.contains("hash-verified copies from each exact upstream tag"));
+    assert!(notices.contains("quad-rand 0.2.3"));
+    assert!(packager.contains("gilrs 0.10.10"));
+    assert!(packager.contains("gilrs-core 0.5.15"));
+    assert!(packager.contains("supplementalLicenseHashes"));
 }

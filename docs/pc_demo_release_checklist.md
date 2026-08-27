@@ -59,8 +59,8 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Release smoke verifies manifest version, commit, UTC build date, every file hash, archive size, and SHA-256 against the exact ZIP.
 - [x] Internal preview packager adds all draft documents, per-file hashes, build identity, and exact archive checksum.
 - [x] Packaged support/privacy drafts disclose local tester counters/export; known issues no longer claim resolved combat defects.
-- [x] Package audit lists the exact Windows dependency graph and bundles 120 available license/notice texts.
-- [x] Missing project/toolkit license metadata and absent `gilrs`, `gilrs-core`, and `quad-rand` license files remain explicit blockers.
+- [x] Package audit lists the exact Windows dependency graph and bundles 120 registry texts plus four hash-verified exact-tag GilRs license copies.
+- [x] Exact-tag license texts fill the `gilrs`/`gilrs-core` crate omissions; project/toolkit metadata, `quad-rand`, selection, and approval remain explicit blockers.
 - [x] A regression-tested ledger identifies all 38 embedded project art/data/resource inputs.
 - [x] A 240-cycle accelerated soak covers repeated town/tower/combat/recovery and native save reloads.
 - [x] The packaged optimized EXE byte-matches the release build and renders all 19 seeded scenes at 1280×720.

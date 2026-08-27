@@ -8,8 +8,9 @@ This is an internal development build, not the approved public demo.
   audio content to control.
 - Combat has deterministic four-size clarity captures, but final human visual review is pending.
 - Gamepad support is not implemented.
-- The executable has verified Windows version/product fields but no approved custom icon or code
-  signature. Windows may show a generic icon or an unsigned-app warning.
+- The executable has verified Windows version/product fields and a custom icon derived from the
+  title art. Rights approval for that art and a code signature remain absent, so Windows may show
+  an unsigned-app warning.
 - The build uses one local save slot and has no cloud save or account support.
 - Version `0.1.0` is a development placeholder, not an approved demo version. The `+g<commit>`
   suffix identifies the exact build for testing.

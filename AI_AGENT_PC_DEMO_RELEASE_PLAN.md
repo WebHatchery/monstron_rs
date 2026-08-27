@@ -21,7 +21,8 @@ Audit date: 26 August 2026
   replacement save now retains one restorable previous state without discarding the file it replaces;
   native panics also append a local, manually shareable crash log beside the save. A post-publish
   packager now produces a self-identifying internal Windows preview with player/support/legal
-  drafts, an exact checksum, and 120 available dependency license/notice texts. A regression gate
+  drafts, an exact checksum, 120 registry license/notice texts, and four exact-tag GilRs license
+  copies. A regression gate
   covers all 38 embedded project inputs.
   A 240-cycle accelerated soak now stresses town, tower, combat, recovery, backup, and native reload.
   The exact packaged optimized EXE now passes a 19-scene boot/render smoke gate at 1280×720,
@@ -47,7 +48,7 @@ Audit date: 26 August 2026
   verifying archive sizes, SHA-256 sidecars, and embedded build identities at every switch.
   Packaged support, privacy, readme, and known-issues drafts now describe the opt-in local tester
   summary and no longer claim that resolved combat chroma/overlap defects are still present.
-  Release smoke now independently rehashes all 129 ZIP entries and cross-checks the external and
+  Release smoke now independently rehashes all 133 ZIP entries and cross-checks the external and
   embedded manifests, checksum sidecar, strict UTC build date, and required document set.
   The Windows executable now embeds a multi-resolution Hatchspire icon derived from the title art;
   exact-package smoke compares its rendered 32 px pixels with the tracked icon source.
@@ -123,9 +124,10 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   structural gate requires every mutating screen route to pass through the autosave wrapper.
 - Draft credits, third-party notices, privacy, support, player readme, and known-issues files now
   exist. The exact Windows dependency inventory bundles 120 available registry-crate license/notice
-  texts. No project/toolkit license has been chosen; `gilrs 0.10.10`, `gilrs-core 0.5.15`, and
-  `quad-rand 0.2.3` ship no top-level license file despite declaring Apache/MIT or MIT; required
-  notice selection is unreviewed; and human approval remains.
+  texts. Hash-verified files from the exact upstream tags now fill the registry-package omissions
+  for `gilrs 0.10.10` and `gilrs-core 0.5.15`. No project/toolkit license has been chosen;
+  `quad-rand 0.2.3` still has no license file in its crate or declared repository; required notice
+  selection is unreviewed; and human approval remains.
 - A regression-tested ledger now identifies the 24 runtime visuals, one Windows icon resource, and
   13 JSON inputs embedded in the executable, distinguishing them from the much larger experimental
   asset tree. Every visual/resource row
