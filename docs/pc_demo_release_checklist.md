@@ -71,6 +71,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Release capture enforces a local, opt-in 16.667 ms p95 update+draw CPU budget across all 19 scenes.
 - [x] Exact-package capture records nonzero sampled and OS-peak working-set diagnostics at all four resolutions.
 - [x] The identical EXE launches read-only from a spaces/Unicode working path without sidecar writes.
+- [x] The identical EXE completes five consecutive rendered starts/exits from that relocated path.
 - [x] Internal catalog metadata removes the inherited repository link and unsupported public platform claim.
 - [x] A deploy-only follow-up makes the local preview download byte-match the sealed archive checksum.
 - [ ] Restricted itch download matches the recorded checksum and completes on a clean machine.

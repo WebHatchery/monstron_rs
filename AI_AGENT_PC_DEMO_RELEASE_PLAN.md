@@ -30,7 +30,8 @@ Audit date: 26 August 2026
   budget, and reports diagnostic maxima. All four resolution processes now emit mandatory local
   sampled/OS-peak working-set reports; GPU memory, a stable ordinary-play memory threshold, and
   sustained pacing remain unmeasured.
-  It also launches read-only from a working path containing spaces and Unicode without sidecar writes.
+  It also completes five consecutive rendered starts/exits while read-only from a working path
+  containing spaces and Unicode without sidecar writes.
   Help, package manifests, and release smoke now share an exact `version+g<commit>` build identity.
   Catalog metadata now labels the build as an internal preview, leads with visible controls, and
   carries no inherited repository link or approved public-demo claim.
@@ -50,6 +51,7 @@ Audit date: 26 August 2026
   embedded manifests, checksum sidecar, strict UTC build date, and required document set.
   The Windows executable now embeds a multi-resolution Hatchspire icon derived from the title art;
   exact-package smoke compares its rendered 32 px pixels with the tracked icon source.
+  That repeated relocated-start gate uses the exact packaged executable and validates every boot.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -144,7 +146,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   Hatchspire product/file identity, Cargo-derived Windows version metadata, and a custom icon.
   Clean-machine launch tests, a write-denying launch-directory ACL test, antivirus/SmartScreen
   records, gamepad support, GPU profiling, stable ordinary-play memory profiling, and a 2–4 hour real-time render/device soak remain
-  absent. The exact EXE does pass a read-only spaces/Unicode relocation test and a provisional
+  absent. The exact EXE does pass five consecutive read-only spaces/Unicode relocated starts and a provisional
   16.667 ms p95 update+draw CPU gate across all release-capture scenes, while a deterministic
   240-cycle engine/native-persistence soak covers 180 victories and 60 recovery returns without deadlock.
 - Current automated flows prove systems in isolation and in short chains, not that a new player can understand, enjoy, and finish the demo.
@@ -273,8 +275,9 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
   a defensible default memory cap; GPU presentation, ordinary-play memory, sustained real-time
   behavior, and CPU performance at other resolutions remain.
 - Test fresh install, paths containing spaces and non-ASCII characters, read-only launch folder, missing/corrupt save, Alt+Tab, resizing, fullscreen toggling, and repeated restart.
-- Implemented independently: the exact packaged EXE launches read-only from a spaces/Unicode working
-  path and writes no sidecars there. Clean-install, write-denying ACL, and OS-event tests remain.
+- Implemented independently: the exact packaged EXE completes five consecutive rendered starts/exits
+  while read-only from a spaces/Unicode working path and writes no sidecars there. Clean-install,
+  write-denying ACL, and OS-event tests remain.
 - Verify on integrated graphics or an equivalent low-spec machine when the human provides access.
 - Add a release manifest containing version, commit, build date, SHA-256, archive size, and included files.
 - Add Windows application icon/version metadata if the chosen packaging path supports it cleanly.

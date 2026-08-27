@@ -25,8 +25,9 @@ The gate:
 11. requires a successful process exit within the capture timeout;
 12. boots the same executable again in 1366×768 and 960×540 windows plus 1920×1080 fullscreen,
    validating all 76 scene outputs as nontrivial PNGs with exact dimensions; then
-13. launches the identical EXE from a working path containing spaces and Unicode, marks the EXE
-   read-only, and fails if the game writes any sidecar beside it.
+13. launches and exits the identical EXE five consecutive times from a working path containing
+   spaces and Unicode, marks the EXE read-only, validates every rendered boot, and fails if any
+   launch writes a sidecar beside it.
 
 Run the complete internal package sequence with:
 
