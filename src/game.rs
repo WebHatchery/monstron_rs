@@ -7,6 +7,7 @@ mod save_flow;
 use macroquad::prelude::*;
 
 use crate::data::{GameData, GameDataLoader};
+use crate::playtest_report;
 use crate::save::SaveRepository;
 use crate::screens::placeholder::PlaceholderKind;
 use crate::screens::{
@@ -106,7 +107,9 @@ impl Game {
                 }
             }
             AppScreen::Help => {
-                if let Some(action) = help::handle_input() {
+                let can_export = playtest_report::is_supported()
+                    && (self.state.is_some() || SaveRepository::exists());
+                if let Some(action) = help::handle_input(can_export) {
                     self.apply_help_action(action);
                 }
             }
@@ -233,7 +236,13 @@ impl Game {
                 menu::draw_settings(&self.settings, &self.status_message);
             }
             AppScreen::Help => {
-                help::draw(&SaveRepository::location_description());
+                help::draw(
+                    &SaveRepository::location_description(),
+                    &playtest_report::location_description(),
+                    playtest_report::is_supported()
+                        && (self.state.is_some() || SaveRepository::exists()),
+                    &self.status_message,
+                );
             }
             AppScreen::Town => {
                 if let Some(state) = &self.state {

@@ -1,13 +1,23 @@
 use super::Game;
 use crate::save::{SaveData, SaveRepository};
+use crate::state::PlaytestMetrics;
 
 #[cfg(test)]
 mod tests;
 
 impl Game {
     pub(super) fn apply_progression(&mut self, apply: impl FnOnce(&mut Self)) {
+        let before_state = self.state.clone();
         let before = self.progression_snapshot();
         apply(self);
+        let after_before_metrics = self.progression_snapshot();
+        if before != after_before_metrics {
+            if let (Some(before_state), Some(after_state)) =
+                (before_state.as_ref(), &mut self.state)
+            {
+                PlaytestMetrics::record_transition(before_state, after_state);
+            }
+        }
         self.autosave_if_changed(before);
     }
 

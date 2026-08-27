@@ -4,6 +4,7 @@ mod combat;
 mod eggs;
 mod game_state;
 mod monsters;
+mod playtest;
 mod resources;
 mod tower;
 mod town_state;
@@ -17,6 +18,7 @@ pub use combat::{
 pub use eggs::{EggCareFocus, EggInheritance, EggInstance, EggInventory};
 pub use game_state::GameState;
 pub use monsters::{DailyCommitment, MonsterInstance, MonsterRoster};
+pub use playtest::PlaytestMetrics;
 pub use resources::{ResourceInventory, ResourceStack};
 pub use tower::{
     survey_charges_for, TowerCompletedLandmark, TowerDiscoveryState, TowerFoundEgg, TowerMapObject,

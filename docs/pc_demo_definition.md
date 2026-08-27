@@ -86,6 +86,9 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   dependency list, and 120 available registry-crate license/notice texts. Public approval remains.
 - The 37 embedded project inputs have a regression-tested provenance ledger; all visual approvals
   remain pending.
+- The Windows Help screen explicitly exports a local-only plain-text tester summary with saved
+  pacing/balance counters; opening Help writes nothing and the game has no automatic upload path.
+  Older saves begin these new counters at zero, so complete evidence requires a fresh tester save.
 - A 240-cycle accelerated soak covers town, tower, combat, recovery, backup-saving, and native
   reload boundaries. Real-time rendering, OS-event, and physical-device soak testing remains.
 - The exact packaged release-profile EXE byte-matches the build and boots/renders all 19 seeded

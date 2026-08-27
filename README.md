@@ -35,7 +35,8 @@ Turn a fragile camp into a working monster haven that can support increasingly d
 - S/L/T: save, load, or title inside menu.
 - Progress autosaves after every successful state-changing action; manual save remains available.
 - Save Options on the title screen deletes the single slot only after a separate confirmation.
-- Help & Support in Settings shows the build version, save path, and recovery guidance.
+- Help & Support in Settings shows the build version, save path, recovery guidance, and an explicit
+  local-only tester-summary export. Nothing is uploaded.
 - Audio levels, mute, fullscreen, and reduced motion persist independently from game saves.
 - Window UI scale resizes the complete fixed canvas to 90%, 100%, 110%, or 125% without clipping controls.
 - Supported older saves are normalized and rewritten at the current version when loaded.
@@ -91,6 +92,7 @@ Standing design constraints:
 - `docs/autosave_boundary_matrix.md` — native restart checks at eight completed progression boundaries.
 - `docs/release_profile_smoke.md` — exact-package optimized boot/render smoke gate across all 19 scenes.
 - `docs/performance_probe.md` — opt-in optimized CPU budget plus four-resolution process-memory diagnostics.
+- `docs/local_tester_summary.md` — explicit local-only pacing/balance export and migration boundary.
 - `TODO.md` — open implementation, testing, and verification work.
 
 ## Internal Windows preview package

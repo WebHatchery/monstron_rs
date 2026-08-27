@@ -55,8 +55,7 @@ impl Game {
                 self.status_message = "Choose whether to keep or delete the save.".to_owned();
             }
             "help" => {
-                self.state = None;
-                self.screen = AppScreen::Help;
+                self.begin_capture_fixture(AppScreen::Help);
                 self.status_message = "Help verification scene.".to_owned();
             }
             "settings" => {

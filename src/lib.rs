@@ -5,6 +5,7 @@ pub mod engine;
 mod facility_actions;
 pub mod game;
 pub mod performance;
+pub mod playtest_report;
 pub mod save;
 pub mod screens;
 pub mod settings;

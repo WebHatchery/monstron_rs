@@ -18,6 +18,7 @@ fn phase6_and_phase7_fields_round_trip_through_save_data() {
     state.town.set_building_level("hatchery", 1);
     state.town.set_building_level("workshop", 1);
     state.resources.add("herbs", 10);
+    state.playtest_metrics.progression_actions = 3;
 
     let rillfin = data.species("rillfin").expect("rillfin should exist");
     let second_id = state
@@ -36,10 +37,12 @@ fn phase6_and_phase7_fields_round_trip_through_save_data() {
     assert!(json.contains("assignments"));
     assert!(json.contains("art_profile"));
     assert!(json.contains("lineage_quality"));
+    assert!(json.contains("playtest_metrics"));
 
     let loaded: SaveData = serde_json::from_str(&json).expect("save should deserialize");
     assert!(loaded.state.egg_inventory.eggs[0].inheritance.is_some());
     assert_eq!(loaded.state.town.assignments[0].job, TownJobKind::Forage);
+    assert_eq!(loaded.state.playtest_metrics.progression_actions, 3);
 }
 
 #[test]
@@ -61,6 +64,10 @@ fn older_saves_without_phase6_or_phase7_fields_still_load() {
         .as_object_mut()
         .expect("state should be an object")
         .remove("tower_discoveries");
+    value["state"]
+        .as_object_mut()
+        .expect("state should be an object")
+        .remove("playtest_metrics");
     for egg in value["state"]["egg_inventory"]["eggs"]
         .as_array_mut()
         .expect("eggs should be an array")
@@ -89,12 +96,14 @@ fn older_saves_without_phase6_or_phase7_fields_still_load() {
     assert!(loaded.state.egg_inventory.eggs[0].inheritance.is_none());
     assert_eq!(loaded.state.monster_roster.monsters[0].condition.fatigue, 0);
     assert!(loaded.state.tower_discoveries.enemy_ids.is_empty());
+    assert_eq!(loaded.state.playtest_metrics, Default::default());
     assert!(loaded.state.monster_roster.monsters[0]
         .art_profile
         .is_empty());
     let normalized = serde_json::to_value(&loaded).expect("migrated save should serialize fully");
     assert!(normalized["state"]["town"].get("assignments").is_some());
     assert!(normalized["state"].get("tower_discoveries").is_some());
+    assert!(normalized["state"].get("playtest_metrics").is_some());
     assert!(normalized["state"]["monster_roster"]["monsters"][0]
         .get("condition")
         .is_some());

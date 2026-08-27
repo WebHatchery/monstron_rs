@@ -2,8 +2,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::data::GameData;
 use crate::state::{
-    ActivityLog, CombatState, EggInventory, MonsterInstance, MonsterRoster, ResourceInventory,
-    TowerDiscoveryState, TowerProgress, TowerRunState, TownState,
+    ActivityLog, CombatState, EggInventory, MonsterInstance, MonsterRoster, PlaytestMetrics,
+    ResourceInventory, TowerDiscoveryState, TowerProgress, TowerRunState, TownState,
 };
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -23,6 +23,8 @@ pub struct GameState {
     pub npc_relationships: Vec<NpcRelationship>,
     pub story_flags: StoryFlags,
     pub activity_log: ActivityLog,
+    #[serde(default)]
+    pub playtest_metrics: PlaytestMetrics,
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
@@ -103,6 +105,7 @@ impl GameState {
                 flags: vec!["arrived_at_tower_camp".to_owned()],
             },
             activity_log,
+            playtest_metrics: PlaytestMetrics::default(),
         }
     }
 

@@ -80,7 +80,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] Capture review passes at 1280×720, 1366×768, 1920×1080, and a small resizable window.
 - [x] Combat clearly communicates HP, turn, intent, target, damage, status, and outcome across the four-size package matrix.
 - [ ] Audio feedback is restrained, normalized, attributable, and the game remains clear while muted.
-- [ ] Local opt-in tester summary reports the agreed pacing and balance measures without telemetry.
+- [x] Local opt-in tester summary reports saved pacing and balance measures without telemetry.
 - [ ] Real-time frame pacing and memory checks show no sustained degradation during the 2–4 hour soak run.
 - [ ] Alt+Tab, resize, fullscreen toggle, restart, non-ASCII path, spaces, and read-only launch folder pass.
 - [ ] Antivirus/SmartScreen behavior and unsigned-build decision are recorded.

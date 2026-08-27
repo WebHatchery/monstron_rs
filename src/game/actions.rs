@@ -7,6 +7,7 @@ use crate::engine::{
     combat_engine::{self, CombatDestination},
     tower_engine, town_engine,
 };
+use crate::playtest_report;
 use crate::save::{compatibility, SaveCompatibility, SaveData, SaveRepository};
 use crate::screens::{
     combat::CombatAction,
@@ -148,6 +149,9 @@ impl Game {
             }
             SettingsAction::OpenHelp => {
                 self.screen = AppScreen::Help;
+                self.status_message =
+                    "Tester summaries are created locally only when you tap EXPORT LOCAL SUMMARY."
+                        .to_owned();
                 return;
             }
             SettingsAction::Back => {
@@ -163,8 +167,42 @@ impl Game {
 
     pub(crate) fn apply_help_action(&mut self, action: HelpAction) {
         match action {
+            HelpAction::ExportLocalSummary => self.export_tester_summary(),
             HelpAction::Back => self.screen = AppScreen::Settings,
         }
+    }
+
+    fn export_tester_summary(&mut self) {
+        let saved_state;
+        let state = if let Some(state) = self.state.as_ref() {
+            state
+        } else {
+            saved_state = match SaveRepository::load() {
+                Ok(save)
+                    if compatibility(save.version, self.data.config.save_version)
+                        != SaveCompatibility::Newer =>
+                {
+                    save.state
+                }
+                Ok(save) => {
+                    self.status_message = format!(
+                        "Could not export tester summary: save version {} is newer than supported version {}.",
+                        save.version, self.data.config.save_version
+                    );
+                    return;
+                }
+                Err(error) => {
+                    self.status_message = format!("Could not export tester summary: {error}");
+                    return;
+                }
+            };
+            &saved_state
+        };
+
+        self.status_message = match playtest_report::export(state, &self.data) {
+            Ok(path) => format!("Local tester summary saved: {}", path.display()),
+            Err(error) => format!("Could not export tester summary: {error}"),
+        };
     }
 
     pub(crate) fn apply_town_action(&mut self, action: TownAction) {

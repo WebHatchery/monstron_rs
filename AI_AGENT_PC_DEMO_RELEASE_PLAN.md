@@ -4,8 +4,8 @@ Audit date: 26 August 2026
 
 ## Implementation status
 
-- **Current phase:** Milestone 1 awaits scope approval; independent Milestone 4 settings and
-  Milestone 5 save-shell work are in progress.
+- **Current phase:** Milestone 1 awaits scope approval; approval-independent release hardening
+  continues without locking the demo progression boundary.
 - **Scope state:** Awaiting human approval; no public-demo progression lock has been applied.
 - **Working specification:** [`docs/pc_demo_definition.md`](docs/pc_demo_definition.md)
 - **Release gate:** [`docs/pc_demo_release_checklist.md`](docs/pc_demo_release_checklist.md)
@@ -37,6 +37,10 @@ Audit date: 26 August 2026
   Combat now embeds the processed transparent VFX atlas, gives every compact unit card separate
   portrait, HP, role/status, and stat rows, previews rules-backed automatic player targets and the
   next queued enemy intent/target, and has deterministic damage/status/victory/defeat captures.
+  Help now offers an explicit local-only tester-summary export. Its autosaved, backward-compatible
+  counters cover progression actions, days, expeditions, rooms, combat outcomes, hatches, facility
+  growth, and current resources; no file is written until the visible control is tapped, and no
+  upload path exists. Older saves begin the counters at zero.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -73,8 +77,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 20,822 physical lines across 121 Rust files; every Rust file is below the 800-line project limit.
-- The automated suite currently passes 130 tests: 114 unit tests, 9 end-to-end game-flow tests,
+- The implementation contains 21,251 physical lines across 124 Rust files; every Rust file is below the 800-line project limit.
+- The automated suite currently passes 136 tests: 120 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, one release-inventory test, one release-metadata test, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
 - Formatting and strict lint checks pass.
@@ -133,6 +137,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   16.667 ms p95 update+draw CPU gate across all release-capture scenes, while a deterministic
   240-cycle engine/native-persistence soak covers 180 victories and 60 recovery returns without deadlock.
 - Current automated flows prove systems in isolation and in short chains, not that a new player can understand, enjoy, and finish the demo.
+- A local opt-in tester summary now exports saved pacing and balance counters without telemetry.
+  Human coaching, comprehension, enjoyment, and skill-band evidence still require real testers.
 
 ## Agent-owned work
 

@@ -8,18 +8,21 @@ mod tests;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum HelpAction {
+    ExportLocalSummary,
     Back,
 }
 
-pub fn handle_input() -> Option<HelpAction> {
+pub fn handle_input(can_export: bool) -> Option<HelpAction> {
     if is_key_pressed(KeyCode::Escape) || ui::button_clicked(back_rect(), true) {
         Some(HelpAction::Back)
+    } else if ui::button_clicked(export_rect(), can_export) {
+        Some(HelpAction::ExportLocalSummary)
     } else {
         None
     }
 }
 
-pub fn draw(save_location: &str) {
+pub fn draw(save_location: &str, summary_location: &str, can_export: bool, status_message: &str) {
     draw_rectangle(0.0, 0.0, ui::VIEW_WIDTH, ui::VIEW_HEIGHT, ui::BACKGROUND);
     draw_ui_text_ex(
         "Help & Support",
@@ -32,7 +35,7 @@ pub fn draw(save_location: &str) {
         },
     );
 
-    let panel = Rect::new(72.0, 112.0, 1136.0, 490.0);
+    let panel = Rect::new(72.0, 112.0, 1136.0, 500.0);
     ui::draw_panel(panel);
     draw_label("Build", panel.x + 28.0, panel.y + 42.0);
     draw_value(
@@ -69,6 +72,18 @@ pub fn draw(save_location: &str) {
         panel.x + 28.0,
         panel.y + 406.0,
     );
+
+    draw_label("Local tester summary", panel.x + 28.0, panel.y + 450.0);
+    let summary_text = if status_message.contains("tester summary") {
+        status_message
+    } else {
+        summary_location
+    };
+    for (index, line) in wrapped_lines(summary_text, 92).iter().take(2).enumerate() {
+        draw_value(line, panel.x + 28.0, panel.y + 478.0 + index as f32 * 22.0);
+    }
+
+    ui::draw_title_button(export_rect(), "EXPORT LOCAL SUMMARY", can_export);
     ui::draw_title_button(back_rect(), "BACK TO SETTINGS", true);
 }
 
@@ -111,5 +126,9 @@ fn draw_value(text: &str, x: f32, y: f32) {
 }
 
 fn back_rect() -> Rect {
-    Rect::new(500.0, 632.0, 280.0, 48.0)
+    Rect::new(660.0, 636.0, 320.0, 48.0)
+}
+
+fn export_rect() -> Rect {
+    Rect::new(300.0, 636.0, 320.0, 48.0)
 }
