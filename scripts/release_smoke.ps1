@@ -364,6 +364,9 @@ try {
     $shared = Join-Path (Split-Path -Parent $projectDir) "macroquad-toolkit\scripts\capture_ui.ps1"
     $captureDir = Join-Path $projectDir $outputDir
     New-Item -ItemType Directory -Path $captureDir -Force | Out-Null
+    $captureSummaryPath = Join-Path $captureDir "capture_summary.json"
+    Remove-Item -LiteralPath $captureSummaryPath -Force -ErrorAction SilentlyContinue
+    $captureRecords = [Collections.Generic.List[object]]::new()
     $performanceReport = Join-Path $captureDir "performance.jsonl"
     $memoryReports = @()
     $memoryReport = Join-Path $captureDir "memory_1280x720.json"
@@ -410,6 +413,16 @@ try {
         if ($width -ne 1280 -or $height -ne 720) {
             throw ("Release smoke capture has wrong dimensions: {0} is {1}x{2}" -f $path, $width, $height)
         }
+        $captureRecords.Add([pscustomobject][ordered]@{
+            scene = $scene
+            resolution = "1280x720"
+            width = $width
+            height = $height
+            fullscreen = $false
+            path = "ui_$scene.png"
+            bytes = (Get-Item -LiteralPath $path).Length
+            sha256 = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
+        })
     }
 
     $additionalResolutions = @(
@@ -439,6 +452,16 @@ try {
             if ($width -ne $resolution.Width -or $height -ne $resolution.Height) {
                 throw ("Release matrix capture has wrong dimensions: {0} is {1}x{2}" -f $path, $width, $height)
             }
+            $captureRecords.Add([pscustomobject][ordered]@{
+                scene = $scene
+                resolution = $resolution.Label
+                width = $width
+                height = $height
+                fullscreen = [bool]$resolution.Fullscreen
+                path = "$($resolution.Label)/ui_$scene.png"
+                bytes = (Get-Item -LiteralPath $path).Length
+                sha256 = (Get-FileHash -LiteralPath $path -Algorithm SHA256).Hash.ToLowerInvariant()
+            })
         }
     }
 
@@ -559,6 +582,31 @@ try {
         }
     }
 
+    [ordered]@{
+        schema_version = 1
+        status = "technical_capture_passed_human_review_pending"
+        generated_utc = [DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ")
+        build_id = $expectedBuildId
+        git_commit = $commit
+        toolkit_build_id = $expectedToolkitBuildId
+        toolkit_git_commit = $toolkitCommit
+        archive_sha256 = $archiveHash
+        executable_sha256 = $releaseExeHash
+        scene_count = $scenes.Count
+        resolution_count = 4
+        capture_count = $captureRecords.Count
+        scenes = $scenes
+        resolutions = @(
+            [ordered]@{ label = "1280x720"; width = 1280; height = 720; fullscreen = $false }
+            [ordered]@{ label = "1366x768"; width = 1366; height = 768; fullscreen = $false }
+            [ordered]@{ label = "1920x1080"; width = 1920; height = 1080; fullscreen = $true }
+            [ordered]@{ label = "960x540"; width = 960; height = 540; fullscreen = $false }
+        )
+        captures = @($captureRecords)
+        human_visual_review_recorded = $false
+        release_approval_granted = $false
+    } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $captureSummaryPath -Encoding utf8
+
     Write-Host "Release-profile smoke passed:" -ForegroundColor Green
     Write-Host "  Commit: $commit"
     Write-Host "  Build ID: $expectedBuildId"
@@ -578,6 +626,7 @@ try {
         Write-Host "  Memory limit: diagnostic only; no stable capture-process ceiling established"
     }
     Write-Host "  Relocated restarts: $RelocatedRestartCount clean starts/exits from a spaces + Unicode write-denied directory, no sidecar writes"
+    Write-Host "  Capture manifest: $captureSummaryPath"
     Write-Host "  Package status: internal preview; public approval still required" -ForegroundColor Yellow
 } finally {
     Pop-Location

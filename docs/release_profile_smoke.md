@@ -28,8 +28,10 @@ The gate:
    default cap;
 11. requires a successful process exit within the capture timeout;
 12. boots the same executable again in 1366×768 and 960×540 windows plus 1920×1080 fullscreen,
-   validating all 76 scene outputs as nontrivial PNGs with exact dimensions; then
-13. grants only read/execute access to a spaces/Unicode launch directory, removes inherited NTFS
+   validating all 76 scene outputs as nontrivial PNGs with exact dimensions;
+13. writes a passing technical-capture manifest only after recording the exact candidate identity,
+   scene matrix, dimensions, byte sizes, and SHA-256 hashes; then
+14. grants only read/execute access to a spaces/Unicode launch directory, removes inherited NTFS
    permissions, proves a file-creation probe is denied, and then launches and exits the identical EXE
    five consecutive times while validating every rendered boot and the absence of sidecars.
 
@@ -60,3 +62,5 @@ physical-device testing. The fullscreen 1080p capture avoids Windows reducing a 
 Structural success at four resolutions is not human screenshot approval.
 The ACL probe runs on this development host and does not replace a clean-machine install test. The
 canonical `docs/verification` images still require human visual review.
+Use `scripts/create_visual_review_packet.ps1` after this gate passes to produce the human review
+handoff described in `docs/visual_review_packet.md`.

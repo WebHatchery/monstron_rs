@@ -66,6 +66,9 @@ Audit date: 26 August 2026
   A physical-Windows evidence packet generator now verifies the sealed ZIP, packaged executable,
   source identities, and Authenticode state, then produces an ignored candidate-stamped record with
   every clean-machine, device, security, audio, soak, and full-demo observation left blank for humans.
+  Exact-package smoke now records identity and SHA-256 evidence for all 76 four-size PNGs. A separate
+  visual-review generator rehashes that matrix into a self-contained candidate gallery and blank
+  scene-by-scene decision record without claiming human taste approval.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.
@@ -102,7 +105,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,528 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The implementation contains 21,549 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
 - The automated suite currently passes 140 tests: 121 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, two release-inventory tests, three release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
@@ -287,6 +290,9 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
 - Implemented independently: exact-package identity checks and release-profile boot/render smoke
   now cover all 19 registered scenes at four target window sizes. The scope-dependent full-demo
   path and human visual review still await approval.
+- Implemented independently: a passing smoke run writes a candidate-bound manifest for every one of
+  those 76 PNGs. `scripts/create_visual_review_packet.ps1` verifies and copies the exact matrix into
+  a four-column native-image gallery with a blank human decision record; visual approval stays open.
 - Add a 2–4 hour soak scenario that repeatedly enters town, facilities, tower, combat, save/load, and quit/restart.
 - Implemented independently: a 240-cycle accelerated soak repeatedly crosses town, tower, combat,
   recovery, atomic backup-save, and native reload boundaries. It does not replace the real-time soak.

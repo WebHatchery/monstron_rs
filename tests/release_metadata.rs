@@ -129,6 +129,10 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
     assert!(window_events.contains("resized_client_width"));
     assert!(window_events.contains("host_diagnostic_only"));
 
+    assert!(smoke.contains("technical_capture_passed_human_review_pending"));
+    assert!(smoke.contains("human_visual_review_recorded = $false"));
+    assert!(smoke.contains("capture_summary.json"));
+
     let physical_packet = fs::read_to_string(root.join("scripts/create_physical_test_packet.ps1"))
         .expect("physical Windows packet generator should be readable");
     assert!(physical_packet.contains("awaiting_human_evidence"));
@@ -149,4 +153,21 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
         .expect("human release checklist should be readable");
     assert!(!human_checklist.contains("currently points to `monstron_rs`"));
     assert!(human_checklist.contains("stale `monstron_rs` catalog link has been removed"));
+
+    let visual_packet = fs::read_to_string(root.join("scripts/create_visual_review_packet.ps1"))
+        .expect("visual-review packet generator should be readable");
+    assert!(visual_packet.contains("awaiting_human_visual_review"));
+    assert!(visual_packet.contains("captures.Count -ne 76"));
+    assert!(visual_packet.contains("Get-FileHash -LiteralPath $source"));
+    assert!(visual_packet.contains("refusing to overwrite possible human evidence"));
+    assert!(visual_packet.contains("release_approval_granted = $false"));
+
+    let visual_record = fs::read_to_string(root.join("docs/visual_review_packet.md"))
+        .expect("visual-review packet instructions should be readable");
+    assert!(visual_record.contains("all 76 source PNGs"));
+    assert!(visual_record
+        .split_whitespace()
+        .collect::<Vec<_>>()
+        .join(" ")
+        .contains("agent judgment do not pass the visual gate"));
 }
