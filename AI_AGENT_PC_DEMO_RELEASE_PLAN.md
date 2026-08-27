@@ -41,6 +41,9 @@ Audit date: 26 August 2026
   counters cover progression actions, days, expeditions, rooms, combat outcomes, hatches, facility
   growth, and current resources; no file is written until the visible control is tapped, and no
   upload path exists. Older saves begin the counters at zero.
+  Clean preview archives can now be preserved under their full commits without replacing different
+  evidence. A real local first-patch rehearsal passed patch → preserved predecessor → patch while
+  verifying archive sizes, SHA-256 sidecars, and embedded build identities at every switch.
 
 The working specification deliberately separates approved facts from proposed defaults. Updating
 its decision record is the gate that authorizes scope-sensitive gameplay changes.

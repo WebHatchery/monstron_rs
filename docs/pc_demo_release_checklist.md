@@ -86,7 +86,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [ ] Antivirus/SmartScreen behavior and unsigned-build decision are recorded.
 - [ ] At least five independent testers participate; required coaching/completion targets are met.
 - [ ] Store copy, screenshots, system requirements, controls, limitations, and support path are approved.
-- [ ] Rollback and first-patch procedures are rehearsed with a preserved previous build.
+- [x] Local rollback and first-patch switching are rehearsed with preserved exact builds; restricted-channel upload/download remains human-owned.
 
 ## Post-demo backlog
 

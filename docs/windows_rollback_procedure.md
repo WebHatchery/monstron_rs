@@ -38,3 +38,18 @@ and leaves `target/release-rollback-rehearsal.json` as machine-readable evidence
 
 The rehearsal uses an isolated temporary directory under `target` and removes it after success or
 failure. It does not mutate the deployed local preview or any remote channel.
+
+## First completed local rehearsal
+
+On 27 August 2026, the isolated sequence passed with:
+
+- patch `0.1.0+g597b73d06168`, commit `597b73d06168f5d0cdb7053a5cebca003555f69b`,
+  SHA-256 `5ffbab3741297cef7f5ce016c8232491d5cc40ef984d6cc4ac35f94e0127f0aa`;
+- rollback `0.1.0+g6a7cacd701e7`, commit `6a7cacd701e7fa7d07d3d3923ecb8b9eb293632f`,
+  SHA-256 `179e474cb72ae04cfa5d8fd6312aa238551fdb22ef86788faf973b2ffd242567`;
+  and
+- final state restored to the patch hash after the rollback hash and both embedded identities passed.
+
+Both candidates remain preserved under commit-addressed ignored `dist/history` directories on this
+workstation. This proves the local artifact-switching procedure, not remote itch processing or a
+clean-machine launch.

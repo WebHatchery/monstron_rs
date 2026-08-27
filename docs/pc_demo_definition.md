@@ -100,6 +100,9 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   visual correctness, and clean-device testing remain.
 - The same EXE launches from a working path with spaces and Unicode while read-only, without writing
   beside itself. A write-denying directory ACL and clean physical PCs remain manual gates.
+- Clean preview archives can be preserved by full commit without replacing differing evidence. An
+  isolated first-patch rehearsal has passed patch → preserved rollback → patch restoration while
+  verifying archive hashes and embedded build identities; remote channel processing remains manual.
 - Help, crash-report guidance, package manifests, and release smoke share a `version+g<commit>` build
   identity; choosing the public demo version remains a human release-candidate decision.
 - Catalog metadata is explicitly an internal preview, leads with visible mouse/touch controls, and
