@@ -1,6 +1,6 @@
 # Hatchspire Windows Demo — AI Agent Release Plan
 
-Audit date: 26 August 2026
+Audit date: 27 August 2026
 
 ## Implementation status
 
@@ -29,8 +29,10 @@ Audit date: 26 August 2026
   1366×768, 1920×1080 fullscreen, and a deliberately small 960×540 window.
   That gate also records opt-in local update+draw CPU samples, enforces a provisional 16.667 ms p95
   budget, and reports diagnostic maxima. All four resolution processes now emit mandatory local
-  first/median/p95/final/max sampled and OS-peak working-set reports; GPU memory, a stable
-  ordinary-play memory threshold, and sustained player-path pacing remain unmeasured. A separate
+  first/median/p95/final/max sampled and OS-peak working-set reports. They now also request Windows
+  process-scoped dedicated/shared GPU-memory distributions and aggregate 3D-engine diagnostics, with
+  explicit unavailable states and an optional availability gate. A portable VRAM threshold, GPU
+  presentation timing, a stable ordinary-play memory threshold, and sustained player-path pacing remain unmeasured. A separate
   exact-package harness can now keep one process rendering all 19 scenes for a real two-to-four-hour
   wall-clock interval while recording per-scene CPU and process-memory distributions; only a visible
   full-duration run counts as release evidence.
@@ -111,7 +113,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Already strong
 
 - The complete town-building → monster-raising → tower → recovery loop exists.
-- The implementation contains 21,600 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
+- The implementation contains 21,608 physical lines across 125 Rust files; every Rust file is below the 800-line project limit.
 - The automated suite currently passes 140 tests: 121 unit tests, 9 end-to-end game-flow tests,
   one asset-registry test, two release-inventory tests, three release-metadata tests, one
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
@@ -172,10 +174,11 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   release smoke and the sustained runner reject mismatches against the current dependency checkout.
 - Native panics now append a local crash log beside the save. The exact EXE now carries verified
   Hatchspire product/file identity, Cargo-derived Windows version metadata, and a custom icon.
-  Clean-machine launch tests, SmartScreen and other-machine antivirus records, gamepad support, GPU
-  profiling, stable ordinary-play memory profiling, and a human-observed
+  Clean-machine launch tests, SmartScreen and other-machine antivirus records, gamepad support,
+  driver-level GPU presentation profiling, portable VRAM budgeting, stable ordinary-play memory profiling, and a human-observed
   2–4 hour real-time play/device soak remain absent. An exact-package render-soak harness now enforces
-  real elapsed time across all 19 scenes and records CPU and memory evidence; its full visible run
+  real elapsed time across all 19 scenes and records CPU, working-set, and available process-scoped
+  Windows GPU evidence; its full visible run
   remains pending. The exact EXE does pass five consecutive starts from a write-denying spaces/Unicode
   launch directory and a provisional
   16.667 ms p95 update+draw CPU gate across all release-capture scenes, while a deterministic
@@ -306,14 +309,16 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
   recovery, atomic backup-save, and native reload boundaries. It does not replace the real-time soak.
 - Implemented independently: `scripts/realtime_render_soak.ps1` verifies and extracts the exact
   Windows archive, keeps one process cycling all 19 release scenes for a measured wall-clock interval,
-  and records CPU and working-set distributions. Its default is a visible two-hour run; short or
+  and records CPU, working-set, and available process-scoped Windows GPU distributions. Its default is a visible two-hour run; short or
   headless executions are explicitly validation-only, and the human-observed interaction/device gate
   remains open.
 - Track frame time and memory at supported resolutions; investigate sustained degradation.
 - Implemented independently: all 19 optimized 1280×720 capture scenes enforce a provisional
   16.667 ms p95 update+draw CPU budget and report diagnostic maxima. Four resolution processes also
-  require internally ordered sampled-memory distributions and OS peaks. Cold capture peaks are too volatile for
-  a defensible default memory cap; GPU presentation, ordinary-play memory, sustained real-time
+  require internally ordered sampled-memory distributions and OS peaks. Both smoke and sustained
+  probes request dedicated/shared GPU-memory and aggregate 3D-engine counters, explicitly record
+  unavailable hosts, and can require counter availability. Cold capture peaks are too volatile for
+  a defensible default memory cap; portable VRAM limits, GPU presentation timing, ordinary-play memory, sustained real-time
   behavior, and CPU performance at other resolutions remain.
 - Test fresh install, paths containing spaces and non-ASCII characters, read-only launch folder, missing/corrupt save, Alt+Tab, resizing, fullscreen toggling, and repeated restart.
 - Implemented independently: the exact packaged EXE completes five consecutive rendered starts/exits

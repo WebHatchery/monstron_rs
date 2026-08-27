@@ -72,6 +72,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Combat capture names rules-backed automatic Attack/Skill targets, the next enemy intent/target, damage, and status effects.
 - [x] Release capture enforces a local, opt-in 16.667 ms p95 update+draw CPU budget across all 19 scenes.
 - [x] Exact-package capture records first/median/p95/final/max sampled and OS-peak memory diagnostics at all four resolutions.
+- [x] Exact-package smoke and sustained probes record process-scoped Windows dedicated/shared GPU-memory distributions and aggregate 3D-engine diagnostics when the host exposes them.
 - [x] Exact-package sustained-soak tooling enforces wall-clock duration across all 19 scenes and marks short/headless runs as validation-only.
 - [x] The identical EXE launches from a spaces/Unicode directory whose NTFS ACL is proven to deny file creation, without sidecar writes.
 - [x] The identical EXE completes five consecutive rendered starts/exits from that write-denied path.

@@ -26,12 +26,14 @@ The gate:
 10. requires internally ordered first/median/p95/final/maximum sampled working sets and an OS peak
    from each resolution process, with an optional explicit sampled-memory ceiling but no unstable
    default cap;
-11. requires a successful process exit within the capture timeout;
-12. boots the same executable again in 1366×768 and 960×540 windows plus 1920×1080 fullscreen,
+11. requests process-scoped Windows dedicated/shared GPU-memory and aggregate 3D-engine diagnostics,
+   validates their distributions when available, and can require counter availability explicitly;
+12. requires a successful process exit within the capture timeout;
+13. boots the same executable again in 1366×768 and 960×540 windows plus 1920×1080 fullscreen,
    validating all 76 scene outputs as nontrivial PNGs with exact dimensions;
-13. writes a passing technical-capture manifest only after recording the exact candidate identity,
-   scene matrix, dimensions, byte sizes, and SHA-256 hashes; then
-14. grants only read/execute access to a spaces/Unicode launch directory, removes inherited NTFS
+14. writes a passing technical-capture manifest only after recording the exact candidate identity,
+   scene matrix, dimensions, byte sizes, SHA-256 hashes, and available GPU diagnostics; then
+15. grants only read/execute access to a spaces/Unicode launch directory, removes inherited NTFS
    permissions, proves a file-creation probe is denied, and then launches and exits the identical EXE
    five consecutive times while validating every rendered boot and the absence of sidecars.
 
@@ -40,7 +42,7 @@ Run the complete internal package sequence with:
 ```powershell
 .\publish.ps1
 .\scripts\package_windows_preview.ps1
-.\scripts\release_smoke.ps1
+.\scripts\release_smoke.ps1 -RequireGpuCounters
 .\publish.ps1 -DeployOnly
 ```
 
@@ -52,11 +54,11 @@ and executable SHA-256. See `docs/performance_probe.md` for the measurement boun
 
 ## What this does not prove
 
-The smoke gate verifies startup, seeded update/draw CPU time, short-batch process-memory reporting,
+The smoke gate verifies startup, seeded update/draw CPU time, short-batch process and available GPU-memory reporting,
 capture output, and clean process completion. It does not play the controls, compare visual
 correctness, or traverse the
 scope-dependent full demo,
-measure GPU presentation, sustained frame time or ordinary-play memory, exercise OS window events, or replace clean-machine and
+measure GPU presentation timing, establish a portable VRAM threshold, measure sustained frame time or ordinary-play memory, exercise OS window events, or replace clean-machine and
 physical-device testing. The fullscreen 1080p capture avoids Windows reducing a decorated
 1920×1080 window to its desktop work area; it does not validate interactive fullscreen toggling.
 Structural success at four resolutions is not human screenshot approval.

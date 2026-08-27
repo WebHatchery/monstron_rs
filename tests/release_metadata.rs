@@ -96,6 +96,11 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
     assert!(soak.contains("$process.elapsed_wall_milliseconds"));
     assert!(soak.contains("$timing.frames -ne $framesPerScene"));
     assert!(soak.contains("$manifest.toolkit_git_commit"));
+    assert!(soak.contains("SampleWindowsGpuCounters = $true"));
+    assert!(soak.contains("[switch]$RequireGpuCounters"));
+    assert!(soak.contains("gpu_counter_status"));
+    assert!(soak.contains("p95_gpu_dedicated_bytes"));
+    assert!(soak.contains("p95_gpu_shared_bytes"));
 
     let packager = fs::read_to_string(root.join("scripts/package_windows_preview.ps1"))
         .expect("Windows preview packager should be readable");
@@ -113,6 +118,9 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
     assert!(smoke.contains("Invoke-Icacls"));
     assert!(smoke.contains("/inheritance:r"));
     assert!(smoke.contains("The relocated launch directory did not deny file creation."));
+    assert!(smoke.contains("-SampleWindowsGpuCounters"));
+    assert!(smoke.contains("[switch]$RequireGpuCounters"));
+    assert!(smoke.contains("gpu_counter_reports_sampled"));
 
     let defender = fs::read_to_string(root.join("scripts/defender_scan.ps1"))
         .expect("Defender exact-package scanner should be readable");

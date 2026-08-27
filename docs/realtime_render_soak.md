@@ -13,7 +13,7 @@ accelerated render loop in seconds.
 The default command is the release-evidence form:
 
 ```powershell
-.\scripts\realtime_render_soak.ps1
+.\scripts\realtime_render_soak.ps1 -RequireGpuCounters
 ```
 
 It opens a visible 1280×720 window for two hours. A visible run between two and four hours is labelled
@@ -29,12 +29,15 @@ explicitly identifies the dirty tree. It cannot turn a dirty package into releas
 
 The ignored `target/realtime-render-soak/summary.json` identifies the exact archive, executable,
 commit, requested and elapsed duration, visibility, scene/frame counts, worst p95 and single-frame
-CPU samples, and sampled working-set distribution. Supporting captures, per-scene timing records,
-and process-memory evidence live beside it. The provisional p95 update+draw limit remains 16.667 ms;
+CPU samples, sampled working-set distribution, and available process-scoped Windows dedicated/shared
+GPU-memory and aggregate 3D-engine diagnostics. Supporting captures, per-scene timing records, and
+process-resource evidence live beside it. `-RequireGpuCounters` makes missing host/driver counters a
+failure; without it, the report explicitly records `unavailable`. The provisional p95 update+draw limit remains 16.667 ms;
 there is no default memory ceiling until representative physical-machine evidence supports one.
 
 This automated render soak does not exercise the demo's interaction path, save/load and restart
-boundaries, audio, Alt+Tab, resizing, fullscreen switching, controller behavior, GPU memory,
-presentation latency, thermals, or clean-device compatibility. It complements the accelerated
+boundaries, audio, Alt+Tab, resizing, fullscreen switching, controller behavior, GPU presentation
+latency, thermals, or clean-device compatibility. Its GPU counters do not establish a portable VRAM
+budget or replace driver-level profiling. It complements the accelerated
 240-cycle gameplay/persistence soak and short four-resolution release smoke; it does not replace a
 human-observed 2–4 hour play/device run on representative physical Windows hardware.

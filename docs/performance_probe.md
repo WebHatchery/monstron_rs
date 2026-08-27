@@ -1,4 +1,4 @@
-# Hatchspire release-capture CPU and memory probe
+# Hatchspire release-capture CPU and process-resource probe
 
 Audit date: 27 August 2026
 
@@ -40,6 +40,17 @@ flaky, while a ceiling high enough to admit every observation would not be a mea
 claim. Distribution evidence now makes transient and sustained behavior distinguishable, but the
 values remain diagnostics until a real-time ordinary-play baseline supports a defensible threshold.
 
+## Windows GPU diagnostics
+
+Each capture process also requests Windows' formatted GPU performance counters every 500 ms. When
+the display driver exposes a matching process instance, the JSON report records sample count and
+first/median/p95/final/max dedicated and shared GPU-memory values plus maximum aggregate 3D-engine
+utilization. The report explicitly says `sampled` or `unavailable`; `-RequireGpuCounters` turns the
+latter into a smoke failure for candidate evidence on a supported host.
+
+These values are diagnostic only. They are process-scoped accounting from the current Windows host,
+not a cross-machine VRAM requirement, a frame-presentation trace, or a default memory ceiling.
+
 ## Sustained exact-package harness
 
 `scripts/realtime_render_soak.ps1` complements the short matrix by keeping one exact packaged process
@@ -51,10 +62,11 @@ headless modes validate the harness without closing the release gate. It writes 
 ## What this does not prove
 
 The CPU timer stops before `next_frame`, so it excludes GPU command execution, presentation,
-display sync, driver latency, PNG export, and waiting between frames. The process-memory sample
+display sync, driver latency, PNG export, and waiting between frames. GPU-engine utilization is a
+coarse aggregate counter rather than presentation timing. The process-memory sample
 includes screenshot readback/export overhead and sequential fixture loading, so it is not a normal-
-play memory profile. Thirty deterministic frames per scene do not measure sustained pacing, GPU
-memory, resource growth, input latency, OS events, audio, or thermal behavior. The sustained harness
+play memory profile. Thirty deterministic frames per scene do not measure sustained pacing, a stable
+VRAM budget, resource growth, input latency, OS events, audio, or thermal behavior. The sustained harness
 adds elapsed-time and resource-growth evidence but still renders deterministic fixtures without
 player interaction. Neither probe substitutes for the required human-observed 2–4 hour play/device
 run and tests on clean physical Windows machines, including a modest-spec machine.

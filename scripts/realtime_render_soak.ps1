@@ -19,6 +19,7 @@ param(
     [int]$WindowHeight = 720,
     [switch]$Fullscreen,
     [switch]$Headless,
+    [switch]$RequireGpuCounters,
     [switch]$AllowDirty
 )
 
@@ -178,6 +179,7 @@ try {
         WindowHeight = $WindowHeight
         OutputDir = $captureOutput
         ProcessReportPath = $processReport
+        SampleWindowsGpuCounters = $true
         MinBytes = 20000
         TimeoutSeconds = $timeoutSeconds
         SkipBuild = $true
@@ -196,6 +198,22 @@ try {
         [long]$process.median_sampled_working_set_bytes -gt [long]$process.p95_sampled_working_set_bytes -or
         [long]$process.p95_sampled_working_set_bytes -gt [long]$process.max_sampled_working_set_bytes) {
         throw "Sustained process evidence is incomplete or internally inconsistent."
+    }
+    if ($process.gpu_counter_status -notin @("sampled", "unavailable")) {
+        throw "Sustained GPU counter status is missing or invalid."
+    }
+    if ($RequireGpuCounters -and $process.gpu_counter_status -ne "sampled") {
+        throw "Windows GPU counters were required but unavailable during the sustained probe."
+    }
+    if ($process.gpu_counter_status -eq "sampled" -and
+        ($process.gpu_sample_count -le 0 -or
+        $process.median_gpu_dedicated_bytes -gt $process.p95_gpu_dedicated_bytes -or
+        $process.p95_gpu_dedicated_bytes -gt $process.max_gpu_dedicated_bytes -or
+        $process.median_gpu_shared_bytes -gt $process.p95_gpu_shared_bytes -or
+        $process.p95_gpu_shared_bytes -gt $process.max_gpu_shared_bytes -or
+        ($process.max_gpu_dedicated_bytes -le 0 -and $process.max_gpu_shared_bytes -le 0) -or
+        $process.max_gpu_3d_utilization_percent -lt 0)) {
+        throw "Sustained GPU diagnostics are incomplete or internally inconsistent."
     }
 
     $timings = @(Get-Content -LiteralPath $performanceReport | ForEach-Object { $_ | ConvertFrom-Json })
@@ -243,6 +261,17 @@ try {
         final_working_set_bytes = [long]$process.final_sampled_working_set_bytes
         max_working_set_bytes = [long]$process.max_sampled_working_set_bytes
         os_peak_working_set_bytes = [long]$process.os_peak_working_set_bytes
+        gpu_counter_status = [string]$process.gpu_counter_status
+        gpu_sample_count = [int]$process.gpu_sample_count
+        median_gpu_dedicated_bytes = [long]$process.median_gpu_dedicated_bytes
+        p95_gpu_dedicated_bytes = [long]$process.p95_gpu_dedicated_bytes
+        final_gpu_dedicated_bytes = [long]$process.final_gpu_dedicated_bytes
+        max_gpu_dedicated_bytes = [long]$process.max_gpu_dedicated_bytes
+        median_gpu_shared_bytes = [long]$process.median_gpu_shared_bytes
+        p95_gpu_shared_bytes = [long]$process.p95_gpu_shared_bytes
+        final_gpu_shared_bytes = [long]$process.final_gpu_shared_bytes
+        max_gpu_shared_bytes = [long]$process.max_gpu_shared_bytes
+        max_gpu_3d_utilization_percent = [double]$process.max_gpu_3d_utilization_percent
     } | ConvertTo-Json | Set-Content -LiteralPath $summaryReport -Encoding utf8
 
     $elapsedMinutes = [Math]::Round($process.elapsed_wall_milliseconds / 60000.0, 2)
@@ -256,6 +285,13 @@ try {
     Write-Host "  Elapsed: $elapsedMinutes minutes across $($scenes.Count) scenes / $([long]$framesPerScene * $scenes.Count) frames"
     Write-Host "  Worst p95 update+draw: $($worstP95.scene) $($worstP95.p95_cpu_micros) us"
     Write-Host "  Working set: p95 $p95MemoryMb MB; final $finalMemoryMb MB"
+    if ($process.gpu_counter_status -eq "sampled") {
+        $p95GpuDedicatedMb = [Math]::Round($process.p95_gpu_dedicated_bytes / 1MB, 1)
+        $p95GpuSharedMb = [Math]::Round($process.p95_gpu_shared_bytes / 1MB, 1)
+        Write-Host "  GPU diagnostics: $($process.gpu_sample_count) samples; p95 dedicated $p95GpuDedicatedMb MB; shared $p95GpuSharedMb MB; max 3D $($process.max_gpu_3d_utilization_percent)%"
+    } else {
+        Write-Host "  GPU diagnostics: unavailable on this host/driver"
+    }
     Write-Host "  Evidence: $summaryReport"
     if (-not $releaseEvidence) {
         Write-Host "  This short or headless run validates the harness but does not satisfy the visible 2-4 hour release gate." -ForegroundColor Yellow

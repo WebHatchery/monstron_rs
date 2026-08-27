@@ -16,6 +16,7 @@ param(
     [double]$MaxP95CpuMs = 16.667,
     [double]$MaxSampledWorkingSetMb = 0,
     [int]$RelocatedRestartCount = 5,
+    [switch]$RequireGpuCounters,
     [switch]$AllowDirty
 )
 
@@ -375,7 +376,7 @@ try {
     }
     Set-Item Env:HATCHSPIRE_PERF_REPORT $performanceReport
     try {
-        & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 -WindowWidth 1280 -WindowHeight 720 -OutputDir $outputDir -MinBytes 20000 -ProcessReportPath $memoryReport -SkipBuild -Release
+        & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 -WindowWidth 1280 -WindowHeight 720 -OutputDir $outputDir -MinBytes 20000 -ProcessReportPath $memoryReport -SampleWindowsGpuCounters -SkipBuild -Release
         if (-not $?) { throw "Release capture harness failed." }
     } finally {
         Remove-Item Env:HATCHSPIRE_PERF_REPORT -ErrorAction SilentlyContinue
@@ -436,7 +437,7 @@ try {
         & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 `
             -WindowWidth $resolution.Width -WindowHeight $resolution.Height `
             -OutputDir $matrixOutputDir -MinBytes 20000 -SkipBuild -Release `
-            -ProcessReportPath $matrixMemoryReport `
+            -ProcessReportPath $matrixMemoryReport -SampleWindowsGpuCounters `
             -Fullscreen:$resolution.Fullscreen
         if (-not $?) { throw "Release capture failed at $($resolution.Label)." }
         $memoryReports += Get-Content -LiteralPath $matrixMemoryReport -Raw | ConvertFrom-Json
@@ -488,6 +489,23 @@ try {
             $sampledMb = [Math]::Round($memorySample.max_sampled_working_set_bytes / 1MB, 1)
             throw "Capture process sampled working set is $sampledMb MB; limit is $MaxSampledWorkingSetMb MB."
         }
+        if ($memorySample.gpu_counter_status -notin @("sampled", "unavailable")) {
+            throw "Capture-process GPU counter status is missing or invalid."
+        }
+        if ($RequireGpuCounters -and $memorySample.gpu_counter_status -ne "sampled") {
+            throw "Windows GPU counters were required but unavailable for a capture process."
+        }
+        if ($memorySample.gpu_counter_status -eq "sampled") {
+            if ($memorySample.gpu_sample_count -le 0 -or
+                $memorySample.median_gpu_dedicated_bytes -gt $memorySample.p95_gpu_dedicated_bytes -or
+                $memorySample.p95_gpu_dedicated_bytes -gt $memorySample.max_gpu_dedicated_bytes -or
+                $memorySample.median_gpu_shared_bytes -gt $memorySample.p95_gpu_shared_bytes -or
+                $memorySample.p95_gpu_shared_bytes -gt $memorySample.max_gpu_shared_bytes -or
+                ($memorySample.max_gpu_dedicated_bytes -le 0 -and $memorySample.max_gpu_shared_bytes -le 0) -or
+                $memorySample.max_gpu_3d_utilization_percent -lt 0) {
+                throw "Capture-process GPU diagnostics are incomplete or internally inconsistent."
+            }
+        }
     }
     $worstSampledMemory = $memoryReports | Sort-Object max_sampled_working_set_bytes -Descending | Select-Object -First 1
     $worstP95Memory = $memoryReports | Sort-Object p95_sampled_working_set_bytes -Descending | Select-Object -First 1
@@ -497,6 +515,16 @@ try {
     $worstP95MemoryMb = [Math]::Round($worstP95Memory.p95_sampled_working_set_bytes / 1MB, 1)
     $worstFinalMemoryMb = [Math]::Round($worstFinalMemory.final_sampled_working_set_bytes / 1MB, 1)
     $worstOsPeakMemoryMb = [Math]::Round($worstOsPeakMemory.os_peak_working_set_bytes / 1MB, 1)
+    $sampledGpuReports = @($memoryReports | Where-Object gpu_counter_status -eq "sampled")
+    $worstP95GpuDedicatedMb = if ($sampledGpuReports.Count) {
+        [Math]::Round(($sampledGpuReports | Measure-Object p95_gpu_dedicated_bytes -Maximum).Maximum / 1MB, 1)
+    } else { 0 }
+    $worstP95GpuSharedMb = if ($sampledGpuReports.Count) {
+        [Math]::Round(($sampledGpuReports | Measure-Object p95_gpu_shared_bytes -Maximum).Maximum / 1MB, 1)
+    } else { 0 }
+    $worstGpu3dPercent = if ($sampledGpuReports.Count) {
+        [Math]::Round(($sampledGpuReports | Measure-Object max_gpu_3d_utilization_percent -Maximum).Maximum, 1)
+    } else { 0 }
 
     $targetRoot = [IO.Path]::GetFullPath((Join-Path $projectDir "target"))
     $relocatedDir = Join-Path $targetRoot ("release smoke Ω path " + [Guid]::NewGuid().ToString("N"))
@@ -603,6 +631,10 @@ try {
             [ordered]@{ label = "960x540"; width = 960; height = 540; fullscreen = $false }
         )
         captures = @($captureRecords)
+        gpu_counter_reports_sampled = $sampledGpuReports.Count
+        worst_p95_gpu_dedicated_bytes = if ($sampledGpuReports.Count) { [long](($sampledGpuReports | Measure-Object p95_gpu_dedicated_bytes -Maximum).Maximum) } else { [long]0 }
+        worst_p95_gpu_shared_bytes = if ($sampledGpuReports.Count) { [long](($sampledGpuReports | Measure-Object p95_gpu_shared_bytes -Maximum).Maximum) } else { [long]0 }
+        worst_gpu_3d_utilization_percent = $worstGpu3dPercent
         human_visual_review_recorded = $false
         release_approval_granted = $false
     } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $captureSummaryPath -Encoding utf8
@@ -620,6 +652,11 @@ try {
     Write-Host "  Enforced CPU limit: p95 $p95LimitMicros us"
     Write-Host "  Sampled working set: worst p95 $worstP95MemoryMb MB; worst final $worstFinalMemoryMb MB"
     Write-Host "  Diagnostic transient peaks: sampled $worstSampledMemoryMb MB; OS $worstOsPeakMemoryMb MB"
+    if ($sampledGpuReports.Count) {
+        Write-Host "  GPU diagnostics: $($sampledGpuReports.Count)/$($memoryReports.Count) reports; worst p95 dedicated $worstP95GpuDedicatedMb MB; shared $worstP95GpuSharedMb MB; max 3D $worstGpu3dPercent%"
+    } else {
+        Write-Host "  GPU diagnostics: unavailable on this host/driver"
+    }
     if ($MaxSampledWorkingSetMb -gt 0) {
         Write-Host "  Enforced memory limit: sampled $MaxSampledWorkingSetMb MB per capture process"
     } else {
