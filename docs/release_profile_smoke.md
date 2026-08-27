@@ -14,10 +14,12 @@ The gate:
 5. boots that optimized build through all 19 deterministic capture scenes in one process;
 6. records 30 update+draw CPU samples per scene, enforces a 16.667 ms p95 ceiling, and reports the
    diagnostic maximum without treating noisy first-use work as a release threshold;
-7. requires a successful process exit within the capture timeout;
-8. boots the same executable again in 1366×768 and 960×540 windows plus 1920×1080 fullscreen,
+7. requires nonzero sampled and OS-peak working-set reports from each of the four resolution
+   processes, with an optional explicit sampled-memory ceiling but no unstable default cap;
+8. requires a successful process exit within the capture timeout;
+9. boots the same executable again in 1366×768 and 960×540 windows plus 1920×1080 fullscreen,
    validating all 76 scene outputs as nontrivial PNGs with exact dimensions; then
-9. launches the identical EXE from a working path containing spaces and Unicode, marks the EXE
+10. launches the identical EXE from a working path containing spaces and Unicode, marks the EXE
    read-only, and fails if the game writes any sidecar beside it.
 
 Run the complete internal package sequence with:
@@ -37,10 +39,11 @@ and executable SHA-256. See `docs/performance_probe.md` for the measurement boun
 
 ## What this does not prove
 
-The smoke gate verifies startup, seeded update/draw CPU time, capture output, and clean process
-completion. It does not play the controls, compare visual correctness, or traverse the
+The smoke gate verifies startup, seeded update/draw CPU time, short-batch process-memory reporting,
+capture output, and clean process completion. It does not play the controls, compare visual
+correctness, or traverse the
 scope-dependent full demo,
-measure GPU presentation, sustained frame time or memory, exercise OS window events, or replace clean-machine and
+measure GPU presentation, sustained frame time or ordinary-play memory, exercise OS window events, or replace clean-machine and
 physical-device testing. The fullscreen 1080p capture avoids Windows reducing a decorated
 1920×1080 window to its desktop work area; it does not validate interactive fullscreen toggling.
 Structural success at four resolutions is not human screenshot approval.

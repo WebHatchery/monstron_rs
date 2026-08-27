@@ -67,6 +67,7 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Deterministic combat captures cover active, victory, and defeat states with visible continuation wording.
 - [x] Combat capture names rules-backed automatic Attack/Skill targets, the next enemy intent/target, damage, and status effects.
 - [x] Release capture enforces a local, opt-in 16.667 ms p95 update+draw CPU budget across all 19 scenes.
+- [x] Exact-package capture records nonzero sampled and OS-peak working-set diagnostics at all four resolutions.
 - [x] The identical EXE launches read-only from a spaces/Unicode working path without sidecar writes.
 - [x] Internal catalog metadata removes the inherited repository link and unsupported public platform claim.
 - [x] A deploy-only follow-up makes the local preview download byte-match the sealed archive checksum.

@@ -27,7 +27,9 @@ Audit date: 26 August 2026
   The exact packaged optimized EXE now passes a 19-scene boot/render smoke gate at 1280×720,
   1366×768, 1920×1080 fullscreen, and a deliberately small 960×540 window.
   That gate also records opt-in local update+draw CPU samples, enforces a provisional 16.667 ms p95
-  budget, and reports diagnostic maxima; GPU, memory, and sustained pacing remain unmeasured.
+  budget, and reports diagnostic maxima. All four resolution processes now emit mandatory local
+  sampled/OS-peak working-set reports; GPU memory, a stable ordinary-play memory threshold, and
+  sustained pacing remain unmeasured.
   It also launches read-only from a working path containing spaces and Unicode without sidecar writes.
   Help, package manifests, and release smoke now share an exact `version+g<commit>` build identity.
   Catalog metadata now labels the build as an internal preview, leads with visible controls, and
@@ -126,7 +128,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   release-candidate task.
 - Native panics now append a local crash log beside the save. Windows icon/version metadata,
   clean-machine launch tests, a write-denying launch-directory ACL test, antivirus/SmartScreen
-  records, gamepad support, GPU/memory profiling, and a 2–4 hour real-time render/device soak remain
+  records, gamepad support, GPU profiling, stable ordinary-play memory profiling, and a 2–4 hour real-time render/device soak remain
   absent. The exact EXE does pass a read-only spaces/Unicode relocation test and a provisional
   16.667 ms p95 update+draw CPU gate across all release-capture scenes, while a deterministic
   240-cycle engine/native-persistence soak covers 180 victories and 60 recovery returns without deadlock.
@@ -249,8 +251,10 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
   recovery, atomic backup-save, and native reload boundaries. It does not replace the real-time soak.
 - Track frame time and memory at supported resolutions; investigate sustained degradation.
 - Implemented independently: all 19 optimized 1280×720 capture scenes enforce a provisional
-  16.667 ms p95 update+draw CPU budget and report diagnostic maxima. GPU presentation, memory,
-  sustained real-time behavior, and performance at other resolutions remain.
+  16.667 ms p95 update+draw CPU budget and report diagnostic maxima. Four resolution processes also
+  require nonzero sampled and OS-peak working-set reports. Cold capture peaks are too volatile for
+  a defensible default memory cap; GPU presentation, ordinary-play memory, sustained real-time
+  behavior, and CPU performance at other resolutions remain.
 - Test fresh install, paths containing spaces and non-ASCII characters, read-only launch folder, missing/corrupt save, Alt+Tab, resizing, fullscreen toggling, and repeated restart.
 - Implemented independently: the exact packaged EXE launches read-only from a spaces/Unicode working
   path and writes no sidecars there. Clean-install, write-denying ACL, and OS-event tests remain.

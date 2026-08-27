@@ -12,6 +12,7 @@
 param(
     [string]$ArchivePath = "dist\hatchspire_windows.zip",
     [double]$MaxP95CpuMs = 16.667,
+    [double]$MaxSampledWorkingSetMb = 0,
     [switch]$AllowDirty
 )
 
@@ -19,6 +20,9 @@ $ErrorActionPreference = "Stop"
 
 if ($MaxP95CpuMs -le 0) {
     throw "The p95 performance limit must be greater than zero."
+}
+if ($MaxSampledWorkingSetMb -lt 0) {
+    throw "The sampled working-set limit cannot be negative."
 }
 
 function Get-ZipEntryText {
@@ -146,12 +150,14 @@ try {
     $captureDir = Join-Path $projectDir $outputDir
     New-Item -ItemType Directory -Path $captureDir -Force | Out-Null
     $performanceReport = Join-Path $captureDir "performance.jsonl"
+    $memoryReports = @()
+    $memoryReport = Join-Path $captureDir "memory_1280x720.json"
     if (Test-Path -LiteralPath $performanceReport) {
         Remove-Item -LiteralPath $performanceReport -Force
     }
     Set-Item Env:HATCHSPIRE_PERF_REPORT $performanceReport
     try {
-        & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 -WindowWidth 1280 -WindowHeight 720 -OutputDir $outputDir -MinBytes 20000 -SkipBuild -Release
+        & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 -WindowWidth 1280 -WindowHeight 720 -OutputDir $outputDir -MinBytes 20000 -ProcessReportPath $memoryReport -SkipBuild -Release
         if (-not $?) { throw "Release capture harness failed." }
     } finally {
         Remove-Item Env:HATCHSPIRE_PERF_REPORT -ErrorAction SilentlyContinue
@@ -177,6 +183,7 @@ try {
     }
     $worstP95 = $performanceSamples | Sort-Object p95_cpu_micros -Descending | Select-Object -First 1
     $worstSingle = $performanceSamples | Sort-Object max_cpu_micros -Descending | Select-Object -First 1
+    $memoryReports += Get-Content -LiteralPath $memoryReport -Raw | ConvertFrom-Json
 
     foreach ($scene in $scenes) {
         $path = Join-Path $captureDir "ui_$scene.png"
@@ -197,11 +204,14 @@ try {
     )
     foreach ($resolution in $additionalResolutions) {
         $matrixOutputDir = Join-Path $outputDir $resolution.Label
+        $matrixMemoryReport = Join-Path $captureDir ("memory_{0}.json" -f $resolution.Label)
         & $shared -GameDir $projectDir -Scenes $scenes -Frames 30 `
             -WindowWidth $resolution.Width -WindowHeight $resolution.Height `
             -OutputDir $matrixOutputDir -MinBytes 20000 -SkipBuild -Release `
+            -ProcessReportPath $matrixMemoryReport `
             -Fullscreen:$resolution.Fullscreen
         if (-not $?) { throw "Release capture failed at $($resolution.Label)." }
+        $memoryReports += Get-Content -LiteralPath $matrixMemoryReport -Raw | ConvertFrom-Json
 
         $matrixCaptureDir = Join-Path $projectDir $matrixOutputDir
         foreach ($scene in $scenes) {
@@ -216,6 +226,25 @@ try {
             }
         }
     }
+
+    $sampledWorkingSetLimitBytes = [Math]::Round($MaxSampledWorkingSetMb * 1MB)
+    foreach ($memorySample in $memoryReports) {
+        if ($memorySample.scenes -ne $scenes.Count -or
+            $memorySample.frames_per_scene -ne 30 -or
+            $memorySample.max_sampled_working_set_bytes -le 0 -or
+            $memorySample.os_peak_working_set_bytes -le 0) {
+            throw "Invalid capture-process memory report."
+        }
+        if ($MaxSampledWorkingSetMb -gt 0 -and
+            $memorySample.max_sampled_working_set_bytes -gt $sampledWorkingSetLimitBytes) {
+            $sampledMb = [Math]::Round($memorySample.max_sampled_working_set_bytes / 1MB, 1)
+            throw "Capture process sampled working set is $sampledMb MB; limit is $MaxSampledWorkingSetMb MB."
+        }
+    }
+    $worstSampledMemory = $memoryReports | Sort-Object max_sampled_working_set_bytes -Descending | Select-Object -First 1
+    $worstOsPeakMemory = $memoryReports | Sort-Object os_peak_working_set_bytes -Descending | Select-Object -First 1
+    $worstSampledMemoryMb = [Math]::Round($worstSampledMemory.max_sampled_working_set_bytes / 1MB, 1)
+    $worstOsPeakMemoryMb = [Math]::Round($worstOsPeakMemory.os_peak_working_set_bytes / 1MB, 1)
 
     $targetRoot = [IO.Path]::GetFullPath((Join-Path $projectDir "target"))
     $relocatedDir = Join-Path $targetRoot ("release smoke Ω path " + [Guid]::NewGuid().ToString("N"))
@@ -285,6 +314,13 @@ try {
     Write-Host "  Worst p95 update+draw: $($worstP95.scene) $($worstP95.p95_cpu_micros) us"
     Write-Host "  Worst single update+draw: $($worstSingle.scene) $($worstSingle.max_cpu_micros) us"
     Write-Host "  Enforced CPU limit: p95 $p95LimitMicros us"
+    Write-Host "  Max sampled working set: $worstSampledMemoryMb MB across four capture processes"
+    Write-Host "  Diagnostic OS peak working set: $worstOsPeakMemoryMb MB"
+    if ($MaxSampledWorkingSetMb -gt 0) {
+        Write-Host "  Enforced memory limit: sampled $MaxSampledWorkingSetMb MB per capture process"
+    } else {
+        Write-Host "  Memory limit: diagnostic only; no stable capture-process ceiling established"
+    }
     Write-Host "  Relocated launch: spaces + Unicode path, read-only EXE, no sidecar writes"
     Write-Host "  Package status: internal preview; public approval still required" -ForegroundColor Yellow
 } finally {
