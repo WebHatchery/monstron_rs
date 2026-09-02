@@ -7,6 +7,7 @@ mod save_flow;
 use macroquad::prelude::*;
 
 use crate::data::{GameData, GameDataLoader};
+use crate::engine::tower_engine;
 use crate::playtest_report;
 use crate::save::SaveRepository;
 use crate::screens::placeholder::PlaceholderKind;
@@ -202,6 +203,7 @@ impl Game {
                         PlaceholderKind::DungeonPrep,
                         self.tower_prep_floor,
                         state.tower_progress.unlocked_floor,
+                        tower_engine::battle_ready_party_count(state) > 0,
                     ) {
                         self.apply_progression(|game| game.apply_placeholder_action(action));
                     }
@@ -244,7 +246,9 @@ impl Game {
                 }
             }
             AppScreen::EndOfDay => {
-                if let Some(action) = placeholder::handle_input(PlaceholderKind::EndOfDay, 1, 1) {
+                if let Some(action) =
+                    placeholder::handle_input(PlaceholderKind::EndOfDay, 1, 1, true)
+                {
                     self.apply_progression(|game| game.apply_placeholder_action(action));
                 }
             }
@@ -328,6 +332,8 @@ impl Game {
                         &self.status_message,
                         self.tower_prep_floor,
                         state.tower_progress.unlocked_floor,
+                        tower_engine::battle_ready_party_count(state),
+                        tower_engine::battle_ready_party_average_level(state),
                     );
                 }
             }
@@ -359,6 +365,8 @@ impl Game {
                     &self.status_message,
                     1,
                     1,
+                    0,
+                    None,
                 );
             }
         }

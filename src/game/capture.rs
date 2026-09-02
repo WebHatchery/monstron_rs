@@ -91,6 +91,15 @@ impl Game {
                 if let Some(state) = &mut self.state {
                     state.tower_progress.best_floor = 6;
                     state.tower_progress.unlocked_floor = 7;
+                    for id in state
+                        .monster_roster
+                        .party_slots
+                        .clone()
+                        .into_iter()
+                        .flatten()
+                    {
+                        state.monster_roster.monster_mut(id).unwrap().level = 4;
+                    }
                 }
                 self.tower_prep_floor = 4;
                 self.status_message = "Floor 4 selected. Choose an expedition goal.".to_owned();

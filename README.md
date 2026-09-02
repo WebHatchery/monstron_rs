@@ -10,7 +10,8 @@ You begin with a loyal slime, a cold hatchery brazier, and just enough supplies 
 - Hatch, raise, rest, and organize tower-born monsters.
 - Page through every Stable slot and safely rehome a benched companion when a full roster blocks
   further hatching.
-- Choose a party before entering the tower.
+- Choose a battle-ready party before entering the tower; expedition prep shows its average level
+  beside the selected floor's suggested level and blocks entry when nobody is ready.
 - Follow an optional, persistent first-expedition guide through Hatchery construction, dungeon
   exploration, recovery, and the first manual save using exact visible touch targets.
 - Choose an expedition goal, survey hidden rooms, resolve landmark events, and retreat before pressure, injuries, and fatigue spiral.
@@ -52,7 +53,8 @@ Turn a fragile camp into a working monster haven that can support increasingly d
   CAMP, or RETREAT for direct control. Live expedition results wrap inside the world HUD, while
   bounded journal excerpts keep route changes and discoveries readable without covering controls.
 - Tower Prep defaults to the deepest unlocked floor, with visible PREV FLOOR and NEXT FLOOR
-  controls for revisiting any earlier route under a different expedition goal.
+  controls for revisiting any earlier route under a different expedition goal. It shows the
+  battle-ready party count, average level, and a suggested level matching the selected floor.
 - A deeper floor unlocks only after the party reaches the current floor's stairs; entering,
   fighting, or retreating alone cannot bypass exploration.
 - The first-expedition guide can be skipped at any step and replayed from the Camp Menu.
@@ -78,6 +80,8 @@ The ten-floor tower currently includes:
 - Pressure escalation, wandering hunters, floor-specific guardian eggs, and sealed guardian thresholds on floors 5 and 10.
 - Stair-authoritative sequential progression backed by connectivity checks across every floor,
   expedition goal, and a broad deterministic seed sweep.
+- Deep-floor balance regressions exercise every floor 4–10 enemy and both guardians with a
+  three-companion party, plus a victory, overnight recovery, and same-floor re-entry cycle.
 - An authored floor-10 conclusion that banks the final expedition, records the restored Verdant
   Crown, celebrates the active party, and keeps post-story expeditions available.
 

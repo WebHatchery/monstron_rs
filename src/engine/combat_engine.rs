@@ -415,4 +415,6 @@ fn encounter_seed(state: &GameState, floor: u32, is_boss: bool) -> u64 {
 }
 
 #[cfg(test)]
+mod campaign_tests;
+#[cfg(test)]
 mod tests;

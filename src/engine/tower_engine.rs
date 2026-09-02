@@ -365,6 +365,18 @@ pub fn battle_ready_party_count(state: &GameState) -> usize {
         .count()
 }
 
+pub fn battle_ready_party_average_level(state: &GameState) -> Option<u32> {
+    let levels = state
+        .monster_roster
+        .party_slots
+        .iter()
+        .filter_map(|slot| state.monster_roster.monster((*slot)?))
+        .filter(|monster| monster.is_battle_ready() && state.town.monster_job(monster.id).is_none())
+        .map(|monster| monster.level)
+        .collect::<Vec<_>>();
+    (!levels.is_empty()).then(|| levels.iter().sum::<u32>() / levels.len() as u32)
+}
+
 fn resolve_map_object(
     state: &mut GameState,
     data: &GameData,

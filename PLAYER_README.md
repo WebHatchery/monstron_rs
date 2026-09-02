@@ -30,6 +30,9 @@ At maximum Stable capacity, use **Prev/Next** to inspect all roster pages. Bench
 
 Tower Prep starts on the deepest unlocked floor. Use the visible **Prev Floor** and **Next Floor**
 buttons to revisit earlier floors, then choose the expedition goal that fits what you want to find.
+The prep card compares the battle-ready party's average level with the selected floor's suggested
+level. If nobody is ready, expedition goals stay disabled; tap **Town**, open **Stable**, and assign
+rested, uncommitted companions before returning.
 To unlock the next floor, explore until the party physically reaches the stairs. Entering a floor,
 winning an ordinary fight, or retreating does not open a deeper route.
 

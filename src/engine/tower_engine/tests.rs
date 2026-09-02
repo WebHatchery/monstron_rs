@@ -6,6 +6,38 @@ use crate::data::GameDataLoader;
 use crate::state::{TowerMapState, TowerPendingEvent, TowerTileKind, TowerTileVisibility};
 
 #[test]
+fn readiness_summary_uses_only_eligible_party_members() {
+    let data = GameDataLoader::load_embedded().expect("embedded data should load");
+    let mut state = GameState::new(&data);
+    for (slot, species_id) in [(1, "emberkit"), (2, "pebblepup")] {
+        let species = data.species(species_id).unwrap();
+        let id = state
+            .monster_roster
+            .add_monster(species.name.clone(), species, slot as u64);
+        state.monster_roster.party_slots[slot] = Some(id);
+    }
+    let party_ids = state
+        .monster_roster
+        .party_slots
+        .iter()
+        .flatten()
+        .copied()
+        .collect::<Vec<_>>();
+    for (index, id) in party_ids.iter().enumerate() {
+        state.monster_roster.monster_mut(*id).unwrap().level = 3 + index as u32 * 2;
+    }
+    state
+        .monster_roster
+        .monster_mut(party_ids[2])
+        .unwrap()
+        .condition
+        .injury_days = 1;
+
+    assert_eq!(battle_ready_party_count(&state), 2);
+    assert_eq!(battle_ready_party_average_level(&state), Some(4));
+}
+
+#[test]
 fn generated_map_has_start_and_stairs() {
     let data = GameDataLoader::load_embedded().expect("embedded data should load");
     let state = GameState::new(&data);

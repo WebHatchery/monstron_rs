@@ -22,12 +22,13 @@ pub fn handle_input(
     kind: PlaceholderKind,
     selected_floor: u32,
     unlocked_floor: u32,
+    can_enter: bool,
 ) -> Option<PlaceholderAction> {
     if is_key_pressed(KeyCode::Escape) {
         return Some(PlaceholderAction::ToTown);
     }
 
-    if kind == PlaceholderKind::DungeonPrep && is_key_pressed(KeyCode::Enter) {
+    if kind == PlaceholderKind::DungeonPrep && can_enter && is_key_pressed(KeyCode::Enter) {
         return Some(PlaceholderAction::ToTower(TowerRunGoal::SafeRun));
     }
     if kind == PlaceholderKind::DungeonPrep && is_key_pressed(KeyCode::Left) {
@@ -41,7 +42,7 @@ pub fn handle_input(
         return Some(PlaceholderAction::ToTown);
     }
 
-    for (action, rect, enabled) in buttons(kind, selected_floor, unlocked_floor) {
+    for (action, rect, enabled) in buttons(kind, selected_floor, unlocked_floor, can_enter) {
         if ui::button_clicked(rect, enabled) {
             return Some(action);
         }
@@ -56,6 +57,8 @@ pub fn draw(
     status_message: &str,
     selected_floor: u32,
     unlocked_floor: u32,
+    ready_party_count: usize,
+    ready_party_average_level: Option<u32>,
 ) {
     let rect = Rect::new(220.0, 96.0, ui::VIEW_WIDTH - 440.0, 500.0);
     ui::draw_panel(rect);
@@ -72,11 +75,20 @@ pub fn draw(
     ui::draw_centered_text(hint, ui::VIEW_WIDTH * 0.5, rect.y + 136.0, 19, ui::TEXT_DIM);
 
     if kind == PlaceholderKind::DungeonPrep {
-        draw_floor_selector(data, rect, selected_floor, unlocked_floor);
+        draw_floor_selector(
+            data,
+            rect,
+            selected_floor,
+            unlocked_floor,
+            ready_party_count,
+            ready_party_average_level,
+        );
         draw_run_goal_reference(rect);
     }
 
-    for (action, button_rect, enabled) in buttons(kind, selected_floor, unlocked_floor) {
+    for (action, button_rect, enabled) in
+        buttons(kind, selected_floor, unlocked_floor, ready_party_count > 0)
+    {
         let label = match action {
             PlaceholderAction::ToTown => "Town",
             PlaceholderAction::ToTower(goal) => goal.label(),
@@ -108,6 +120,7 @@ fn buttons(
     kind: PlaceholderKind,
     selected_floor: u32,
     unlocked_floor: u32,
+    can_enter: bool,
 ) -> Vec<(PlaceholderAction, Rect, bool)> {
     let center_x = ui::VIEW_WIDTH * 0.5;
     match kind {
@@ -133,7 +146,7 @@ fn buttons(
                         (
                             PlaceholderAction::ToTower(*goal),
                             goal_button_rect(index),
-                            true,
+                            can_enter,
                         )
                     }),
             );
@@ -160,7 +173,7 @@ fn draw_run_goal_reference(rect: Rect) {
     draw_ui_text_ex(
         "EXPEDITION GOAL",
         rect.x + 42.0,
-        rect.y + 266.0,
+        rect.y + 282.0,
         TextParams {
             font_size: 16,
             color: ui::ACCENT,
@@ -169,7 +182,7 @@ fn draw_run_goal_reference(rect: Rect) {
     );
     for (index, goal) in TowerRunGoal::CHOICES.iter().enumerate() {
         let x = rect.x + 42.0;
-        let y = rect.y + 294.0 + index as f32 * 25.0;
+        let y = rect.y + 306.0 + index as f32 * 22.0;
         draw_ui_text_ex(
             goal.label(),
             x,
@@ -193,14 +206,21 @@ fn draw_run_goal_reference(rect: Rect) {
     }
 }
 
-fn draw_floor_selector(data: &GameData, rect: Rect, selected_floor: u32, unlocked_floor: u32) {
+fn draw_floor_selector(
+    data: &GameData,
+    rect: Rect,
+    selected_floor: u32,
+    unlocked_floor: u32,
+    ready_party_count: usize,
+    ready_party_average_level: Option<u32>,
+) {
     let selected = normalize_floor_selection(selected_floor, unlocked_floor);
     let floor = data.tower_floor(selected);
     let name = floor.map_or("Unknown Floor", |floor| floor.name.as_str());
     let theme = floor.map_or("No expedition notes are available.", |floor| {
         floor.theme.as_str()
     });
-    let card = Rect::new(rect.x + 190.0, rect.y + 154.0, rect.w - 380.0, 92.0);
+    let card = Rect::new(rect.x + 190.0, rect.y + 154.0, rect.w - 380.0, 108.0);
     ui::draw_panel(card);
     ui::draw_centered_text(
         &format!("Floor {selected} of {} · {name}", unlocked_floor.max(1)),
@@ -210,6 +230,30 @@ fn draw_floor_selector(data: &GameData, rect: Rect, selected_floor: u32, unlocke
         ui::TEXT_BRIGHT,
     );
     ui::draw_centered_text(theme, ui::VIEW_WIDTH * 0.5, card.y + 66.0, 15, ui::TEXT_DIM);
+    let (readiness, readiness_color) = if ready_party_count == 0 {
+        (
+            "NO READY PARTY · Tap TOWN, then open Stable".to_owned(),
+            ui::WARN,
+        )
+    } else {
+        let average = ready_party_average_level.unwrap_or(1);
+        let color = if average < selected {
+            ui::WARN
+        } else {
+            ui::ACCENT
+        };
+        (
+            format!("{ready_party_count} READY · PARTY AVG LV {average} · SUGGESTED LV {selected}"),
+            color,
+        )
+    };
+    ui::draw_centered_text(
+        &readiness,
+        ui::VIEW_WIDTH * 0.5,
+        card.y + 91.0,
+        15,
+        readiness_color,
+    );
 }
 
 fn previous_floor_rect() -> Rect {

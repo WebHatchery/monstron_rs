@@ -81,8 +81,12 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   rehoming, so a ready egg cannot permanently dead-end the raising loop.
 - Tower Prep defaults to the deepest unlocked floor while exposing touch controls for revisiting
   every earlier unlocked floor; later unlocks no longer erase access to earlier dungeon content.
+  It reports battle-ready party count and average level against the selected floor's suggested
+  level, and keeps goal controls disabled until at least one companion can enter.
 - Floor progression is stair-authoritative: only reaching an unsealed stair unlocks the next route,
   and automated connectivity coverage checks every authored floor and expedition goal.
+- Automated deep-campaign balance coverage clears every floor 4–10 enemy and both guardians with
+  three same-level companions, then separately proves victory, sleep recovery, and re-entry.
 - The existing floor data unlocks floor 4 immediately after floor 3; there is no demo boundary.
 - Floor 3 has no guardian or authored finale state.
 - Tutorial progress now persists in save data. A separately approved demo-completion boundary and

@@ -16,6 +16,7 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Keep live expedition messages and journal history inside their dungeon HUD bounds.
 - [x] Make reached stairs—not entry, retreat, or ordinary combat—the authority for floor unlocks.
 - [x] Verify every room and map object is reachable across all floors, goals, and representative seeds.
+- [x] Show party readiness and a tested floor-level recommendation before each expedition.
 
 ## Onboarding
 
@@ -33,6 +34,8 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Record player commands and the RNG seed while a combat encounter is running.
 - [x] Implement a replay runner that reconstructs an encounter and reports the first mismatch.
 - [x] Add deterministic replay tests for victory, defeat, fleeing, and item use.
+- [x] Regression-test every deep-floor enemy and guardian with a three-monster same-level party.
+- [x] Regression-test deep victory, overnight recovery, and same-floor re-entry as one playable loop.
 
 ## Verification captures
 
