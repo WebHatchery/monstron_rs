@@ -546,7 +546,7 @@ fn enemy_slot_rect(slot: usize) -> Rect {
     )
 }
 
-fn command_buttons() -> [(CombatCommand, Rect); 5] {
+pub(crate) fn command_buttons() -> [(CombatCommand, Rect); 5] {
     [
         (CombatCommand::Attack, Rect::new(210.0, 538.0, 100.0, 36.0)),
         (CombatCommand::Skill, Rect::new(322.0, 538.0, 100.0, 36.0)),

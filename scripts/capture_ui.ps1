@@ -27,6 +27,15 @@
       - "combat_victory" -> resolved victory with visible continuation
       - "combat_defeat" -> resolved defeat with visible recovery continuation
       - "finale" -> completed ten-floor campaign with visible continuation choices
+      - "tutorial_town" -> first town objective and highlighted touch target
+      - "tutorial_welcome" -> first-run introduction and visible continuation
+      - "tutorial_prep" -> first expedition-goal choice
+      - "tutorial_tower" -> first dungeon movement instruction
+      - "tutorial_survey" -> hidden-room survey instruction
+      - "tutorial_retreat" -> safe expedition-return instruction
+      - "tutorial_combat" -> first encounter explanation
+      - "tutorial_combat_action" -> highlighted first combat action
+      - "tutorial_finished" -> completion and replay guidance
 
 .EXAMPLE
     ./scripts/capture_ui.ps1

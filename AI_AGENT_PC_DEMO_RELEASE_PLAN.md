@@ -130,7 +130,10 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 
 ### Release blockers or risks found
 
-- There is no first-time tutorial or guided opening. New Game drops directly into the town.
+- New Game now opens a persistent, skippable first-expedition guide that highlights SCAVENGE,
+  TOWER, SAFE RUN, EXPLORE, SURVEY, RETREAT, and the first combat ATTACK path. It can be replayed
+  from the Camp Menu. Facility improvement, egg care/hatching, recovery, and save education still
+  need later contextual steps before the complete proposed demo path is taught.
 - Defeating the floor-10 guardian now opens an authored full-campaign finale, banks the expedition rewards, records the restored crown, and offers visible town/title continuations. A shorter demo still has no separately authored finish line.
 - The initial combat capture contained a magenta VFX background and overlapping statistics. Combat
   now uses the processed transparent atlas and distinct card rows at all four structural capture

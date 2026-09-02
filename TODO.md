@@ -12,6 +12,12 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Add actionable validation messages for hatchery, stable, breeding, and workshop failures.
 - [x] Add tower and combat failure/recovery messages with a visible touch action for each.
 
+## Onboarding
+
+- [x] Add a persistent, skippable first-expedition guide from camp scavenging through tower return.
+- [x] Add contextual first-combat guidance with an exact visible ATTACK target.
+- [x] Add a Camp Menu replay path and verification captures at desktop and small-window sizes.
+
 ## Balance tooling
 
 - [x] Define a serializable combat replay format containing the RNG seed, roster, encounter,

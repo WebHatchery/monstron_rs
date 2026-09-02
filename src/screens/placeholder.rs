@@ -93,7 +93,7 @@ fn buttons(kind: PlaceholderKind) -> Vec<(PlaceholderAction, Rect, bool)> {
                 .map(|(index, goal)| {
                     (
                         PlaceholderAction::ToTower(*goal),
-                        Rect::new(298.0 + index as f32 * 138.0, 480.0, 126.0, 34.0),
+                        goal_button_rect(index),
                         true,
                     )
                 })
@@ -111,6 +111,10 @@ fn buttons(kind: PlaceholderKind) -> Vec<(PlaceholderAction, Rect, bool)> {
             true,
         )],
     }
+}
+
+pub(crate) fn goal_button_rect(index: usize) -> Rect {
+    Rect::new(298.0 + index as f32 * 138.0, 480.0, 126.0, 34.0)
 }
 
 fn draw_run_goal_reference(rect: Rect) {

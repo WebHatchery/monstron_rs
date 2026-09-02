@@ -24,6 +24,73 @@ impl Game {
             "combat_status" => self.begin_capture_combat_status(),
             "combat_victory" => self.begin_capture_combat(Some(CombatOutcome::Victory)),
             "combat_defeat" => self.begin_capture_combat(Some(CombatOutcome::Defeat)),
+            "tutorial_welcome" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.reset_capture_tutorial();
+            }
+            "tutorial_town" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.reset_capture_tutorial();
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::WELCOME]);
+            }
+            "tutorial_prep" => {
+                self.begin_capture_fixture(AppScreen::DungeonPrep);
+                self.reset_capture_tutorial();
+                self.set_capture_tutorial_flags(&[
+                    crate::screens::tutorial::WELCOME,
+                    crate::screens::tutorial::SCAVENGED,
+                    crate::screens::tutorial::PREP_OPENED,
+                ]);
+            }
+            "tutorial_tower" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.enter_tower(TowerRunGoal::SafeRun);
+                self.reset_capture_tutorial();
+                self.set_capture_tutorial_flags(&first_tower_tutorial_flags());
+            }
+            "tutorial_survey" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.enter_tower(TowerRunGoal::SafeRun);
+                self.reset_capture_tutorial();
+                let mut flags = first_tower_tutorial_flags();
+                flags.push(crate::screens::tutorial::EXPLORED);
+                self.set_capture_tutorial_flags(&flags);
+            }
+            "tutorial_retreat" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.enter_tower(TowerRunGoal::Balanced);
+                self.reset_capture_tutorial();
+                let mut flags = first_tower_tutorial_flags();
+                flags.extend([
+                    crate::screens::tutorial::EXPLORED,
+                    crate::screens::tutorial::SURVEYED,
+                ]);
+                self.set_capture_tutorial_flags(&flags);
+            }
+            "tutorial_combat" => {
+                self.begin_capture_combat(None);
+                self.reset_capture_tutorial();
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::COMPLETE]);
+            }
+            "tutorial_combat_action" => {
+                self.begin_capture_combat(None);
+                self.reset_capture_tutorial();
+                self.set_capture_tutorial_flags(&[
+                    crate::screens::tutorial::COMPLETE,
+                    crate::screens::tutorial::COMBAT_INTRO,
+                ]);
+            }
+            "tutorial_finished" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.reset_capture_tutorial();
+                let mut flags = first_tower_tutorial_flags();
+                flags.extend([
+                    crate::screens::tutorial::EXPLORED,
+                    crate::screens::tutorial::SURVEYED,
+                    crate::screens::tutorial::RETURNED,
+                ]);
+                self.set_capture_tutorial_flags(&flags);
+            }
             "finale" => {
                 self.begin_capture_fixture(AppScreen::Finale);
                 if let Some(state) = &mut self.state {
@@ -211,9 +278,36 @@ impl Game {
         state
             .egg_inventory
             .add_egg("mossy_egg".to_owned(), 0, 3, 0xA7C4_0001);
+        state.story_flags.add(crate::screens::tutorial::SKIPPED);
         self.screen = screen;
         self.town_menu_open = false;
         self.status_message =
             "Seeded verification scene. Tap a visible control to continue.".to_owned();
     }
+
+    fn reset_capture_tutorial(&mut self) {
+        if let Some(state) = &mut self.state {
+            state
+                .story_flags
+                .flags
+                .retain(|flag| !flag.starts_with("tutorial_"));
+        }
+    }
+
+    fn set_capture_tutorial_flags(&mut self, flags: &[&str]) {
+        if let Some(state) = &mut self.state {
+            for flag in flags {
+                state.story_flags.add(flag);
+            }
+        }
+    }
+}
+
+fn first_tower_tutorial_flags() -> Vec<&'static str> {
+    vec![
+        crate::screens::tutorial::WELCOME,
+        crate::screens::tutorial::SCAVENGED,
+        crate::screens::tutorial::PREP_OPENED,
+        crate::screens::tutorial::TOWER_ENTERED,
+    ]
 }

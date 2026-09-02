@@ -71,10 +71,13 @@ This is the route the tutorial, deterministic test fixture, and release capture 
 
 ## Current implementation gaps on that path
 
-- New Game enters town without onboarding or a visible first objective.
+- New Game now provides a persistent, skippable first-expedition guide with highlighted visible
+  controls through scavenging, tower preparation, exploration, survey, retreat, and first combat.
+  Facility improvement, egg care/hatching, recovery, and save education remain unguided.
 - The existing floor data unlocks floor 4 immediately after floor 3; there is no demo boundary.
 - Floor 3 has no guardian or authored finale state.
-- Tutorial completion, demo completion, and post-finale results are not represented in save data.
+- Tutorial progress now persists in save data. A separately approved demo-completion boundary and
+  its results are not yet represented; full-campaign finale completion is persisted.
 - Change-aware autosave, New Game confirmation, separately confirmed reset, native save-location
   help, visible historical-save migration, one-step rollback, and a visible native quit control are
   implemented. Eight major completed-action boundaries survive native save/restart cycles, while a

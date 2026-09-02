@@ -18,6 +18,7 @@ use crate::screens::{
     save_recovery::SaveRecoveryAction,
     tower::TowerAction,
     town::TownAction,
+    tutorial::{self, TutorialAction, TutorialStep},
     AppScreen,
 };
 use crate::state::{GameState, TowerRunGoal};
@@ -220,6 +221,9 @@ impl Game {
             }
             TownAction::DungeonPrep => {
                 self.town_menu_open = false;
+                if let Some(state) = &mut self.state {
+                    tutorial::mark(state, tutorial::PREP_OPENED);
+                }
                 self.screen = AppScreen::DungeonPrep;
                 self.status_message = "Choose a party before entering the tower.".to_owned();
             }
@@ -241,6 +245,7 @@ impl Game {
                 if let Some(state) = &mut self.state {
                     self.status_message =
                         town_engine::reduce(state, &self.data, &TownAction::Scavenge).summary;
+                    tutorial::mark(state, tutorial::SCAVENGED);
                 }
             }
             TownAction::AdvanceBuilding(building_id) => {
@@ -276,6 +281,17 @@ impl Game {
                 self.screen = AppScreen::MainMenu;
                 self.status_message = "Returned to title.".to_owned();
             }
+            TownAction::ReplayTutorial => {
+                self.town_menu_open = false;
+                if let Some(state) = &mut self.state {
+                    state
+                        .story_flags
+                        .flags
+                        .retain(|flag| !flag.starts_with("tutorial_"));
+                    self.status_message =
+                        "First-expedition guide restarted. Tap CONTINUE.".to_owned();
+                }
+            }
         }
     }
 
@@ -302,6 +318,7 @@ impl Game {
                 if let Some(result) = result {
                     self.apply_tower_result(result);
                 }
+                self.mark_tutorial_explored();
             }
             TowerAction::RouteTo(x, y) => {
                 let result = self
@@ -311,6 +328,7 @@ impl Game {
                 if let Some(result) = result {
                     self.apply_tower_result(result);
                 }
+                self.mark_tutorial_explored();
                 self.schedule_tower_route_step();
             }
             TowerAction::Explore => {
@@ -321,12 +339,21 @@ impl Game {
                 if let Some(result) = result {
                     self.apply_tower_result(result);
                 }
+                self.mark_tutorial_explored();
                 self.schedule_tower_route_step();
             }
             TowerAction::Survey => {
                 self.clear_tower_route();
                 if let Some(state) = &mut self.state {
+                    let before = state.tower_run.as_ref().map_or(0, |run| run.survey_charges);
                     self.status_message = tower_engine::survey_floor(state, &self.data).summary;
+                    let after = state
+                        .tower_run
+                        .as_ref()
+                        .map_or(before, |run| run.survey_charges);
+                    if after < before {
+                        tutorial::mark(state, tutorial::SURVEYED);
+                    }
                 }
             }
             TowerAction::Camp => {
@@ -354,6 +381,7 @@ impl Game {
                 self.clear_tower_route();
                 if let Some(state) = &mut self.state {
                     self.status_message = tower_engine::return_to_town(state, &self.data).summary;
+                    tutorial::mark(state, tutorial::RETURNED);
                 }
                 self.screen = AppScreen::Town;
                 self.tower_guide_open = false;
@@ -429,6 +457,9 @@ impl Game {
             return;
         }
         if result.returned_to_town {
+            if let Some(state) = &mut self.state {
+                tutorial::mark(state, tutorial::RETURNED);
+            }
             self.screen = AppScreen::Town;
         }
 
@@ -472,6 +503,7 @@ impl Game {
                 if let Some(state) = &mut self.state {
                     self.status_message =
                         combat_engine::reduce_command(state, &self.data, command).summary;
+                    tutorial::mark(state, tutorial::COMBAT_ACTION);
                 }
             }
             CombatAction::Continue => {
@@ -521,7 +553,44 @@ impl Game {
         let run_started = state.tower_run.is_some();
         self.status_message = result.summary;
         if run_started {
+            tutorial::mark(state, tutorial::TOWER_ENTERED);
             self.screen = AppScreen::Tower;
+        }
+    }
+
+    pub(crate) fn apply_tutorial_action(&mut self, action: TutorialAction) {
+        let Some(state) = &mut self.state else {
+            return;
+        };
+        match action {
+            TutorialAction::Skip => {
+                tutorial::mark(state, tutorial::SKIPPED);
+                self.status_message =
+                    "Guide skipped. Replay it any time from the Camp Menu.".to_owned();
+            }
+            TutorialAction::Continue => {
+                match tutorial::current_step(state, self.screen) {
+                    Some(TutorialStep::Welcome) => tutorial::mark(state, tutorial::WELCOME),
+                    Some(TutorialStep::CombatIntro) => {
+                        tutorial::mark(state, tutorial::COMBAT_INTRO)
+                    }
+                    Some(TutorialStep::Finished) => tutorial::mark(state, tutorial::COMPLETE),
+                    _ => {}
+                }
+                self.status_message = "Follow the highlighted visible control.".to_owned();
+            }
+        }
+    }
+
+    fn mark_tutorial_explored(&mut self) {
+        if let Some(state) = &mut self.state {
+            if state
+                .tower_run
+                .as_ref()
+                .is_some_and(|run| run.rooms_explored > 0)
+            {
+                tutorial::mark(state, tutorial::EXPLORED);
+            }
         }
     }
 

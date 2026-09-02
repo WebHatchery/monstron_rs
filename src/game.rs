@@ -12,7 +12,7 @@ use crate::save::SaveRepository;
 use crate::screens::placeholder::PlaceholderKind;
 use crate::screens::{
     breeding, combat, finale, hatchery, help, menu, placeholder, save_recovery, shop, stable,
-    tower, town, workshop, AppScreen,
+    tower, town, tutorial, workshop, AppScreen,
 };
 use crate::settings::AppSettings;
 use crate::state::GameState;
@@ -78,6 +78,14 @@ impl Game {
     }
 
     pub fn update(&mut self) {
+        let tutorial_action = self
+            .state
+            .as_ref()
+            .and_then(|state| tutorial::handle_input(state, self.screen));
+        if let Some(action) = tutorial_action {
+            self.apply_progression(|game| game.apply_tutorial_action(action));
+            return;
+        }
         match self.screen {
             AppScreen::MainMenu => {
                 let has_save = SaveRepository::exists();
@@ -311,6 +319,10 @@ impl Game {
             AppScreen::EndOfDay => {
                 placeholder::draw(PlaceholderKind::EndOfDay, &self.status_message);
             }
+        }
+
+        if let Some(state) = &self.state {
+            tutorial::draw(state, self.screen);
         }
 
         set_default_camera();

@@ -54,7 +54,7 @@ pub(crate) fn menu_button_rect() -> Rect {
 }
 
 pub(crate) fn menu_panel_rect() -> Rect {
-    Rect::new(466.0, 190.0, 348.0, 270.0)
+    Rect::new(466.0, 166.0, 348.0, 326.0)
 }
 
 pub(crate) fn menu_resume_rect() -> Rect {
@@ -70,5 +70,9 @@ pub(crate) fn menu_load_rect() -> Rect {
 }
 
 pub(crate) fn menu_title_rect() -> Rect {
+    Rect::new(536.0, 456.0, 208.0, 36.0)
+}
+
+pub(crate) fn menu_tutorial_rect() -> Rect {
     Rect::new(536.0, 410.0, 208.0, 36.0)
 }

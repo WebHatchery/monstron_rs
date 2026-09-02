@@ -358,6 +358,7 @@ fn draw_actions() {
             | TownAction::Save
             | TownAction::Load
             | TownAction::BackToMenu
+            | TownAction::ReplayTutorial
             | TownAction::AdvanceBuilding(_)
             | TownAction::Trade(_)
             | TownAction::GreetNpc(_) => "",

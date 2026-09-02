@@ -31,6 +31,7 @@ pub enum TownCommand {
     Save,
     Load,
     BackToMenu,
+    ReplayTutorial,
 }
 
 impl ShopTrade {
@@ -68,6 +69,9 @@ pub fn reduce(state: &mut GameState, data: &GameData, command: &TownCommand) -> 
         | TownCommand::Load
         | TownCommand::BackToMenu => TownResult {
             summary: "Town command acknowledged.".to_owned(),
+        },
+        TownCommand::ReplayTutorial => TownResult {
+            summary: "First-expedition guide restarted.".to_owned(),
         },
     }
 }

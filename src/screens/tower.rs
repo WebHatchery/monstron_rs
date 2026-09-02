@@ -587,11 +587,11 @@ fn return_button_rect() -> Rect {
     town_button_rect()
 }
 
-fn explore_button_rect() -> Rect {
+pub(crate) fn explore_button_rect() -> Rect {
     Rect::new(300.0, 650.0, 150.0, 58.0)
 }
 
-fn survey_button_rect() -> Rect {
+pub(crate) fn survey_button_rect() -> Rect {
     Rect::new(462.0, 650.0, 150.0, 58.0)
 }
 
@@ -599,7 +599,7 @@ fn camp_button_rect() -> Rect {
     Rect::new(624.0, 650.0, 150.0, 58.0)
 }
 
-fn retreat_button_rect() -> Rect {
+pub(crate) fn retreat_button_rect() -> Rect {
     Rect::new(786.0, 650.0, 150.0, 58.0)
 }
 

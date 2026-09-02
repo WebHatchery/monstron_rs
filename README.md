@@ -9,6 +9,7 @@ You begin with a loyal slime, a cold hatchery brazier, and just enough supplies 
 - Rebuild camp facilities such as the hatchery, stable, workshop, shop, and breeding grove.
 - Hatch, raise, rest, and organize tower-born monsters.
 - Choose a party before entering the tower.
+- Follow an optional, persistent first-expedition guide with exact visible touch targets.
 - Choose an expedition goal, survey hidden rooms, resolve landmark events, and retreat before pressure, injuries, and fatigue spiral.
 - Spend rewards on stronger buildings, better recovery, and deeper expeditions.
 
@@ -46,6 +47,7 @@ Turn a fragile camp into a working monster haven that can support increasingly d
 - Touch/mouse: tap a chamber to travel toward it at a readable pace. Travel pauses at loot,
   hazards, landmarks, and encounters; tap another room to redirect, or use STEP NOW, SURVEY,
   CAMP, or RETREAT for direct control.
+- The first-expedition guide can be skipped at any step and replayed from the Camp Menu.
 
 ## Current Scope
 

@@ -12,6 +12,7 @@ pub mod tower;
 pub mod town;
 mod town_layout;
 mod town_panels;
+pub mod tutorial;
 pub mod workshop;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

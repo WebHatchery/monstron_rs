@@ -108,6 +108,9 @@ fn handle_menu_input() -> Option<TownAction> {
     if is_key_pressed(KeyCode::T) || ui::button_clicked(town_layout::menu_title_rect(), true) {
         return Some(TownAction::BackToMenu);
     }
+    if ui::button_clicked(town_layout::menu_tutorial_rect(), true) {
+        return Some(TownAction::ReplayTutorial);
+    }
     if is_key_pressed(KeyCode::Enter)
         || is_key_pressed(KeyCode::Space)
         || ui::button_clicked(town_layout::menu_resume_rect(), true)
@@ -249,6 +252,7 @@ fn draw_escape_menu() {
     ui::draw_button(town_layout::menu_resume_rect(), "Resume", true);
     ui::draw_button(town_layout::menu_save_rect(), "Save", true);
     ui::draw_button(town_layout::menu_load_rect(), "Load", true);
+    ui::draw_button(town_layout::menu_tutorial_rect(), "Replay Guide", true);
     ui::draw_button(town_layout::menu_title_rect(), "Title", true);
     ui::draw_tooltip_target(ui::Tooltip {
         rect: town_layout::menu_save_rect(),
