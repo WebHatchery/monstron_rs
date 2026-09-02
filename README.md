@@ -89,6 +89,9 @@ The ten-floor tower currently includes:
   repeatable town income can eventually complete every facility without a resource dead end.
 - A generated floor-one Egg Hunt is integration-tested through routed nest exploration, safe return,
   daily care, incubation, hatching, and Stable assignment into a three-companion expedition party.
+- A routed campaign regression walks generated corridors from floor 1 through floor 10, handles
+  pressure camps, combats, hazards, loot, eggs, and landmark interruptions, defeats both guardians,
+  reaches each physical stair, and completes the Verdant Crown exit.
 - An authored floor-10 conclusion that banks the final expedition, records the restored Verdant
   Crown, celebrates the active party, and keeps post-story expeditions available.
 

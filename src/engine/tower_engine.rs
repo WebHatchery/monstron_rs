@@ -21,6 +21,8 @@ mod map_reachability_tests;
 mod navigation;
 mod pressure;
 #[cfg(test)]
+mod routed_campaign_tests;
+#[cfg(test)]
 mod secret_tests;
 mod survey;
 pub use camp::{camp_party, camp_sheltered};

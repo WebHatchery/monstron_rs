@@ -40,6 +40,7 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Show individual level and XP-to-next-level progress in the Stable for training decisions.
 - [x] Prove required early facilities and every maximum upgrade remain reachable from renewable income.
 - [x] Prove routed dungeon eggs can be recovered, incubated, hatched, and assigned as a full early party.
+- [x] Traverse generated maps from floor 1 to the finale through routed movement and live interruptions.
 
 ## Verification captures
 
