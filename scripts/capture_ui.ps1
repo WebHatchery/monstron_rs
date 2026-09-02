@@ -25,6 +25,8 @@
       - "workshop" -> seeded workshop assignments scene
       - "shop"     -> seeded shop scene
       - "tower"    -> seeded active first-floor dungeon run
+      - "tower_revisit" -> seeded revisit to unlocked floor 4
+      - "dungeon_prep_unlocked" -> unlocked-floor revisit selector and expedition goals
       - "combat"   -> seeded first-floor combat scene
       - "combat_status" -> combat damage and named status evidence
       - "combat_victory" -> resolved victory with visible continuation

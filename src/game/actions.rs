@@ -14,7 +14,7 @@ use crate::screens::{
     finale::FinaleAction,
     help::HelpAction,
     menu::{MenuAction, NewGameConfirmationAction, SaveResetConfirmationAction, SettingsAction},
-    placeholder::PlaceholderAction,
+    placeholder::{self, PlaceholderAction},
     save_recovery::SaveRecoveryAction,
     tower::TowerAction,
     town::TownAction,
@@ -223,7 +223,15 @@ impl Game {
             TownAction::DungeonPrep => {
                 self.town_menu_open = false;
                 if let Some(state) = &mut self.state {
+                    let guided_first_route =
+                        tutorial::current_step(state, self.screen, self.town_menu_open)
+                            == Some(TutorialStep::OpenTowerPrep);
                     tutorial::mark(state, tutorial::PREP_OPENED);
+                    self.tower_prep_floor = if guided_first_route {
+                        1
+                    } else {
+                        state.tower_progress.unlocked_floor.max(1)
+                    };
                 }
                 self.screen = AppScreen::DungeonPrep;
                 self.status_message = "Choose a party before entering the tower.".to_owned();
@@ -304,6 +312,23 @@ impl Game {
             }
             PlaceholderAction::ToTower(goal) => {
                 self.enter_tower(goal);
+            }
+            PlaceholderAction::SelectFloor(delta) => {
+                let unlocked_floor = self
+                    .state
+                    .as_ref()
+                    .map_or(1, |state| state.tower_progress.unlocked_floor);
+                let selected = if delta < 0 {
+                    self.tower_prep_floor.saturating_sub(delta.unsigned_abs())
+                } else {
+                    self.tower_prep_floor.saturating_add(delta as u32)
+                };
+                self.tower_prep_floor =
+                    placeholder::normalize_floor_selection(selected, unlocked_floor);
+                self.status_message = format!(
+                    "Floor {} selected. Choose an expedition goal.",
+                    self.tower_prep_floor
+                );
             }
         }
     }
@@ -559,7 +584,8 @@ impl Game {
             return;
         };
 
-        let result = tower_engine::start_run(state, &self.data, goal);
+        let result =
+            tower_engine::start_run_on_floor(state, &self.data, goal, self.tower_prep_floor);
         let run_started = state.tower_run.is_some();
         self.status_message = result.summary;
         if run_started {

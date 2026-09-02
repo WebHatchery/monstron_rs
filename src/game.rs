@@ -26,6 +26,7 @@ pub struct Game {
     pub(crate) town_menu_open: bool,
     pub(crate) stable_roster_page: usize,
     pub(crate) stable_rehome_pending: Option<u64>,
+    pub(crate) tower_prep_floor: u32,
     tower_guide_open: bool,
     tower_guide_page: usize,
     pub(crate) tower_route_step_ready_at: f64,
@@ -70,6 +71,7 @@ impl Game {
             town_menu_open: false,
             stable_roster_page: 0,
             stable_rehome_pending: None,
+            tower_prep_floor: 1,
             tower_guide_open: false,
             tower_guide_page: 0,
             tower_route_step_ready_at: 0.0,
@@ -195,8 +197,17 @@ impl Game {
                 }
             }
             AppScreen::DungeonPrep => {
-                if let Some(action) = placeholder::handle_input(PlaceholderKind::DungeonPrep) {
-                    self.apply_progression(|game| game.apply_placeholder_action(action));
+                if let Some(state) = &self.state {
+                    if let Some(action) = placeholder::handle_input(
+                        PlaceholderKind::DungeonPrep,
+                        self.tower_prep_floor,
+                        state.tower_progress.unlocked_floor,
+                    ) {
+                        self.apply_progression(|game| game.apply_placeholder_action(action));
+                    }
+                } else {
+                    self.screen = AppScreen::MainMenu;
+                    self.status_message = "No active save. Start a new game.".to_owned();
                 }
             }
             AppScreen::Tower => {
@@ -233,7 +244,7 @@ impl Game {
                 }
             }
             AppScreen::EndOfDay => {
-                if let Some(action) = placeholder::handle_input(PlaceholderKind::EndOfDay) {
+                if let Some(action) = placeholder::handle_input(PlaceholderKind::EndOfDay, 1, 1) {
                     self.apply_progression(|game| game.apply_placeholder_action(action));
                 }
             }
@@ -310,7 +321,15 @@ impl Game {
                 }
             }
             AppScreen::DungeonPrep => {
-                placeholder::draw(PlaceholderKind::DungeonPrep, &self.status_message);
+                if let Some(state) = &self.state {
+                    placeholder::draw(
+                        PlaceholderKind::DungeonPrep,
+                        &self.data,
+                        &self.status_message,
+                        self.tower_prep_floor,
+                        state.tower_progress.unlocked_floor,
+                    );
+                }
             }
             AppScreen::Tower => {
                 if let Some(state) = &self.state {
@@ -334,7 +353,13 @@ impl Game {
                 }
             }
             AppScreen::EndOfDay => {
-                placeholder::draw(PlaceholderKind::EndOfDay, &self.status_message);
+                placeholder::draw(
+                    PlaceholderKind::EndOfDay,
+                    &self.data,
+                    &self.status_message,
+                    1,
+                    1,
+                );
             }
         }
 

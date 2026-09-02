@@ -35,6 +35,24 @@ impl Game {
                 self.begin_capture_fixture(AppScreen::Town);
                 self.enter_tower(TowerRunGoal::Balanced);
             }
+            "tower_revisit" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                if let Some(state) = &mut self.state {
+                    state.tower_progress.best_floor = 6;
+                    state.tower_progress.unlocked_floor = 7;
+                }
+                self.tower_prep_floor = 4;
+                self.enter_tower(TowerRunGoal::Scout);
+            }
+            "dungeon_prep_unlocked" => {
+                self.begin_capture_fixture(AppScreen::DungeonPrep);
+                if let Some(state) = &mut self.state {
+                    state.tower_progress.best_floor = 6;
+                    state.tower_progress.unlocked_floor = 7;
+                }
+                self.tower_prep_floor = 4;
+                self.status_message = "Floor 4 selected. Choose an expedition goal.".to_owned();
+            }
             "combat" => self.begin_capture_combat(None),
             "combat_status" => self.begin_capture_combat_status(),
             "combat_victory" => self.begin_capture_combat(Some(CombatOutcome::Victory)),
@@ -428,6 +446,7 @@ impl Game {
         self.town_menu_open = false;
         self.stable_roster_page = 0;
         self.stable_rehome_pending = None;
+        self.tower_prep_floor = 1;
         self.status_message =
             "Seeded verification scene. Tap a visible control to continue.".to_owned();
     }

@@ -28,6 +28,9 @@ The guide returns once for the first stored egg, including what to do if the Sta
 At maximum Stable capacity, use **Prev/Next** to inspect all roster pages. Bench a companion, tap
 **Rehome**, and confirm the permanent choice to free one slot for a ready egg.
 
+Tower Prep starts on the deepest unlocked floor. Use the visible **Prev Floor** and **Next Floor**
+buttons to revisit earlier floors, then choose the expedition goal that fits what you want to find.
+
 In the tower, tap a chamber to send the party toward it. Travel advances across the dungeon and
 stops at loot, hazards, landmarks, encounters, or maximum pressure so you remain in control. Tap
 another chamber to redirect, or use the visible STEP NOW, SURVEY, CAMP, and RETREAT controls.

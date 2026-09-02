@@ -1,5 +1,6 @@
 use macroquad::prelude::*;
 
+use crate::data::GameData;
 use crate::state::TowerRunGoal;
 use crate::ui;
 use macroquad_toolkit::ui::draw_ui_text_ex;
@@ -8,6 +9,7 @@ use macroquad_toolkit::ui::draw_ui_text_ex;
 pub enum PlaceholderAction {
     ToTown,
     ToTower(TowerRunGoal),
+    SelectFloor(i32),
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -16,7 +18,11 @@ pub enum PlaceholderKind {
     EndOfDay,
 }
 
-pub fn handle_input(kind: PlaceholderKind) -> Option<PlaceholderAction> {
+pub fn handle_input(
+    kind: PlaceholderKind,
+    selected_floor: u32,
+    unlocked_floor: u32,
+) -> Option<PlaceholderAction> {
     if is_key_pressed(KeyCode::Escape) {
         return Some(PlaceholderAction::ToTown);
     }
@@ -24,12 +30,18 @@ pub fn handle_input(kind: PlaceholderKind) -> Option<PlaceholderAction> {
     if kind == PlaceholderKind::DungeonPrep && is_key_pressed(KeyCode::Enter) {
         return Some(PlaceholderAction::ToTower(TowerRunGoal::SafeRun));
     }
+    if kind == PlaceholderKind::DungeonPrep && is_key_pressed(KeyCode::Left) {
+        return Some(PlaceholderAction::SelectFloor(-1));
+    }
+    if kind == PlaceholderKind::DungeonPrep && is_key_pressed(KeyCode::Right) {
+        return Some(PlaceholderAction::SelectFloor(1));
+    }
 
     if kind == PlaceholderKind::EndOfDay && is_key_pressed(KeyCode::Enter) {
         return Some(PlaceholderAction::ToTown);
     }
 
-    for (action, rect, enabled) in buttons(kind) {
+    for (action, rect, enabled) in buttons(kind, selected_floor, unlocked_floor) {
         if ui::button_clicked(rect, enabled) {
             return Some(action);
         }
@@ -38,29 +50,38 @@ pub fn handle_input(kind: PlaceholderKind) -> Option<PlaceholderAction> {
     None
 }
 
-pub fn draw(kind: PlaceholderKind, status_message: &str) {
-    let rect = Rect::new(220.0, 120.0, ui::VIEW_WIDTH - 440.0, 440.0);
+pub fn draw(
+    kind: PlaceholderKind,
+    data: &GameData,
+    status_message: &str,
+    selected_floor: u32,
+    unlocked_floor: u32,
+) {
+    let rect = Rect::new(220.0, 96.0, ui::VIEW_WIDTH - 440.0, 500.0);
     ui::draw_panel(rect);
 
     let (title, body, hint) = copy(kind);
     ui::draw_centered_text(
         title,
         ui::VIEW_WIDTH * 0.5,
-        rect.y + 76.0,
+        rect.y + 62.0,
         38,
         ui::TEXT_BRIGHT,
     );
-    ui::draw_centered_text(body, ui::VIEW_WIDTH * 0.5, rect.y + 135.0, 22, ui::TEXT);
-    ui::draw_centered_text(hint, ui::VIEW_WIDTH * 0.5, rect.y + 174.0, 19, ui::TEXT_DIM);
+    ui::draw_centered_text(body, ui::VIEW_WIDTH * 0.5, rect.y + 104.0, 22, ui::TEXT);
+    ui::draw_centered_text(hint, ui::VIEW_WIDTH * 0.5, rect.y + 136.0, 19, ui::TEXT_DIM);
 
     if kind == PlaceholderKind::DungeonPrep {
+        draw_floor_selector(data, rect, selected_floor, unlocked_floor);
         draw_run_goal_reference(rect);
     }
 
-    for (action, button_rect, enabled) in buttons(kind) {
+    for (action, button_rect, enabled) in buttons(kind, selected_floor, unlocked_floor) {
         let label = match action {
             PlaceholderAction::ToTown => "Town",
             PlaceholderAction::ToTower(goal) => goal.label(),
+            PlaceholderAction::SelectFloor(-1) => "Prev Floor",
+            PlaceholderAction::SelectFloor(_) => "Next Floor",
         };
         ui::draw_button(button_rect, label, enabled);
     }
@@ -83,24 +104,42 @@ fn copy(kind: PlaceholderKind) -> (&'static str, &'static str, &'static str) {
     }
 }
 
-fn buttons(kind: PlaceholderKind) -> Vec<(PlaceholderAction, Rect, bool)> {
+fn buttons(
+    kind: PlaceholderKind,
+    selected_floor: u32,
+    unlocked_floor: u32,
+) -> Vec<(PlaceholderAction, Rect, bool)> {
     let center_x = ui::VIEW_WIDTH * 0.5;
     match kind {
         PlaceholderKind::DungeonPrep => {
-            let mut buttons = TowerRunGoal::CHOICES
-                .iter()
-                .enumerate()
-                .map(|(index, goal)| {
-                    (
-                        PlaceholderAction::ToTower(*goal),
-                        goal_button_rect(index),
-                        true,
-                    )
-                })
-                .collect::<Vec<_>>();
+            let max_floor = unlocked_floor.max(1);
+            let mut buttons = vec![
+                (
+                    PlaceholderAction::SelectFloor(-1),
+                    previous_floor_rect(),
+                    selected_floor > 1,
+                ),
+                (
+                    PlaceholderAction::SelectFloor(1),
+                    next_floor_rect(),
+                    selected_floor < max_floor,
+                ),
+            ];
+            buttons.extend(
+                TowerRunGoal::CHOICES
+                    .iter()
+                    .enumerate()
+                    .map(|(index, goal)| {
+                        (
+                            PlaceholderAction::ToTower(*goal),
+                            goal_button_rect(index),
+                            true,
+                        )
+                    }),
+            );
             buttons.push((
                 PlaceholderAction::ToTown,
-                Rect::new(center_x - 80.0, 522.0, 160.0, 30.0),
+                Rect::new(center_x - 80.0, 552.0, 160.0, 30.0),
                 true,
             ));
             buttons
@@ -114,13 +153,23 @@ pub(crate) fn end_day_town_rect() -> Rect {
 }
 
 pub(crate) fn goal_button_rect(index: usize) -> Rect {
-    Rect::new(298.0 + index as f32 * 138.0, 480.0, 126.0, 34.0)
+    Rect::new(298.0 + index as f32 * 138.0, 508.0, 126.0, 34.0)
 }
 
 fn draw_run_goal_reference(rect: Rect) {
+    draw_ui_text_ex(
+        "EXPEDITION GOAL",
+        rect.x + 42.0,
+        rect.y + 266.0,
+        TextParams {
+            font_size: 16,
+            color: ui::ACCENT,
+            ..Default::default()
+        },
+    );
     for (index, goal) in TowerRunGoal::CHOICES.iter().enumerate() {
         let x = rect.x + 42.0;
-        let y = rect.y + 210.0 + index as f32 * 30.0;
+        let y = rect.y + 294.0 + index as f32 * 25.0;
         draw_ui_text_ex(
             goal.label(),
             x,
@@ -143,3 +192,37 @@ fn draw_run_goal_reference(rect: Rect) {
         );
     }
 }
+
+fn draw_floor_selector(data: &GameData, rect: Rect, selected_floor: u32, unlocked_floor: u32) {
+    let selected = normalize_floor_selection(selected_floor, unlocked_floor);
+    let floor = data.tower_floor(selected);
+    let name = floor.map_or("Unknown Floor", |floor| floor.name.as_str());
+    let theme = floor.map_or("No expedition notes are available.", |floor| {
+        floor.theme.as_str()
+    });
+    let card = Rect::new(rect.x + 190.0, rect.y + 154.0, rect.w - 380.0, 92.0);
+    ui::draw_panel(card);
+    ui::draw_centered_text(
+        &format!("Floor {selected} of {} · {name}", unlocked_floor.max(1)),
+        ui::VIEW_WIDTH * 0.5,
+        card.y + 34.0,
+        24,
+        ui::TEXT_BRIGHT,
+    );
+    ui::draw_centered_text(theme, ui::VIEW_WIDTH * 0.5, card.y + 66.0, 15, ui::TEXT_DIM);
+}
+
+fn previous_floor_rect() -> Rect {
+    Rect::new(262.0, 274.0, 130.0, 46.0)
+}
+
+fn next_floor_rect() -> Rect {
+    Rect::new(888.0, 274.0, 130.0, 46.0)
+}
+
+pub(crate) fn normalize_floor_selection(selected_floor: u32, unlocked_floor: u32) -> u32 {
+    selected_floor.clamp(1, unlocked_floor.max(1))
+}
+
+#[cfg(test)]
+mod tests;

@@ -58,7 +58,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
 1. Start **New Game** and meet Pip at the damaged camp.
 2. Follow a visible first objective to perform one camp resource action.
 3. Build or enter the first required facility through a visible control.
-4. Open **Tower Prep**, review Pip's party slot, choose an expedition goal, and enter floor 1.
+4. Open **Tower Prep**, review the selected floor and Pip's party slot, choose an expedition goal,
+   and enter floor 1. Later expeditions may revisit any unlocked floor.
 5. Use visible map routing and **EXPLORE**; encounter and complete the first combat.
 6. Use **SURVEY** or **CAMP** in context, then return with resources using **RETREAT**.
 7. Spend expedition resources on the required facility improvement.
@@ -77,6 +78,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   contextual care, incubation, Stable-capacity recovery, and hatching guidance.
 - A maximum-capacity Stable exposes all 12 companions across visible pages and offers confirmed
   rehoming, so a ready egg cannot permanently dead-end the raising loop.
+- Tower Prep defaults to the deepest unlocked floor while exposing touch controls for revisiting
+  every earlier unlocked floor; later unlocks no longer erase access to earlier dungeon content.
 - The existing floor data unlocks floor 4 immediately after floor 3; there is no demo boundary.
 - Floor 3 has no guardian or authored finale state.
 - Tutorial progress now persists in save data. A separately approved demo-completion boundary and

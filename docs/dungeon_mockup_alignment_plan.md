@@ -23,6 +23,8 @@ The target is the world-first dungeon composition represented by `docs/ui_refere
 - The debug legend, minimap, exposed grid, and keyboard-labelled movement cluster were removed from the player-facing view.
 - The top resource bar, compact party rail, right landmark drawer, expedition journal, and three-button touch dock now follow the mockup's placement, scale, black-gold framing, and visual hierarchy.
 - Tapping a visible room converts its world-space target into an authoritative one-tile movement step; keyboard movement remains a secondary input path without appearing in player-facing text.
+- Live entry, travel, discovery, and hazard messages wrap into a bounded two-line world overlay
+  instead of disappearing beneath the context drawer.
 - The verified acceptance capture is `docs/verification/ui_tower.png`.
 - The Moss Gate acceptance floor now uses `moss_gate_world_plate_v1.png`, a dedicated HUD-free continuous ruin plate derived directly from the approved screenshot. This replaces the visibly incorrect floating-room and rectangular corridor reconstructions while live party, object, fog, and input state remain code-driven overlays.
 

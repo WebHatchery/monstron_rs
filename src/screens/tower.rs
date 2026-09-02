@@ -120,7 +120,7 @@ pub fn draw(
         journal::draw_anomaly(data, run);
         event_prompt::draw(state, data, run);
         ui::draw_button(guide_button_rect(true), "FIELD GUIDE", true);
-        ui::draw_status_at(status_message, Rect::new(250.0, 60.0, 780.0, 28.0));
+        draw_run_status(status_message);
     } else {
         draw_backdrop();
         draw_header(state);
@@ -452,6 +452,52 @@ fn draw_overlay_panel(rect: Rect) {
     );
 }
 
+fn draw_run_status(status_message: &str) {
+    let rect = Rect::new(250.0, 58.0, 780.0, 48.0);
+    let surface = macroquad_toolkit::ui::SurfaceStyle::new(Color::from_rgba(8, 12, 14, 226));
+    macroquad_toolkit::ui::draw_surface(rect, &surface);
+    for (row, line) in wrap_status_lines(status_message, 84).iter().enumerate() {
+        draw_ui_text_ex(
+            line,
+            rect.x + 12.0,
+            rect.y + 18.0 + row as f32 * 19.0,
+            TextParams {
+                font_size: 16,
+                color: ui::TEXT_DIM,
+                ..Default::default()
+            },
+        );
+    }
+}
+
+fn wrap_status_lines(text: &str, max_chars: usize) -> Vec<String> {
+    let mut lines = Vec::new();
+    let mut line = String::new();
+    for word in text.split_whitespace() {
+        let next_len = line.chars().count() + usize::from(!line.is_empty()) + word.chars().count();
+        if next_len > max_chars && !line.is_empty() {
+            lines.push(std::mem::take(&mut line));
+        }
+        if !line.is_empty() {
+            line.push(' ');
+        }
+        line.push_str(word);
+    }
+    if !line.is_empty() {
+        lines.push(line);
+    }
+    if lines.len() > 2 {
+        lines.truncate(2);
+        if let Some(last) = lines.last_mut() {
+            while last.chars().count() >= max_chars {
+                last.pop();
+            }
+            last.push('…');
+        }
+    }
+    lines
+}
+
 fn gold_bright() -> Color {
     Color::from_rgba(227, 196, 139, 255)
 }
@@ -617,3 +663,6 @@ fn guide_button_rect(active_run: bool) -> Rect {
         Rect::new(998.0, 616.0, 250.0, 52.0)
     }
 }
+
+#[cfg(test)]
+mod tests;

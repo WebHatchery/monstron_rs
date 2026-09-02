@@ -49,7 +49,10 @@ Turn a fragile camp into a working monster haven that can support increasingly d
 - Mouse: build, open, trade, and greet.
 - Touch/mouse: tap a chamber to travel toward it at a readable pace. Travel pauses at loot,
   hazards, landmarks, and encounters; tap another room to redirect, or use STEP NOW, SURVEY,
-  CAMP, or RETREAT for direct control.
+  CAMP, or RETREAT for direct control. Live expedition results wrap inside the world HUD so route
+  changes and discoveries remain readable.
+- Tower Prep defaults to the deepest unlocked floor, with visible PREV FLOOR and NEXT FLOOR
+  controls for revisiting any earlier route under a different expedition goal.
 - The first-expedition guide can be skipped at any step and replayed from the Camp Menu.
 - When the first egg reaches camp, contextual guidance covers daily care, incubation, Stable
   expansion or confirmed rehoming, and hatching without interrupting later free play.
@@ -65,6 +68,8 @@ The ten-floor tower currently includes:
 - Deterministic room-art variants keep each generated chamber's visual identity stable through save/load, while completed landmarks leave an authored event trail on the map.
 - Six hazards, six anomalies, six expedition contracts, persistent room purposes, and goal-aware
   routed travel that visibly crosses the map and stops for discoveries.
+- Direct selection of every unlocked floor, so earlier nests, caches, landmarks, enemies, and
+  Field Guide discoveries remain available after deeper routes open.
 - Concealed floor caches that use the secret-discovery atlas and can be exposed by SURVEY, loot-finder passives, or map-reading landmark events. Salvage runs hide two caches per floor.
 - A persistent Field Guide that records enemies, hazards, landmarks, and tried approaches; knowledge ranks improve future survey kits and reveal known hunter tracks in explored rooms.
 - Marked CAMP rooms with stronger recovery, Safe Run return routing, and event-created shelters that permanently reshape the current floor.

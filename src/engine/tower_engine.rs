@@ -8,6 +8,7 @@ mod boss_gate_tests;
 mod camp;
 mod contracts;
 mod discovery;
+mod entry;
 mod event_choices;
 mod exploration_talents;
 mod interactions;
@@ -19,6 +20,7 @@ mod pressure;
 mod secret_tests;
 mod survey;
 pub use camp::{camp_party, camp_sheltered};
+pub use entry::{ensure_map, start_run, start_run_on_floor};
 pub use event_choices::{choose_special_event, event_choice_available, leave_special_event};
 pub use survey::survey_floor;
 #[cfg(test)]
@@ -27,8 +29,8 @@ mod tests;
 use crate::data::{GameData, PassiveSkill, TowerBlessing};
 use crate::engine::{monster_engine, town_engine};
 use crate::state::{
-    DailyCommitment, GameState, ResourceStack, TowerFoundEgg, TowerMapObject, TowerMapObjectKind,
-    TowerRunGoal, TowerRunState,
+    GameState, ResourceStack, TowerFoundEgg, TowerMapObject, TowerMapObjectKind, TowerRunGoal,
+    TowerRunState,
 };
 use anomalies::{anomaly_effect, select_anomaly_id};
 pub use contracts::contract_progress;
@@ -53,101 +55,6 @@ pub struct TowerEncounterRequest {
     pub floor: u32,
     pub is_boss: bool,
     pub enemy_id: Option<String>,
-}
-
-pub fn start_run(state: &mut GameState, data: &GameData, goal: TowerRunGoal) -> TowerResult {
-    if state.tower_run.is_some() {
-        return result("The party is already inside the tower.");
-    }
-
-    let ready_members = available_party_ids(state);
-    if ready_members.is_empty() {
-        return result(
-            "Assign at least one rested, uncommitted monster to the party before entering the tower. Tap Stable.",
-        );
-    }
-
-    let start_floor = state
-        .tower_progress
-        .unlocked_floor
-        .max(1)
-        .min(max_floor(data));
-    let Some(floor) = data.tower_floor(start_floor) else {
-        return result(format!(
-            "Missing tower floor data for floor {start_floor}. Tap Town to return."
-        ));
-    };
-
-    for monster_id in ready_members {
-        monster_engine::mark_commitment(state, monster_id, DailyCommitment::Tower);
-    }
-
-    let seed = tower_seed(state, start_floor, goal, 0);
-    let map = generate_map(state, data, start_floor, goal, seed);
-    let anomaly_id = select_anomaly_id(data, start_floor, seed);
-    let anomaly_name = data
-        .tower_anomaly(&anomaly_id)
-        .map(|anomaly| anomaly.name.as_str())
-        .unwrap_or("No anomaly");
-    let guide_bonus = state.tower_discoveries.survey_bonus();
-    let mut run = TowerRunState::new(start_floor, floor.pressure_limit, goal).with_map(map);
-    run.survey_charges = run.survey_charges.saturating_add(guide_bonus).min(5);
-    run.anomaly_id = anomaly_id;
-    state.tower_run = Some(run);
-    record_visible_discoveries(state, data, None);
-    let guide_note = if guide_bonus > 0 {
-        format!(" Field Guide expertise adds {guide_bonus} survey flare(s).")
-    } else {
-        String::new()
-    };
-    let summary = format!(
-        "The party enters floor {}: {} under {}. Move through the map to find event sites, hazards, stairs, eggs, caches, and denizens.",
-        floor.floor, floor.name, anomaly_name
-    );
-    let summary = format!("{summary}{guide_note}");
-    state.activity_log.add(state.day, summary.clone());
-
-    result(summary)
-}
-
-pub fn ensure_map(state: &mut GameState, data: &GameData) {
-    let Some(run) = &state.tower_run else {
-        return;
-    };
-    let needs_map = run.map.is_empty();
-
-    if needs_map {
-        let floor = run.current_floor.max(1).min(max_floor(data));
-        let goal = run.goal;
-        let seed = tower_seed(state, floor, goal, run.rooms_explored);
-        let map = generate_map(state, data, floor, goal, seed);
-        if let Some(run) = &mut state.tower_run {
-            run.current_floor = floor;
-            run.map = map;
-            if run.anomaly_id.is_empty() {
-                run.anomaly_id = select_anomaly_id(data, floor, seed);
-            }
-            run.add_event(format!("Generated a map for floor {floor}."));
-        }
-        record_visible_discoveries(state, data, None);
-        return;
-    }
-
-    if let Some(run) = &mut state.tower_run {
-        if run.anomaly_id.is_empty() {
-            run.anomaly_id = select_anomaly_id(data, run.current_floor, run.map.seed);
-        }
-        let restored_visibility = run.map.ensure_visibility();
-        let restored_room_kinds = run.map.ensure_room_kinds();
-        let restored_room_art = run.map.ensure_room_art_variants();
-        if restored_visibility || !run.map.is_visible(run.map.player_x, run.map.player_y) {
-            reveal_current_area(&mut run.map);
-        }
-        if restored_visibility || restored_room_kinds || restored_room_art {
-            run.add_event("Recovered the party's map notes and room markings.".to_owned());
-        }
-    }
-    record_visible_discoveries(state, data, None);
 }
 
 pub fn move_party(state: &mut GameState, data: &GameData, dx: i32, dy: i32) -> TowerResult {

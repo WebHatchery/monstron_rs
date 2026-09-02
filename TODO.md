@@ -12,6 +12,8 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Add actionable validation messages for hatchery, stable, breeding, and workshop failures.
 - [x] Add tower and combat failure/recovery messages with a visible touch action for each.
 - [x] Expose all 12 Stable slots and add confirmed rehoming so maximum capacity cannot block eggs.
+- [x] Let players revisit every unlocked tower floor from a touch-first expedition-prep selector.
+- [x] Wrap live expedition messages inside the dungeon HUD instead of clipping discoveries.
 
 ## Onboarding
 

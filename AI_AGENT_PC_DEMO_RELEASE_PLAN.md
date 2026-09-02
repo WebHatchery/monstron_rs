@@ -193,7 +193,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - Current automated flows prove systems in isolation and in short chains, not that a new player can understand, enjoy, and finish the demo.
 - A local opt-in tester summary now exports saved pacing and balance counters without telemetry.
   Human coaching, comprehension, enjoyment, and skill-band evidence still require real testers.
-  The new playtest packet and cohort summarizer bind those future human records to one exact ZIP,
+  Tower Prep now defaults to the deepest unlocked floor while keeping every earlier floor
+  revisit-able through visible touch controls. The new playtest packet and cohort summarizer bind
+  those future human records to one exact ZIP,
   reject non-anonymous schema additions, and preserve every human observation and consent gate.
 
 ## Agent-owned work
