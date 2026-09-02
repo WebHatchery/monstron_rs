@@ -36,6 +36,8 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Add deterministic replay tests for victory, defeat, fleeing, and item use.
 - [x] Regression-test every deep-floor enemy and guardian with a three-monster same-level party.
 - [x] Regression-test deep victory, overnight recovery, and same-floor re-entry as one playable loop.
+- [x] Prove a fresh three-monster party can level through generated-map revisits and beat both guardians.
+- [x] Show individual level and XP-to-next-level progress in the Stable for training decisions.
 
 ## Verification captures
 

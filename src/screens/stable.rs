@@ -84,7 +84,7 @@ pub fn draw(
 ) {
     draw_backdrop();
     draw_header(state);
-    draw_party(state, data);
+    draw_party(state);
     draw_roster(state, data, roster_page);
     if let Some(monster_id) = pending_rehome {
         draw_rehome_confirmation(state, data, monster_id);
@@ -144,7 +144,7 @@ fn draw_header(state: &GameState) {
     ui::draw_button(town_button_rect(), "Town", true);
 }
 
-fn draw_party(state: &GameState, data: &GameData) {
+fn draw_party(state: &GameState) {
     let rect = Rect::new(32.0, 124.0, ui::VIEW_WIDTH - 64.0, 154.0);
     ui::draw_panel(rect);
     ui::draw_section_title("Six-Slot Party", rect.x + 20.0, rect.y + 34.0);
@@ -169,10 +169,6 @@ fn draw_party(state: &GameState, data: &GameData) {
         if let Some(monster_id) = slot {
             if let Some(monster) = state.monster_roster.monster(*monster_id) {
                 assets::draw_monster_badge(&monster.species_id, x + 10.0, y + 28.0, 34.0);
-                let species_name = data
-                    .species(&monster.species_id)
-                    .map(|species| species.name.as_str())
-                    .unwrap_or(monster.species_id.as_str());
                 draw_ui_text_ex(
                     &monster.name,
                     x + 54.0,
@@ -185,8 +181,8 @@ fn draw_party(state: &GameState, data: &GameData) {
                 );
                 draw_ui_text_ex(
                     &format!(
-                        "{}  {}",
-                        species_name,
+                        "Lv {} · {}",
+                        monster.level,
                         monster_engine::condition_label(monster)
                     ),
                     x + 54.0,
@@ -257,11 +253,16 @@ fn draw_roster(state: &GameState, data: &GameData, roster_page: usize) {
             .unwrap_or(monster.species_id.as_str());
         assets::draw_monster_badge(&monster.species_id, x, y - 28.0, 42.0);
         draw_ui_text_ex(
-            &format!("{} the {}", monster.name, species_name),
+            &format!(
+                "{} the {} · {}",
+                monster.name,
+                species_name,
+                level_progress_label(monster.level, monster.xp)
+            ),
             x + 58.0,
             y,
             TextParams {
-                font_size: 21,
+                font_size: 18,
                 color: ui::TEXT_BRIGHT,
                 ..Default::default()
             },
@@ -302,6 +303,10 @@ fn draw_roster(state: &GameState, data: &GameData, roster_page: usize) {
             state.monster_roster.monsters.len() > 1 && !in_party,
         );
     }
+}
+
+fn level_progress_label(level: u32, xp: u32) -> String {
+    format!("Lv {level} · XP {xp}/{}", level.saturating_mul(20))
 }
 
 fn draw_rehome_confirmation(state: &GameState, data: &GameData, monster_id: u64) {
@@ -354,7 +359,7 @@ fn town_button_rect() -> Rect {
 }
 
 fn slot_button_rect(index: usize) -> Rect {
-    Rect::new(100.0 + index as f32 * 196.0, 232.0, 70.0, 26.0)
+    Rect::new(150.0 + index as f32 * 196.0, 190.0, 70.0, 26.0)
 }
 
 fn roster_button_rect(index: usize) -> Rect {

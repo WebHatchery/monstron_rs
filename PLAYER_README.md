@@ -33,6 +33,8 @@ buttons to revisit earlier floors, then choose the expedition goal that fits wha
 The prep card compares the battle-ready party's average level with the selected floor's suggested
 level. If nobody is ready, expedition goals stay disabled; tap **Town**, open **Stable**, and assign
 rested, uncommitted companions before returning.
+The Stable shows every companion's current level and XP progress. Revisit earlier unlocked floors
+when the party needs training; map encounters continue awarding XP on return expeditions.
 To unlock the next floor, explore until the party physically reaches the stairs. Entering a floor,
 winning an ordinary fight, or retreating does not open a deeper route.
 

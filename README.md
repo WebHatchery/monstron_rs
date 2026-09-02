@@ -10,6 +10,7 @@ You begin with a loyal slime, a cold hatchery brazier, and just enough supplies 
 - Hatch, raise, rest, and organize tower-born monsters.
 - Page through every Stable slot and safely rehome a benched companion when a full roster blocks
   further hatching.
+- Review each companion's level and XP-to-next-level progress in the Stable before choosing a party.
 - Choose a battle-ready party before entering the tower; expedition prep shows its average level
   beside the selected floor's suggested level and blocks entry when nobody is ready.
 - Follow an optional, persistent first-expedition guide through Hatchery construction, dungeon
@@ -82,6 +83,8 @@ The ten-floor tower currently includes:
   expedition goal, and a broad deterministic seed sweep.
 - Deep-floor balance regressions exercise every floor 4–10 enemy and both guardians with a
   three-companion party, plus a victory, overnight recovery, and same-floor re-entry cycle.
+- Natural-progression coverage starts three companions at level one, trains only through encounters
+  present on generated revisit maps, and clears both guardians by level ten within 45 victories.
 - An authored floor-10 conclusion that banks the final expedition, records the restored Verdant
   Crown, celebrates the active party, and keeps post-story expeditions available.
 

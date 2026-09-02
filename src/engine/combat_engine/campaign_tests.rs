@@ -1,7 +1,7 @@
 use super::*;
 use crate::data::{GameData, GameDataLoader, MonsterRole};
 use crate::engine::{day_engine, tower_engine};
-use crate::state::{DailyCommitment, TowerRunGoal};
+use crate::state::{DailyCommitment, TowerMapObjectKind, TowerRunGoal};
 
 #[test]
 fn three_member_same_level_party_can_clear_every_deep_encounter() {
@@ -88,6 +88,112 @@ fn deep_victory_sleep_and_reentry_form_a_recoverable_cycle() {
         state.tower_run.as_ref().map(|run| run.current_floor),
         Some(floor)
     );
+}
+
+#[test]
+fn fresh_party_can_train_through_revisits_and_defeat_both_guardians() {
+    let data = GameDataLoader::load_embedded().expect("embedded data should load");
+    let mut state = trained_party(&data, 1, 1_001);
+    state.monster_roster.party_slots[3..].fill(None);
+    let party_ids = state
+        .monster_roster
+        .party_slots
+        .iter()
+        .flatten()
+        .copied()
+        .collect::<Vec<_>>();
+    for id in party_ids {
+        state.monster_roster.monster_mut(id).unwrap().bond = 1;
+    }
+    let mut training_victories = 0;
+
+    for target_floor in 2..=10 {
+        state.tower_progress.unlocked_floor = target_floor;
+        let previous_floor = target_floor - 1;
+        let training_floor = data
+            .tower_floor(previous_floor)
+            .filter(|floor| floor.guardian_enemy_id.is_empty() && !floor.is_boss_floor)
+            .map_or(previous_floor.saturating_sub(1).max(1), |floor| floor.floor);
+        while ready_party_average_level(&state) < target_floor {
+            complete_mapped_victory(&mut state, &data, training_floor, None);
+            training_victories += 1;
+            assert!(
+                training_victories < 100,
+                "campaign training should remain bounded"
+            );
+        }
+
+        if let Some(guardian) = data.enemies.iter().find(|enemy| {
+            enemy.is_boss && enemy.min_floor <= target_floor && enemy.max_floor >= target_floor
+        }) {
+            complete_mapped_victory(&mut state, &data, target_floor, Some(&guardian.id));
+        }
+    }
+
+    assert!(
+        training_victories <= 45,
+        "natural leveling requires {training_victories} repeat fights"
+    );
+    assert!(ready_party_average_level(&state) >= 10);
+}
+
+fn complete_mapped_victory(
+    state: &mut GameState,
+    data: &GameData,
+    floor: u32,
+    guardian_id: Option<&str>,
+) {
+    tower_engine::start_run_on_floor(state, data, TowerRunGoal::Balanced, floor);
+    assert!(state.tower_run.is_some());
+    let enemy_id = state
+        .tower_run
+        .as_ref()
+        .unwrap()
+        .map
+        .objects
+        .iter()
+        .filter(|object| {
+            if let Some(guardian_id) = guardian_id {
+                object.kind == TowerMapObjectKind::Boss && object.enemy_id == guardian_id
+            } else {
+                object.kind == TowerMapObjectKind::Enemy
+            }
+        })
+        .filter_map(|object| data.enemy(&object.enemy_id))
+        .max_by_key(|enemy| enemy.xp_reward)
+        .expect("generated campaign floor should contain the requested encounter")
+        .id
+        .clone();
+    start_named_encounter(
+        state,
+        data,
+        floor,
+        data.enemy(&enemy_id).unwrap().is_boss,
+        Some(&enemy_id),
+    );
+    run_tactical_policy(state, data);
+    assert_eq!(
+        state.combat.as_ref().and_then(|combat| combat.outcome),
+        Some(CombatOutcome::Victory),
+        "natural party lost to {enemy_id} on floor {floor} at average level {}",
+        ready_party_average_level(state)
+    );
+    assert_eq!(
+        finish_combat(state, data).destination,
+        CombatDestination::Tower
+    );
+    tower_engine::return_to_town(state, data);
+    for _ in 0..3 {
+        day_engine::sleep(state, data);
+        if tower_engine::battle_ready_party_count(state) == 3 {
+            break;
+        }
+    }
+    assert_eq!(tower_engine::battle_ready_party_count(state), 3);
+}
+
+fn ready_party_average_level(state: &GameState) -> u32 {
+    tower_engine::battle_ready_party_average_level(state).unwrap_or(0)
 }
 
 fn trained_party(data: &GameData, level: u32, seed: u64) -> GameState {
