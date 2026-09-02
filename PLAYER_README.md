@@ -42,6 +42,10 @@ In the tower, tap a chamber to send the party toward it. Travel advances across 
 stops at loot, hazards, landmarks, encounters, or maximum pressure so you remain in control. Tap
 another chamber to redirect, or use the visible STEP NOW, SURVEY, CAMP, and RETREAT controls.
 
+If the party is defeated, follow the result message back to Town and tap **SLEEP** until each
+companion's Town-roster condition reads **Ready**. A severely injured expedition party can require
+up to three nights before it can re-enter the selected floor.
+
 ## Saves and recovery
 
 Progress autosaves after successful state-changing actions. A successful replacement save retains

@@ -2,7 +2,10 @@ use macroquad::prelude::*;
 
 use crate::assets;
 use crate::data::GameData;
-use crate::engine::town_engine::{self, ShopTrade};
+use crate::engine::{
+    monster_engine,
+    town_engine::{self, ShopTrade},
+};
 use crate::screens::{town::TownAction, town_layout};
 use crate::state::GameState;
 use crate::ui;
@@ -181,8 +184,11 @@ fn draw_roster(state: &GameState, data: &GameData) {
         );
         draw_ui_text_ex(
             &format!(
-                "Lv {}  HP {}/{}  Bond {}  {}",
-                monster.level, monster.hp, monster.max_hp, monster.bond, monster.role
+                "Lv {}  HP {}/{}  {}",
+                monster.level,
+                monster.hp,
+                monster.max_hp,
+                monster_engine::condition_label(monster)
             ),
             rect.x + 56.0,
             y + 18.0,

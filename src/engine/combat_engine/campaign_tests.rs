@@ -91,6 +91,35 @@ fn deep_victory_sleep_and_reentry_form_a_recoverable_cycle() {
 }
 
 #[test]
+fn defeat_names_and_completes_the_visible_sleep_recovery_path() {
+    let data = GameDataLoader::load_embedded().expect("embedded data should load");
+    let floor = 4;
+    let mut state = trained_party(&data, floor, 404);
+    state.monster_roster.party_slots[3..].fill(None);
+    state.tower_progress.unlocked_floor = floor;
+    tower_engine::start_run_on_floor(&mut state, &data, TowerRunGoal::Balanced, floor);
+    start_encounter(&mut state, &data, floor, false);
+    state.combat.as_mut().unwrap().outcome = Some(CombatOutcome::Defeat);
+
+    let finish = finish_combat(&mut state, &data);
+    assert_eq!(finish.destination, CombatDestination::Town);
+    assert!(finish.summary.contains("Tap SLEEP"));
+    assert_eq!(tower_engine::battle_ready_party_count(&state), 0);
+    day_engine::sleep(&mut state, &data);
+    assert_eq!(tower_engine::battle_ready_party_count(&state), 0);
+    day_engine::sleep(&mut state, &data);
+    assert_eq!(tower_engine::battle_ready_party_count(&state), 0);
+    day_engine::sleep(&mut state, &data);
+    assert_eq!(tower_engine::battle_ready_party_count(&state), 3);
+
+    tower_engine::start_run_on_floor(&mut state, &data, TowerRunGoal::SafeRun, floor);
+    assert_eq!(
+        state.tower_run.as_ref().map(|run| run.current_floor),
+        Some(floor)
+    );
+}
+
+#[test]
 fn fresh_party_can_train_through_revisits_and_defeat_both_guardians() {
     let data = GameDataLoader::load_embedded().expect("embedded data should load");
     let mut state = trained_party(&data, 1, 1_001);

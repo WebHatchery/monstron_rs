@@ -41,6 +41,7 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Prove required early facilities and every maximum upgrade remain reachable from renewable income.
 - [x] Prove routed dungeon eggs can be recovered, incubated, hatched, and assigned as a full early party.
 - [x] Traverse generated maps from floor 1 to the finale through routed movement and live interruptions.
+- [x] Make defeat recovery explicit in Town and prove the injured party can re-enter after sleeping.
 
 ## Verification captures
 

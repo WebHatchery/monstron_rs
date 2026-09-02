@@ -92,6 +92,8 @@ The ten-floor tower currently includes:
 - A routed campaign regression walks generated corridors from floor 1 through floor 10, handles
   pressure camps, combats, hazards, loot, eggs, and landmark interruptions, defeats both guardians,
   reaches each physical stair, and completes the Verdant Crown exit.
+- Defeat returns to Town with an exact visible SLEEP recovery instruction; the Town roster exposes
+  each condition, and a regression proves three recovery nights restore deep-floor re-entry.
 - An authored floor-10 conclusion that banks the final expedition, records the restored Verdant
   Crown, celebrates the active party, and keeps post-story expeditions available.
 

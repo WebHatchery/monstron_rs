@@ -352,7 +352,7 @@ fn finish_defeat(state: &mut GameState, combat: CombatState) -> CombatFinish {
     }
     state.tower_run = None;
     let summary = format!(
-        "The party was defeated on floor {} and rescued back to town. Run cargo was lost, and the party needs recovery.",
+        "The party was defeated on floor {} and rescued back to town. Run cargo was lost. Tap SLEEP until the Town roster marks the party Ready (up to 3 nights).",
         combat.floor
     );
     state.activity_log.add(state.day, summary.clone());
