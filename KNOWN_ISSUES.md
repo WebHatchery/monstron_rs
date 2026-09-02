@@ -2,7 +2,8 @@
 
 This is an internal development build, not the approved public demo.
 
-- There is no first-time tutorial or guided opening.
+- The first-expedition and first-egg guides are implemented, but their pacing and clarity still
+  need independent tester validation.
 - Floors 1–3 do not yet end in an authored demo finale or progression boundary.
 - No music or sound effects ship in the build. Audio settings are present but have no approved
   audio content to control.

@@ -78,6 +78,9 @@ fn packaged_player_documents_match_current_local_data_and_known_issue_facts() {
     }
 
     assert!(normalized(&player_readme).contains("EXPORT LOCAL SUMMARY"));
+    assert!(normalized(&player_readme)
+        .contains("`SUPPORT.md`, `KNOWN_ISSUES.md`, and `PRIVACY.md` beside this README"));
+    assert!(!player_readme.contains("docs/KNOWN_ISSUES.md"));
     assert!(!normalized(&player_readme).contains("custom executable icon, rights approval"));
     assert!(support.contains("tester_summary.txt"));
     let privacy = normalized(&privacy);
@@ -85,6 +88,8 @@ fn packaged_player_documents_match_current_local_data_and_known_issue_facts() {
     assert!(privacy.contains("only when the player taps"));
     assert!(privacy.contains("never uploaded automatically"));
     assert!(!known_issues.contains("chroma/magenta art defects"));
+    assert!(!known_issues.contains("There is no first-time tutorial"));
+    assert!(known_issues.contains("first-expedition and first-egg guides are implemented"));
     assert!(known_issues.contains("final human visual review is pending"));
     assert!(normalized(&known_issues).contains("a custom icon derived from the title art"));
     assert!(normalized(&known_issues).contains("a code signature remain absent"));

@@ -54,4 +54,4 @@ That screen can also create `tester_summary.txt` beside the save when you tap **
 SUMMARY**. The plain-text pacing/balance summary is never uploaded automatically; inspect it before
 choosing whether to share it with the private test team.
 
-See `docs/SUPPORT.md`, `docs/KNOWN_ISSUES.md`, and `docs/PRIVACY.md` before testing.
+See `SUPPORT.md`, `KNOWN_ISSUES.md`, and `PRIVACY.md` beside this README before testing.
