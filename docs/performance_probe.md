@@ -3,7 +3,7 @@
 Audit date: 27 August 2026
 
 The exact packaged optimized Windows executable records a local performance sample while
-`scripts/release_smoke.ps1` renders its 19 deterministic scenes at 1280×720, 1366×768,
+`scripts/release_smoke.ps1` renders its 20 deterministic scenes at 1280×720, 1366×768,
 1920×1080 fullscreen, and 960×540. Every scene/resolution pair contributes 30 frames, producing 76
 records. Each sample contains the average, 95th-percentile, and maximum CPU time spent inside
 Hatchspire's `update` and `draw` calls.
@@ -56,7 +56,7 @@ not a cross-machine VRAM requirement, a frame-presentation trace, or a default m
 ## Sustained exact-package harness
 
 `scripts/realtime_render_soak.ps1` complements the short matrix by keeping one exact packaged process
-alive while it cycles all 19 scenes for a measured wall-clock interval. The default is a visible
+alive while it cycles all 20 scenes for a measured wall-clock interval. The default is a visible
 two-hour run; only visible runs lasting two to four hours are labelled release evidence. Short and
 headless modes validate the harness without closing the release gate. It writes ignored evidence to
 `target/realtime-render-soak/`; see `docs/realtime_render_soak.md` for the command and limitations.

@@ -1,5 +1,6 @@
 pub mod breeding;
 pub mod combat;
+pub mod finale;
 pub mod hatchery;
 pub mod help;
 pub mod menu;
@@ -30,5 +31,6 @@ pub enum AppScreen {
     DungeonPrep,
     Tower,
     Combat,
+    Finale,
     EndOfDay,
 }

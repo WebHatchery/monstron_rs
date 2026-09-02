@@ -254,6 +254,7 @@ pub(super) fn apply_tower_event(
             enemy_id: Some(enemy_id),
         }),
         returned_to_town: false,
+        completed_tower: false,
     }
 }
 

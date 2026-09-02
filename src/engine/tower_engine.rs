@@ -46,6 +46,7 @@ pub struct TowerResult {
     pub summary: String,
     pub encounter: Option<TowerEncounterRequest>,
     pub returned_to_town: bool,
+    pub completed_tower: bool,
 }
 
 pub struct TowerEncounterRequest {
@@ -411,6 +412,7 @@ pub fn return_to_town(state: &mut GameState, data: &GameData) -> TowerResult {
         summary,
         encounter: None,
         returned_to_town: true,
+        completed_tower: false,
     }
 }
 
@@ -556,6 +558,7 @@ fn resolve_map_object(
                     enemy_id: (!object.enemy_id.is_empty()).then_some(object.enemy_id),
                 }),
                 returned_to_town: false,
+                completed_tower: false,
             }
         }
         TowerMapObjectKind::Hazard => resolve_hazard(state, data, &object.hazard_id),
@@ -578,6 +581,13 @@ fn resolve_exit(state: &mut GameState, data: &GameData, object: TowerMapObject) 
             run.add_event(summary.to_owned());
             return result(summary);
         }
+    }
+    if state
+        .tower_run
+        .as_ref()
+        .is_some_and(|run| run.current_floor == max_floor(data) && run.boss_defeated)
+    {
+        return complete_tower(state, data);
     }
     return_to_town(state, data)
 }
@@ -611,7 +621,10 @@ fn advance_floor(state: &mut GameState, data: &GameData) -> TowerResult {
     };
     let next_floor = (run.current_floor + 1).min(max_floor(data));
     if next_floor == run.current_floor {
-        return result("The stairs end at the tower crown.");
+        if !run.boss_defeated {
+            return result("The living crown bars the final threshold. Defeat its guardian.");
+        }
+        return complete_tower(state, data);
     }
 
     let Some(next_floor_data) = data.tower_floor(next_floor) else {
@@ -716,7 +729,34 @@ fn result(summary: impl Into<String>) -> TowerResult {
         summary: summary.into(),
         encounter: None,
         returned_to_town: false,
+        completed_tower: false,
     }
+}
+
+fn complete_tower(state: &mut GameState, data: &GameData) -> TowerResult {
+    let Some(run) = state.tower_run.as_ref() else {
+        return result("No tower run is active. Tap Town to choose a run.");
+    };
+    let floor = run.current_floor;
+    let rooms = run.rooms_explored;
+    let landmarks = run.stats.landmarks_resolved;
+    let first_victory = !state.story_flags.has("verdant_crown_restored");
+
+    let mut outcome = return_to_town(state, data);
+    state.story_flags.add("verdant_crown_restored");
+    let return_note = outcome.summary;
+    outcome.summary = if first_victory {
+        format!(
+            "The Verdant Crown opens to daylight. The party completes Hatchspire after {rooms} steps and {landmarks} resolved landmarks on floor {floor}. {return_note}"
+        )
+    } else {
+        format!(
+            "The party reaches the living crown again after {rooms} steps. Hatchspire remembers its keepers. {return_note}"
+        )
+    };
+    state.activity_log.add(state.day, outcome.summary.clone());
+    outcome.completed_tower = true;
+    outcome
 }
 
 fn with_contract_refresh(

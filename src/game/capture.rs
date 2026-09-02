@@ -24,6 +24,18 @@ impl Game {
             "combat_status" => self.begin_capture_combat_status(),
             "combat_victory" => self.begin_capture_combat(Some(CombatOutcome::Victory)),
             "combat_defeat" => self.begin_capture_combat(Some(CombatOutcome::Defeat)),
+            "finale" => {
+                self.begin_capture_fixture(AppScreen::Finale);
+                if let Some(state) = &mut self.state {
+                    state.tower_progress.best_floor = 10;
+                    state.tower_progress.unlocked_floor = 10;
+                    state.story_flags.add("verdant_crown_restored");
+                    for enemy in &self.data.enemies {
+                        state.tower_discoveries.discover_enemy(&enemy.id);
+                    }
+                }
+                self.status_message = "The Verdant Crown opens to daylight.".to_owned();
+            }
             "mainmenu" => {
                 self.state = None;
                 self.screen = AppScreen::MainMenu;

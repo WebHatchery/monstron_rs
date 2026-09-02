@@ -114,7 +114,7 @@ $scenes = @(
     "mainmenu", "new_game_warning", "save_recovery", "autosave_notice",
     "save_migration_notice", "save_reset_warning", "help", "settings",
     "town", "hatchery", "stable", "breeding", "workshop", "shop",
-    "tower", "combat", "combat_status", "combat_victory", "combat_defeat"
+    "tower", "combat", "combat_status", "combat_victory", "combat_defeat", "finale"
 )
 $framesPerScene = [Math]::Ceiling(
     ($DurationSeconds * 1000.0) / ($MinFrameMilliseconds * $scenes.Count)

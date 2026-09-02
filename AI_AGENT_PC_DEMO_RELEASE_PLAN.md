@@ -26,16 +26,16 @@ Audit date: 27 August 2026
   copies. A regression gate
   covers all 38 embedded project inputs.
   A 240-cycle accelerated soak now stresses town, tower, combat, recovery, backup, and native reload.
-  The exact packaged optimized EXE now passes a 19-scene boot/render smoke gate at 1280×720,
+  The exact packaged optimized EXE now passes a 20-scene boot/render smoke gate at 1280×720,
   1366×768, 1920×1080 fullscreen, and a deliberately small 960×540 window.
   That gate also records opt-in local update+draw CPU samples at all four resolutions, enforces a
-  provisional 16.667 ms p95 budget across all 76 scene/resolution records, and reports diagnostic
+  provisional 16.667 ms p95 budget across all 80 scene/resolution records, and reports diagnostic
   maxima. All four resolution processes now emit mandatory local
   first/median/p95/final/max sampled and OS-peak working-set reports. They now also request Windows
   process-scoped dedicated/shared GPU-memory distributions and aggregate 3D-engine diagnostics, with
   explicit unavailable states and an optional availability gate. A portable VRAM threshold, GPU
   presentation timing, a stable ordinary-play memory threshold, and sustained player-path pacing remain unmeasured. A separate
-  exact-package harness can now keep one process rendering all 19 scenes for a real two-to-four-hour
+  exact-package harness can now keep one process rendering all 20 scenes for a real two-to-four-hour
   wall-clock interval while recording per-scene CPU and process-memory distributions; only a visible
   full-duration run counts as release evidence.
   It also completes five consecutive rendered starts/exits from a genuinely write-denying NTFS
@@ -121,7 +121,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   accelerated-soak test, two autosave-boundary tests, and one code-standards test.
 - Formatting and strict lint checks pass.
 - The Windows release already packages successfully as a self-contained 51.3 MB `hatchspire_windows.zip` containing `hatchspire.exe`.
-- The exact packaged EXE byte-matches the optimized release build and renders all 19 seeded scenes
+- The exact packaged EXE byte-matches the optimized release build and renders all 20 seeded scenes
   at 1280×720 with valid, nontrivial PNG output.
 - GitHub CI checks formatting, linting, tests, WebGL compilation, and a Windows release build.
 - Save data is versioned and stored under the user’s application-data area through `macroquad-toolkit`.
@@ -131,13 +131,13 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 ### Release blockers or risks found
 
 - There is no first-time tutorial or guided opening. New Game drops directly into the town.
-- Defeating the floor-10 guardian does not produce an ending; the player only reaches a message that the stairs end. A shorter demo also has no authored finish line.
+- Defeating the floor-10 guardian now opens an authored full-campaign finale, banks the expedition rewards, records the restored crown, and offers visible town/title continuations. A shorter demo still has no separately authored finish line.
 - The initial combat capture contained a magenta VFX background and overlapping statistics. Combat
   now uses the processed transparent atlas and distinct card rows at all four structural capture
   sizes. The active view names automatic Attack/Skill targets and the next queued enemy intent and
   target from the same selectors used by combat resolution. A dedicated damaged-state fixture names
   GUARDING, DEFENDING, and MARKED and their effects; victory and defeat name the visible continuation
-  path. The 19-scene four-size package matrix passes, and the combat evidence remains readable at
+  path. The 20-scene four-size package matrix passes, and the combat evidence remains readable at
   the deliberately small 960×540 size without clipping or overlap.
 - Audio assets are absent. Settings now persist master/music/SFX levels, mute, fullscreen, and
   reduced motion independently from saves. Windowed UI scale preserves the full fixed canvas at
@@ -180,7 +180,7 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
   Clean-machine launch tests, SmartScreen and other-machine antivirus records, gamepad support,
   driver-level GPU presentation profiling, portable VRAM budgeting, stable ordinary-play memory profiling, and a human-observed
   2–4 hour real-time play/device soak remain absent. An exact-package render-soak harness now enforces
-  real elapsed time across all 19 scenes and records CPU, working-set, and available process-scoped
+  real elapsed time across all 20 scenes and records CPU, working-set, and available process-scoped
   Windows GPU evidence; its full visible run
   remains pending. The exact EXE does pass five consecutive starts from a write-denying spaces/Unicode
   launch directory and a provisional
@@ -302,7 +302,7 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
 
 - Add release-profile smoke tests and a seeded headless run covering the full demo path.
 - Implemented independently: exact-package identity checks and release-profile boot/render smoke
-  now cover all 19 registered scenes at four target window sizes. The scope-dependent full-demo
+  now cover all 20 registered scenes at four target window sizes. The scope-dependent full-demo
   path and human visual review still await approval.
 - Implemented independently: a passing smoke run writes a candidate-bound manifest for every one of
   those 76 PNGs. `scripts/create_visual_review_packet.ps1` verifies and copies the exact matrix into
@@ -311,7 +311,7 @@ Estimated agent effort: 4–8 working days across multiple feedback rounds.
 - Implemented independently: a 240-cycle accelerated soak repeatedly crosses town, tower, combat,
   recovery, atomic backup-save, and native reload boundaries. It does not replace the real-time soak.
 - Implemented independently: `scripts/realtime_render_soak.ps1` verifies and extracts the exact
-  Windows archive, keeps one process cycling all 19 release scenes for a measured wall-clock interval,
+  Windows archive, keeps one process cycling all 20 release scenes for a measured wall-clock interval,
   and records CPU, working-set, and available process-scoped Windows GPU distributions. Its default is a visible two-hour run; short or
   headless executions are explicitly validation-only, and the human-observed interaction/device gate
   remains open.

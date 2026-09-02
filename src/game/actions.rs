@@ -11,6 +11,7 @@ use crate::playtest_report;
 use crate::save::{compatibility, SaveCompatibility, SaveData, SaveRepository};
 use crate::screens::{
     combat::CombatAction,
+    finale::FinaleAction,
     help::HelpAction,
     menu::{MenuAction, NewGameConfirmationAction, SaveResetConfirmationAction, SettingsAction},
     placeholder::PlaceholderAction,
@@ -423,6 +424,10 @@ impl Game {
 
     fn apply_tower_result(&mut self, result: tower_engine::TowerResult) {
         self.status_message = result.summary;
+        if result.completed_tower {
+            self.screen = AppScreen::Finale;
+            return;
+        }
         if result.returned_to_town {
             self.screen = AppScreen::Town;
         }
@@ -443,6 +448,21 @@ impl Game {
         self.status_message = combat_result.summary;
         if state.combat.is_some() {
             self.screen = AppScreen::Combat;
+        }
+    }
+
+    pub(crate) fn apply_finale_action(&mut self, action: FinaleAction) {
+        match action {
+            FinaleAction::ContinueInTown => {
+                self.screen = AppScreen::Town;
+                self.status_message =
+                    "The restored crown watches over the camp. New expeditions remain open."
+                        .to_owned();
+            }
+            FinaleAction::ReturnToTitle => {
+                self.screen = AppScreen::MainMenu;
+                self.status_message = "Hatchspire remembers its keepers.".to_owned();
+            }
         }
     }
 

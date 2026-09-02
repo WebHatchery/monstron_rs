@@ -3,7 +3,7 @@
     Creates a candidate-stamped human review gallery from exact-package smoke captures.
 
 .DESCRIPTION
-    Verifies the sealed package and the release-smoke capture manifest, rehashes all 76 PNGs, and
+    Verifies the sealed package and the release-smoke capture manifest, rehashes all 80 PNGs, and
     copies them into an ignored self-contained review packet. The generated records are blank and
     do not claim visual approval or release authorization.
 #>
@@ -105,10 +105,10 @@ if ($summary.schema_version -ne 1 -or
 $expectedResolutions = @("1280x720", "1366x768", "1920x1080", "960x540")
 $scenes = @($summary.scenes | ForEach-Object { [string]$_ })
 $captures = @($summary.captures)
-if ($scenes.Count -ne 19 -or $scenes.Count -ne [int]$summary.scene_count -or
-    $captures.Count -ne 76 -or $captures.Count -ne [int]$summary.capture_count -or
+if ($scenes.Count -ne 20 -or $scenes.Count -ne [int]$summary.scene_count -or
+    $captures.Count -ne 80 -or $captures.Count -ne [int]$summary.capture_count -or
     [int]$summary.resolution_count -ne $expectedResolutions.Count) {
-    throw "Capture summary must contain 19 scenes and 76 four-resolution captures."
+    throw "Capture summary must contain 20 scenes and 80 four-resolution captures."
 }
 if (@($scenes | Select-Object -Unique).Count -ne $scenes.Count) {
     throw "Capture summary contains duplicate scene names."

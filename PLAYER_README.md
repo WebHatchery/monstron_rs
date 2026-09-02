@@ -5,6 +5,7 @@ for tower-born companions, and preparing them for increasingly dangerous expedit
 
 This archive is an internal pre-release preview. It is not yet the approved public demo: onboarding,
 the authored demo finale, audio, rights approval, and outside testing remain incomplete.
+The development build does include a complete ten-floor campaign ending after the Verdant Crown.
 
 ## Install and start
 

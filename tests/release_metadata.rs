@@ -10,7 +10,7 @@ fn release_documents_keep_technical_evidence_distinct_from_human_approval() {
     let human = fs::read_to_string(root.join("HUMAN_PC_DEMO_RELEASE_CHECKLIST.md"))
         .expect("human release checklist should be readable");
 
-    assert!(definition.contains("all 76 scene/resolution pairs"));
+    assert!(definition.contains("all 80 scene/resolution pairs"));
     assert!(definition.contains("dedicated/shared GPU-memory distributions"));
     assert!(definition.contains("Portable VRAM thresholds, GPU presentation timing"));
     assert!(!definition.contains("diagnostics; GPU memory, stable"));
@@ -185,7 +185,7 @@ fn sustained_render_soak_keeps_short_or_headless_runs_out_of_release_evidence() 
     let visual_packet = fs::read_to_string(root.join("scripts/create_visual_review_packet.ps1"))
         .expect("visual-review packet generator should be readable");
     assert!(visual_packet.contains("awaiting_human_visual_review"));
-    assert!(visual_packet.contains("captures.Count -ne 76"));
+    assert!(visual_packet.contains("captures.Count -ne 80"));
     assert!(visual_packet.contains("Get-FileHash -LiteralPath $source"));
     assert!(visual_packet.contains("refusing to overwrite possible human evidence"));
     assert!(visual_packet.contains("release_approval_granted = $false"));

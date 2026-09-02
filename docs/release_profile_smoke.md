@@ -20,9 +20,9 @@ The gate:
 7. verifies the exact executable's Windows product/file name, Cargo-derived version fields, and
    embedded shared-toolkit identity, then compares its rendered 32 px icon pixels with the tracked
    multi-resolution source;
-8. boots that optimized build through all 19 deterministic capture scenes in one process;
+8. boots that optimized build through all 20 deterministic capture scenes in one process;
 9. records 30 update+draw CPU samples for every scene at all four resolutions, enforces a 16.667 ms
-   p95 ceiling across all 76 scene/resolution records, and reports the diagnostic maximum without
+   p95 ceiling across all 80 scene/resolution records, and reports the diagnostic maximum without
    treating noisy first-use work as a release threshold;
 10. requires internally ordered first/median/p95/final/maximum sampled working sets and an OS peak
    from each resolution process, with an optional explicit sampled-memory ceiling but no unstable
@@ -31,7 +31,7 @@ The gate:
    validates their distributions when available, and can require counter availability explicitly;
 12. requires a successful process exit within the capture timeout;
 13. boots the same executable again in 1366×768 and 960×540 windows plus 1920×1080 fullscreen,
-   validating all 76 scene outputs as nontrivial PNGs with exact dimensions;
+   validating all 80 scene outputs as nontrivial PNGs with exact dimensions;
 14. writes a passing technical-capture manifest only after recording the exact candidate identity,
    scene matrix, dimensions, byte sizes, SHA-256 hashes, and available GPU diagnostics; then
 15. grants only read/execute access to a spaces/Unicode launch directory, removes inherited NTFS
@@ -47,7 +47,7 @@ Run the complete internal package sequence with:
 .\publish.ps1 -DeployOnly
 ```
 
-Current baseline: all 19 scenes pass at all four resolutions. The first expanded 18-scene run had a
+Current baseline: all 20 scenes pass at all four resolutions. The first expanded 18-scene run had a
 0.715 ms worst p95 update+draw time; five earlier 16-scene runs peaked at 0.830 ms. A diagnostic first-use
 sample reached 1,260.245 ms while its scene p95 remained 0.556 ms. The package
 manifest and command output, rather than this mutable document, record the candidate's exact commit

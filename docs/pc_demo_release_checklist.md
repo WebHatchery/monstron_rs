@@ -65,21 +65,21 @@ Severity is based on player impact and the approved promise, not implementation 
 - [x] Release smoke fails unless both package manifests name exactly `quad-rand 0.2.3` as the sole missing dependency license file.
 - [x] A regression-tested ledger identifies all 38 embedded project art/data/resource inputs.
 - [x] A 240-cycle accelerated soak covers repeated town/tower/combat/recovery and native save reloads.
-- [x] The packaged optimized EXE byte-matches the release build and renders all 19 seeded scenes at 1280×720.
-- [x] Automated structural capture passes for all 19 scenes at 1366×768, 1920×1080, and 960×540.
+- [x] The packaged optimized EXE byte-matches the release build and renders all 20 seeded scenes at 1280×720.
+- [x] Automated structural capture passes for all 20 scenes at 1366×768, 1920×1080, and 960×540.
 - [x] Combat VFX uses the processed transparent atlas; unit-card portrait, HP, role, and stat rows do not overlap.
 - [x] Deterministic combat captures cover active, victory, and defeat states with visible continuation wording.
 - [x] Combat capture names rules-backed automatic Attack/Skill targets, the next enemy intent/target, damage, and status effects.
-- [x] Release capture enforces a local, opt-in 16.667 ms p95 update+draw CPU budget across all 76 scene/resolution records.
+- [x] Release capture enforces a local, opt-in 16.667 ms p95 update+draw CPU budget across all 80 scene/resolution records.
 - [x] Exact-package capture records first/median/p95/final/max sampled and OS-peak memory diagnostics at all four resolutions.
 - [x] Exact-package smoke and sustained probes record process-scoped Windows dedicated/shared GPU-memory distributions and aggregate 3D-engine diagnostics when the host exposes them.
-- [x] Exact-package sustained-soak tooling enforces wall-clock duration across all 19 scenes and marks short/headless runs as validation-only.
+- [x] Exact-package sustained-soak tooling enforces wall-clock duration across all 20 scenes and marks short/headless runs as validation-only.
 - [x] The identical EXE launches from a spaces/Unicode directory whose NTFS ACL is proven to deny file creation, without sidecar writes.
 - [x] The identical EXE completes five consecutive rendered starts/exits from that write-denied path.
 - [x] Active Microsoft Defender signatures scan the exact clean ZIP and manifest-matched EXE in non-remediating mode; local evidence records engine, signatures, hashes, and results.
 - [x] A visible exact-package host probe passes live 1280×720 → 960×540 resize, minimize, restore, resized render, and clean exit.
 - [x] A candidate-stamped physical-test packet verifies the exact ZIP, executable, source identities, and Authenticode state before leaving all device observations blank for humans.
-- [x] Exact-package smoke hashes all 76 captures, and a candidate-stamped gallery generator re-verifies them before leaving visual decisions blank for humans.
+- [x] Exact-package smoke hashes all 80 captures, and a candidate-stamped gallery generator re-verifies them before leaving visual decisions blank for humans.
 - [x] Proposed itch page, FAQ, release notes, invitation, launch post, and patch-post copy exist; a clean-candidate packet fills only technical facts and leaves all public claims for human approval.
 - [x] A candidate-stamped independent-playtest packet provides anonymous consent-safe session records, a neutral observer protocol, and mechanical 5/4/3/4/0 cohort summarization without release authority.
 - [x] Internal catalog metadata removes the inherited repository link and unsupported public platform claim.

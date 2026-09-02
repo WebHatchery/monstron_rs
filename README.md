@@ -62,6 +62,8 @@ The ten-floor tower currently includes:
 - A persistent Field Guide that records enemies, hazards, landmarks, and tried approaches; knowledge ranks improve future survey kits and reveal known hunter tracks in explored rooms.
 - Marked CAMP rooms with stronger recovery, Safe Run return routing, and event-created shelters that permanently reshape the current floor.
 - Pressure escalation, wandering hunters, floor-specific guardian eggs, and sealed guardian thresholds on floors 5 and 10.
+- An authored floor-10 conclusion that banks the final expedition, records the restored Verdant
+  Crown, celebrates the active party, and keeps post-story expeditions available.
 
 ## Design
 
@@ -93,7 +95,7 @@ Standing design constraints:
 - `docs/shipped_asset_provenance.md` — exact embedded art/data inventory and human rights-approval ledger.
 - `docs/accelerated_soak.md` — deterministic 240-cycle engine/native-persistence stress gate and its limits.
 - `docs/autosave_boundary_matrix.md` — native restart checks at eight completed progression boundaries.
-- `docs/release_profile_smoke.md` — exact-package optimized boot/render smoke gate across all 19 scenes.
+- `docs/release_profile_smoke.md` — exact-package optimized boot/render smoke gate across all 20 scenes.
 - `docs/performance_probe.md` — opt-in optimized CPU budget plus four-resolution process-memory diagnostics.
 - `docs/local_tester_summary.md` — explicit local-only pacing/balance export and migration boundary.
 - `docs/windows_rollback_procedure.md` — preserved-build rollback and first-patch rehearsal.
@@ -112,7 +114,7 @@ Run the required publisher first, then add the player-facing drafts and exact bu
 
 The packager requires a clean working tree, replaces `dist/hatchspire_windows.zip`, verifies its
 contents, and writes `dist/hatchspire_windows_manifest.json` plus `dist/hatchspire_windows.sha256`.
-The smoke gate then proves the packaged EXE matches the release build, renders all 19 seeded scenes
+The smoke gate then proves the packaged EXE matches the release build, renders all 20 seeded scenes
 at four target window sizes, satisfies the provisional optimized CPU regression budget, and records
 nonzero sampled/OS-peak process-memory diagnostics for every resolution process. The
 deploy-only pass synchronizes that sealed archive, rather than the initial executable-only base ZIP,

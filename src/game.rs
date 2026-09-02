@@ -11,8 +11,8 @@ use crate::playtest_report;
 use crate::save::SaveRepository;
 use crate::screens::placeholder::PlaceholderKind;
 use crate::screens::{
-    breeding, combat, hatchery, help, menu, placeholder, save_recovery, shop, stable, tower, town,
-    workshop, AppScreen,
+    breeding, combat, finale, hatchery, help, menu, placeholder, save_recovery, shop, stable,
+    tower, town, workshop, AppScreen,
 };
 use crate::settings::AppSettings;
 use crate::state::GameState;
@@ -208,6 +208,11 @@ impl Game {
                     self.status_message = "No active save. Start a new game.".to_owned();
                 }
             }
+            AppScreen::Finale => {
+                if let Some(action) = finale::handle_input() {
+                    self.apply_finale_action(action);
+                }
+            }
             AppScreen::EndOfDay => {
                 if let Some(action) = placeholder::handle_input(PlaceholderKind::EndOfDay) {
                     self.apply_progression(|game| game.apply_placeholder_action(action));
@@ -296,6 +301,11 @@ impl Game {
             AppScreen::Combat => {
                 if let Some(state) = &self.state {
                     combat::draw(state, &self.data, &self.status_message);
+                }
+            }
+            AppScreen::Finale => {
+                if let Some(state) = &self.state {
+                    finale::draw(state);
                 }
             }
             AppScreen::EndOfDay => {
