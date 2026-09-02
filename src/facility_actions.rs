@@ -2,13 +2,16 @@ use crate::engine::{breeding_engine, egg_engine, job_engine, monster_engine, tow
 use crate::game::Game;
 use crate::screens::{
     breeding::BreedingAction, hatchery::HatcheryAction, shop::ShopAction, stable::StableAction,
-    workshop::WorkshopAction, AppScreen,
+    tutorial, workshop::WorkshopAction, AppScreen,
 };
 
 impl Game {
     pub(crate) fn apply_hatchery_action(&mut self, action: HatcheryAction) {
         match action {
             HatcheryAction::ToTown => {
+                if let Some(state) = &mut self.state {
+                    tutorial::mark(state, tutorial::HATCHERY_VISITED);
+                }
                 self.screen = AppScreen::Town;
                 self.status_message = "Returned to tower camp.".to_owned();
             }

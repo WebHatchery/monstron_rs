@@ -244,7 +244,7 @@ fn draw_reference(data: &GameData) {
     }
 }
 
-fn town_button_rect() -> Rect {
+pub(crate) fn town_button_rect() -> Rect {
     Rect::new(ui::VIEW_WIDTH - 148.0, 44.0, 86.0, 34.0)
 }
 

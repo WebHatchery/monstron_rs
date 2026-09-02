@@ -78,7 +78,7 @@ fn copy(kind: PlaceholderKind) -> (&'static str, &'static str, &'static str) {
         PlaceholderKind::EndOfDay => (
             "End Of Day",
             "The day has advanced and monsters have recovered.",
-            "Enter returns to town.",
+            "Tap TOWN to return to camp.",
         ),
     }
 }
@@ -105,12 +105,12 @@ fn buttons(kind: PlaceholderKind) -> Vec<(PlaceholderAction, Rect, bool)> {
             ));
             buttons
         }
-        PlaceholderKind::EndOfDay => vec![(
-            PlaceholderAction::ToTown,
-            Rect::new(center_x - 100.0, 390.0, 200.0, 46.0),
-            true,
-        )],
+        PlaceholderKind::EndOfDay => vec![(PlaceholderAction::ToTown, end_day_town_rect(), true)],
     }
+}
+
+pub(crate) fn end_day_town_rect() -> Rect {
+    Rect::new(ui::VIEW_WIDTH * 0.5 - 100.0, 390.0, 200.0, 46.0)
 }
 
 pub(crate) fn goal_button_rect(index: usize) -> Rect {

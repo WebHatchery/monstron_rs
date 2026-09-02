@@ -240,7 +240,7 @@ fn draw_escape_menu() {
         ui::TEXT_BRIGHT,
     );
     draw_ui_text_ex(
-        "Esc closes this menu.",
+        "Tap RESUME to close this menu.",
         rect.x + 92.0,
         rect.y + 90.0,
         TextParams {

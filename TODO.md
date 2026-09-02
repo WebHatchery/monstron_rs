@@ -17,6 +17,8 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Add a persistent, skippable first-expedition guide from camp scavenging through tower return.
 - [x] Add contextual first-combat guidance with an exact visible ATTACK target.
 - [x] Add a Camp Menu replay path and verification captures at desktop and small-window sizes.
+- [x] Build and visit the Hatchery before the guided expedition so discovered eggs have capacity.
+- [x] Teach post-expedition recovery and the explicit manual-save path with visible controls.
 
 ## Balance tooling
 

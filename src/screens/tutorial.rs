@@ -2,18 +2,22 @@ use macroquad::prelude::*;
 
 use crate::engine::combat_engine::CombatCommand;
 use crate::engine::town_engine::TownCommand;
-use crate::screens::{combat, placeholder, tower, town_layout, AppScreen};
+use crate::screens::{combat, hatchery, placeholder, tower, town_layout, AppScreen};
 use crate::state::{GameState, TowerRunGoal};
 use crate::ui;
 use macroquad_toolkit::ui::draw_ui_text_ex;
 
 pub const WELCOME: &str = "tutorial_welcome";
 pub const SCAVENGED: &str = "tutorial_scavenged";
+pub const HATCHERY_OPENED: &str = "tutorial_hatchery_opened";
+pub const HATCHERY_VISITED: &str = "tutorial_hatchery_visited";
 pub const PREP_OPENED: &str = "tutorial_prep_opened";
 pub const TOWER_ENTERED: &str = "tutorial_tower_entered";
 pub const EXPLORED: &str = "tutorial_explored";
 pub const SURVEYED: &str = "tutorial_surveyed";
 pub const RETURNED: &str = "tutorial_returned";
+pub const RECOVERED: &str = "tutorial_recovered";
+pub const SAVED: &str = "tutorial_saved";
 pub const COMBAT_INTRO: &str = "tutorial_combat_intro";
 pub const COMBAT_ACTION: &str = "tutorial_combat_action";
 pub const COMPLETE: &str = "tutorial_complete";
@@ -29,17 +33,28 @@ pub enum TutorialAction {
 pub enum TutorialStep {
     Welcome,
     Scavenge,
+    BuildHatchery,
+    OpenHatchery,
+    LeaveHatchery,
     OpenTowerPrep,
     ChooseGoal,
     Explore,
     Survey,
     Retreat,
+    Recover,
+    EndDayContinue,
+    OpenMenu,
+    Save,
     CombatIntro,
     CombatAttack,
     Finished,
 }
 
-pub fn current_step(state: &GameState, screen: AppScreen) -> Option<TutorialStep> {
+pub fn current_step(
+    state: &GameState,
+    screen: AppScreen,
+    town_menu_open: bool,
+) -> Option<TutorialStep> {
     if state.story_flags.has(SKIPPED) {
         return None;
     }
@@ -58,6 +73,19 @@ pub fn current_step(state: &GameState, screen: AppScreen) -> Option<TutorialStep
     if !state.story_flags.has(SCAVENGED) {
         return (screen == AppScreen::Town).then_some(TutorialStep::Scavenge);
     }
+    if state.town.building_level("hatchery") == 0 {
+        return (screen == AppScreen::Town).then_some(TutorialStep::BuildHatchery);
+    }
+    if !state.story_flags.has(HATCHERY_OPENED) {
+        return (screen == AppScreen::Town).then_some(TutorialStep::OpenHatchery);
+    }
+    if !state.story_flags.has(HATCHERY_VISITED) {
+        return match screen {
+            AppScreen::Hatchery => Some(TutorialStep::LeaveHatchery),
+            AppScreen::Town => Some(TutorialStep::OpenHatchery),
+            _ => None,
+        };
+    }
     if !state.story_flags.has(PREP_OPENED) || !state.story_flags.has(TOWER_ENTERED) {
         return match screen {
             AppScreen::Town => Some(TutorialStep::OpenTowerPrep),
@@ -74,11 +102,28 @@ pub fn current_step(state: &GameState, screen: AppScreen) -> Option<TutorialStep
     if !state.story_flags.has(RETURNED) {
         return (screen == AppScreen::Tower).then_some(TutorialStep::Retreat);
     }
+    if !state.story_flags.has(RECOVERED) {
+        return (screen == AppScreen::Town).then_some(TutorialStep::Recover);
+    }
+    if screen == AppScreen::EndOfDay {
+        return Some(TutorialStep::EndDayContinue);
+    }
+    if !state.story_flags.has(SAVED) {
+        return (screen == AppScreen::Town).then_some(if town_menu_open {
+            TutorialStep::Save
+        } else {
+            TutorialStep::OpenMenu
+        });
+    }
     (screen == AppScreen::Town).then_some(TutorialStep::Finished)
 }
 
-pub fn handle_input(state: &GameState, screen: AppScreen) -> Option<TutorialAction> {
-    let step = current_step(state, screen)?;
+pub fn handle_input(
+    state: &GameState,
+    screen: AppScreen,
+    town_menu_open: bool,
+) -> Option<TutorialAction> {
+    let step = current_step(state, screen, town_menu_open)?;
     if ui::button_clicked(skip_rect(), true) {
         return Some(TutorialAction::Skip);
     }
@@ -92,8 +137,8 @@ pub fn handle_input(state: &GameState, screen: AppScreen) -> Option<TutorialActi
     None
 }
 
-pub fn draw(state: &GameState, screen: AppScreen) {
-    let Some(step) = current_step(state, screen) else {
+pub fn draw(state: &GameState, screen: AppScreen, town_menu_open: bool) {
+    let Some(step) = current_step(state, screen, town_menu_open) else {
         return;
     };
     draw_rectangle(
@@ -159,6 +204,9 @@ fn target_rect(step: TutorialStep) -> Option<Rect> {
             .into_iter()
             .find(|(action, _)| *action == TownCommand::Scavenge)
             .map(|(_, rect)| rect),
+        TutorialStep::BuildHatchery => Some(town_layout::building_button_rect(1)),
+        TutorialStep::OpenHatchery => Some(town_layout::building_open_button_rect(1)),
+        TutorialStep::LeaveHatchery => Some(hatchery::town_button_rect()),
         TutorialStep::OpenTowerPrep => town_layout::action_buttons()
             .into_iter()
             .find(|(action, _)| *action == TownCommand::DungeonPrep)
@@ -170,6 +218,13 @@ fn target_rect(step: TutorialStep) -> Option<Rect> {
         TutorialStep::Explore => Some(tower::explore_button_rect()),
         TutorialStep::Survey => Some(tower::survey_button_rect()),
         TutorialStep::Retreat => Some(tower::retreat_button_rect()),
+        TutorialStep::Recover => town_layout::action_buttons()
+            .into_iter()
+            .find(|(action, _)| *action == TownCommand::Sleep)
+            .map(|(_, rect)| rect),
+        TutorialStep::EndDayContinue => Some(placeholder::end_day_town_rect()),
+        TutorialStep::OpenMenu => Some(town_layout::menu_button_rect()),
+        TutorialStep::Save => Some(town_layout::menu_save_rect()),
         TutorialStep::CombatAttack => combat::command_buttons()
             .into_iter()
             .find(|(command, _)| *command == CombatCommand::Attack)
@@ -182,11 +237,18 @@ fn step_title(step: TutorialStep) -> &'static str {
     match step {
         TutorialStep::Welcome => "PIP IS READY",
         TutorialStep::Scavenge => "GATHER FOR THE ROAD",
+        TutorialStep::BuildHatchery => "LIGHT THE HATCHERY BRAZIER",
+        TutorialStep::OpenHatchery => "VISIT THE NEW HATCHERY",
+        TutorialStep::LeaveHatchery => "EGGS NOW HAVE A HOME",
         TutorialStep::OpenTowerPrep => "PREPARE AN EXPEDITION",
         TutorialStep::ChooseGoal => "CHOOSE THE FIRST ROUTE",
         TutorialStep::Explore => "STEP INTO THE TOWER",
         TutorialStep::Survey => "READ THE HIDDEN ROOMS",
         TutorialStep::Retreat => "BRING THE PARTY HOME",
+        TutorialStep::Recover => "REST AFTER THE EXPEDITION",
+        TutorialStep::EndDayContinue => "BEGIN THE NEXT DAY",
+        TutorialStep::OpenMenu => "OPEN THE CAMP LEDGER",
+        TutorialStep::Save => "KEEP THIS CAMP SAFE",
         TutorialStep::CombatIntro => "A DENIZEN BLOCKS THE PATH",
         TutorialStep::CombatAttack => "TAKE THE FIRST TURN",
         TutorialStep::Finished => "FIRST EXPEDITION READY",
@@ -199,6 +261,13 @@ fn step_instruction(step: TutorialStep) -> &'static str {
             "Follow the gold guide to learn the camp and your first tower run."
         }
         TutorialStep::Scavenge => "Tap SCAVENGE to gather the camp's first travel supplies.",
+        TutorialStep::BuildHatchery => {
+            "Tap the Hatchery BUILD button so tower eggs can come home with you."
+        }
+        TutorialStep::OpenHatchery => "Tap OPEN beside the Hatchery to visit its warm nests.",
+        TutorialStep::LeaveHatchery => {
+            "Future tower eggs appear here for care and hatching. Tap TOWN to return."
+        }
         TutorialStep::OpenTowerPrep => "Tap TOWER to review the expedition goals.",
         TutorialStep::ChooseGoal => "Tap SAFE RUN to enter floor 1 with Pip.",
         TutorialStep::Explore => {
@@ -208,6 +277,12 @@ fn step_instruction(step: TutorialStep) -> &'static str {
             "Tap SURVEY to reveal a hidden room before choosing the next route."
         }
         TutorialStep::Retreat => "Tap RETREAT to bank everything found during this practice run.",
+        TutorialStep::Recover => {
+            "Tap SLEEP. A new day warms stored eggs and restores tired companions."
+        }
+        TutorialStep::EndDayContinue => "Tap TOWN to return to the recovered camp.",
+        TutorialStep::OpenMenu => "Tap MENU to reach the manual save control.",
+        TutorialStep::Save => "Tap SAVE. Progress also autosaves after successful actions.",
         TutorialStep::CombatIntro => {
             "Each living companion takes a turn. Read the target and intent panels."
         }

@@ -33,14 +33,43 @@ impl Game {
                 self.reset_capture_tutorial();
                 self.set_capture_tutorial_flags(&[crate::screens::tutorial::WELCOME]);
             }
-            "tutorial_prep" => {
-                self.begin_capture_fixture(AppScreen::DungeonPrep);
+            "tutorial_build_hatchery" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.reset_capture_tutorial();
+                if let Some(state) = &mut self.state {
+                    state.town.set_building_level("hatchery", 0);
+                }
+                self.set_capture_tutorial_flags(&[
+                    crate::screens::tutorial::WELCOME,
+                    crate::screens::tutorial::SCAVENGED,
+                ]);
+            }
+            "tutorial_open_hatchery" => {
+                self.begin_capture_fixture(AppScreen::Town);
                 self.reset_capture_tutorial();
                 self.set_capture_tutorial_flags(&[
                     crate::screens::tutorial::WELCOME,
                     crate::screens::tutorial::SCAVENGED,
-                    crate::screens::tutorial::PREP_OPENED,
                 ]);
+            }
+            "tutorial_hatchery" => {
+                self.begin_capture_fixture(AppScreen::Hatchery);
+                self.reset_capture_tutorial();
+                if let Some(state) = &mut self.state {
+                    state.egg_inventory.eggs.clear();
+                }
+                self.set_capture_tutorial_flags(&[
+                    crate::screens::tutorial::WELCOME,
+                    crate::screens::tutorial::SCAVENGED,
+                    crate::screens::tutorial::HATCHERY_OPENED,
+                ]);
+            }
+            "tutorial_prep" => {
+                self.begin_capture_fixture(AppScreen::DungeonPrep);
+                self.reset_capture_tutorial();
+                let mut flags = pre_tower_tutorial_flags();
+                flags.push(crate::screens::tutorial::PREP_OPENED);
+                self.set_capture_tutorial_flags(&flags);
             }
             "tutorial_tower" => {
                 self.begin_capture_fixture(AppScreen::Town);
@@ -88,8 +117,37 @@ impl Game {
                     crate::screens::tutorial::EXPLORED,
                     crate::screens::tutorial::SURVEYED,
                     crate::screens::tutorial::RETURNED,
+                    crate::screens::tutorial::RECOVERED,
+                    crate::screens::tutorial::SAVED,
                 ]);
                 self.set_capture_tutorial_flags(&flags);
+            }
+            "tutorial_recovery" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.reset_capture_tutorial();
+                self.set_capture_tutorial_flags(&returned_tutorial_flags());
+            }
+            "tutorial_end_day" => {
+                self.begin_capture_fixture(AppScreen::EndOfDay);
+                self.reset_capture_tutorial();
+                let mut flags = returned_tutorial_flags();
+                flags.push(crate::screens::tutorial::RECOVERED);
+                self.set_capture_tutorial_flags(&flags);
+            }
+            "tutorial_menu" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.reset_capture_tutorial();
+                let mut flags = returned_tutorial_flags();
+                flags.push(crate::screens::tutorial::RECOVERED);
+                self.set_capture_tutorial_flags(&flags);
+            }
+            "tutorial_save" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.reset_capture_tutorial();
+                let mut flags = returned_tutorial_flags();
+                flags.push(crate::screens::tutorial::RECOVERED);
+                self.set_capture_tutorial_flags(&flags);
+                self.town_menu_open = true;
             }
             "finale" => {
                 self.begin_capture_fixture(AppScreen::Finale);
@@ -304,10 +362,29 @@ impl Game {
 }
 
 fn first_tower_tutorial_flags() -> Vec<&'static str> {
+    let mut flags = pre_tower_tutorial_flags();
+    flags.extend([
+        crate::screens::tutorial::PREP_OPENED,
+        crate::screens::tutorial::TOWER_ENTERED,
+    ]);
+    flags
+}
+
+fn pre_tower_tutorial_flags() -> Vec<&'static str> {
     vec![
         crate::screens::tutorial::WELCOME,
         crate::screens::tutorial::SCAVENGED,
-        crate::screens::tutorial::PREP_OPENED,
-        crate::screens::tutorial::TOWER_ENTERED,
+        crate::screens::tutorial::HATCHERY_OPENED,
+        crate::screens::tutorial::HATCHERY_VISITED,
     ]
+}
+
+fn returned_tutorial_flags() -> Vec<&'static str> {
+    let mut flags = first_tower_tutorial_flags();
+    flags.extend([
+        crate::screens::tutorial::EXPLORED,
+        crate::screens::tutorial::SURVEYED,
+        crate::screens::tutorial::RETURNED,
+    ]);
+    flags
 }

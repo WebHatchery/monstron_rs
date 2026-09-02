@@ -81,7 +81,7 @@ impl Game {
         let tutorial_action = self
             .state
             .as_ref()
-            .and_then(|state| tutorial::handle_input(state, self.screen));
+            .and_then(|state| tutorial::handle_input(state, self.screen, self.town_menu_open));
         if let Some(action) = tutorial_action {
             self.apply_progression(|game| game.apply_tutorial_action(action));
             return;
@@ -322,7 +322,7 @@ impl Game {
         }
 
         if let Some(state) = &self.state {
-            tutorial::draw(state, self.screen);
+            tutorial::draw(state, self.screen, self.town_menu_open);
         }
 
         set_default_camera();

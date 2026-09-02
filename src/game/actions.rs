@@ -216,6 +216,7 @@ impl Game {
                 if let Some(state) = &mut self.state {
                     let result = town_engine::reduce(state, &self.data, &TownAction::Sleep);
                     self.status_message = result.summary;
+                    tutorial::mark(state, tutorial::RECOVERED);
                     self.screen = AppScreen::EndOfDay;
                 }
             }
@@ -539,6 +540,11 @@ impl Game {
 
         self.screen = screen;
         self.town_menu_open = false;
+        if building_id == "hatchery" {
+            if let Some(state) = &mut self.state {
+                tutorial::mark(state, tutorial::HATCHERY_OPENED);
+            }
+        }
         self.status_message = "Facility opened.".to_owned();
     }
 
@@ -569,7 +575,7 @@ impl Game {
                     "Guide skipped. Replay it any time from the Camp Menu.".to_owned();
             }
             TutorialAction::Continue => {
-                match tutorial::current_step(state, self.screen) {
+                match tutorial::current_step(state, self.screen, self.town_menu_open) {
                     Some(TutorialStep::Welcome) => tutorial::mark(state, tutorial::WELCOME),
                     Some(TutorialStep::CombatIntro) => {
                         tutorial::mark(state, tutorial::COMBAT_INTRO)
@@ -604,11 +610,15 @@ impl Game {
     }
 
     pub(crate) fn save_game(&mut self) {
-        let Some(state) = &self.state else {
+        let Some(state) = &mut self.state else {
             self.status_message = "Nothing to save yet.".to_owned();
             return;
         };
 
+        let finishes_guide = tutorial::current_step(state, self.screen, self.town_menu_open)
+            == Some(TutorialStep::Save);
+        let tutorial_was_saved = state.story_flags.has(tutorial::SAVED);
+        tutorial::mark(state, tutorial::SAVED);
         let save_data = SaveData {
             version: self.data.config.save_version,
             state: state.clone(),
@@ -617,8 +627,17 @@ impl Game {
         match SaveRepository::save(&save_data) {
             Ok(()) => {
                 self.status_message = format!("Saved day {}.", state.day);
+                if finishes_guide {
+                    self.town_menu_open = false;
+                }
             }
             Err(error) => {
+                if !tutorial_was_saved {
+                    state
+                        .story_flags
+                        .flags
+                        .retain(|flag| flag != tutorial::SAVED);
+                }
                 self.status_message = format!("Save failed: {error}");
             }
         }

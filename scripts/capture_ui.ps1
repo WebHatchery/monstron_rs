@@ -29,12 +29,19 @@
       - "finale" -> completed ten-floor campaign with visible continuation choices
       - "tutorial_town" -> first town objective and highlighted touch target
       - "tutorial_welcome" -> first-run introduction and visible continuation
+      - "tutorial_build_hatchery" -> first facility construction target
+      - "tutorial_open_hatchery" -> first facility entry target
+      - "tutorial_hatchery" -> empty hatchery explanation and town return
       - "tutorial_prep" -> first expedition-goal choice
       - "tutorial_tower" -> first dungeon movement instruction
       - "tutorial_survey" -> hidden-room survey instruction
       - "tutorial_retreat" -> safe expedition-return instruction
       - "tutorial_combat" -> first encounter explanation
       - "tutorial_combat_action" -> highlighted first combat action
+      - "tutorial_recovery" -> post-expedition sleep and recovery
+      - "tutorial_end_day" -> visible return after overnight recovery
+      - "tutorial_menu" -> visible Camp Menu target before saving
+      - "tutorial_save" -> highlighted manual save control
       - "tutorial_finished" -> completion and replay guidance
 
 .EXAMPLE
