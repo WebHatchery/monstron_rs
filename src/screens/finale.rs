@@ -5,6 +5,8 @@ use crate::state::GameState;
 use crate::ui;
 use macroquad_toolkit::ui::draw_ui_text_ex;
 
+pub const EPILOGUE_SEEN: &str = "verdant_crown_epilogue_seen";
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum FinaleAction {
     ContinueInTown,

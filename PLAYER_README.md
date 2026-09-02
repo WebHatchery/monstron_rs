@@ -51,6 +51,8 @@ up to three nights before it can re-enter the selected floor.
 Progress autosaves after successful state-changing actions. A successful replacement save retains
 one previous state. If a save cannot be loaded, the recovery screen can restore that backup while
 preserving the file it replaces. New Game and Save Reset both require visible confirmation.
+Restarting from an autosave resumes an unresolved combat, active tower map, or unseen Crown epilogue
+on its matching screen. After choosing a finale continuation, later completed saves resume in Town.
 
 Settings and saves are kept in the current Windows user's local application-data folder. Open
 **Settings → Help & Support** in the game to see the exact saved-camp path and running version.

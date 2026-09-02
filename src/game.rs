@@ -242,7 +242,7 @@ impl Game {
             }
             AppScreen::Finale => {
                 if let Some(action) = finale::handle_input() {
-                    self.apply_finale_action(action);
+                    self.apply_progression(|game| game.apply_finale_action(action));
                 }
             }
             AppScreen::EndOfDay => {

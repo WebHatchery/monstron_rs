@@ -42,6 +42,7 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Prove routed dungeon eggs can be recovered, incubated, hatched, and assigned as a full early party.
 - [x] Traverse generated maps from floor 1 to the finale through routed movement and live interruptions.
 - [x] Make defeat recovery explicit in Town and prove the injured party can re-enter after sleeping.
+- [x] Restore active Tower, Combat, and pending Finale screens correctly after save/load.
 
 ## Verification captures
 

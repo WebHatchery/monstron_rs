@@ -167,6 +167,7 @@ fn every_progression_screen_routes_mutation_through_the_autosave_wrapper() {
         "game.apply_shop_action(action)",
         "game.apply_tower_action(action)",
         "game.apply_combat_action(action)",
+        "game.apply_finale_action(action)",
         "game.apply_tutorial_action(action)",
     ] {
         let routed = format!("self.apply_progression(|game| {action})");
@@ -184,7 +185,7 @@ fn every_progression_screen_routes_mutation_through_the_autosave_wrapper() {
     );
     assert_eq!(
         GAME_COORDINATOR.matches("self.apply_progression(").count(),
-        11,
+        12,
         "review and register every new progression route in this persistence gate"
     );
 }

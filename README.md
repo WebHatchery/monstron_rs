@@ -94,6 +94,8 @@ The ten-floor tower currently includes:
   reaches each physical stair, and completes the Verdant Crown exit.
 - Defeat returns to Town with an exact visible SLEEP recovery instruction; the Town roster exposes
   each condition, and a regression proves three recovery nights restore deep-floor re-entry.
+- Loading reconstructs unresolved Combat and Tower screens, preserves an unseen Crown epilogue,
+  and records finale choices so completed post-game saves resume in Town without replay loops.
 - An authored floor-10 conclusion that banks the final expedition, records the restored Verdant
   Crown, celebrates the active party, and keeps post-story expeditions available.
 

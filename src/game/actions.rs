@@ -11,7 +11,7 @@ use crate::playtest_report;
 use crate::save::{compatibility, SaveCompatibility, SaveData, SaveRepository};
 use crate::screens::{
     combat::CombatAction,
-    finale::FinaleAction,
+    finale::{self, FinaleAction},
     help::HelpAction,
     menu::{MenuAction, NewGameConfirmationAction, SaveResetConfirmationAction, SettingsAction},
     placeholder::{self, PlaceholderAction},
@@ -509,6 +509,9 @@ impl Game {
     }
 
     pub(crate) fn apply_finale_action(&mut self, action: FinaleAction) {
+        if let Some(state) = &mut self.state {
+            state.story_flags.add(finale::EPILOGUE_SEEN);
+        }
         match action {
             FinaleAction::ContinueInTown => {
                 self.screen = AppScreen::Town;
@@ -701,9 +704,13 @@ impl Game {
                 tower_engine::ensure_map(&mut loaded_state, &self.data);
                 let after_repairs = serde_json::to_vec(&loaded_state).ok();
                 let repairs_applied = before_repairs != after_repairs;
+                let resumed_screen = loaded_screen(&loaded_state);
                 self.state = Some(loaded_state);
-                self.screen = AppScreen::Town;
+                self.screen = resumed_screen;
                 self.town_menu_open = false;
+                self.tower_guide_open = false;
+                self.tower_guide_page = 0;
+                self.tower_route_step_ready_at = 0.0;
 
                 let migrated = SaveData {
                     version: self.data.config.save_version,
@@ -732,3 +739,20 @@ impl Game {
         }
     }
 }
+
+fn loaded_screen(state: &GameState) -> AppScreen {
+    if state.combat.is_some() {
+        AppScreen::Combat
+    } else if state.tower_run.is_some() {
+        AppScreen::Tower
+    } else if state.story_flags.has("verdant_crown_restored")
+        && !state.story_flags.has(finale::EPILOGUE_SEEN)
+    {
+        AppScreen::Finale
+    } else {
+        AppScreen::Town
+    }
+}
+
+#[cfg(test)]
+mod tests;
