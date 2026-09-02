@@ -6,6 +6,8 @@ mod blessing_tests;
 #[cfg(test)]
 mod boss_gate_tests;
 mod camp;
+#[cfg(test)]
+mod campaign_progression_tests;
 mod contracts;
 mod discovery;
 mod entry;
@@ -14,6 +16,8 @@ mod exploration_talents;
 mod interactions;
 mod map_gen;
 mod map_objects;
+#[cfg(test)]
+mod map_reachability_tests;
 mod navigation;
 mod pressure;
 #[cfg(test)]
@@ -280,7 +284,7 @@ pub fn return_to_town(state: &mut GameState, data: &GameData) -> TowerResult {
         return result("No tower run is active. Tap Town to choose a run.");
     };
 
-    record_floor_reached(state, data, run.current_floor);
+    record_floor_reached(state, run.current_floor);
 
     for stack in &run.cargo {
         state.resources.add(&stack.resource_id, stack.amount);
@@ -526,8 +530,9 @@ fn advance_floor(state: &mut GameState, data: &GameData) -> TowerResult {
     let Some(run) = &state.tower_run else {
         return result("No tower run is active. Tap Town to choose a run.");
     };
-    let next_floor = (run.current_floor + 1).min(max_floor(data));
-    if next_floor == run.current_floor {
+    let cleared_floor = run.current_floor;
+    let next_floor = (cleared_floor + 1).min(max_floor(data));
+    if next_floor == cleared_floor {
         if !run.boss_defeated {
             return result("The living crown bars the final threshold. Defeat its guardian.");
         }
@@ -538,7 +543,11 @@ fn advance_floor(state: &mut GameState, data: &GameData) -> TowerResult {
         return result(format!("Missing tower floor data for floor {next_floor}."));
     };
 
-    record_floor_reached(state, data, next_floor);
+    let unlocked_before = state.tower_progress.unlocked_floor;
+    unlock_after_clearing_floor(state, data, cleared_floor);
+    let newly_unlocked =
+        unlocked_before < next_floor && state.tower_progress.unlocked_floor >= next_floor;
+    record_floor_reached(state, next_floor);
     let goal = state
         .tower_run
         .as_ref()
@@ -574,8 +583,13 @@ fn advance_floor(state: &mut GameState, data: &GameData) -> TowerResult {
         } else {
             String::new()
         };
+        let unlock_note = if newly_unlocked {
+            format!("Floor {} unlocked. ", next_floor_data.floor)
+        } else {
+            String::new()
+        };
         let summary = format!(
-            "Descended to floor {}: {} under {}. A fresh map unfolds.{guide_note}",
+            "{unlock_note}Descended to floor {}: {} under {}. A fresh map unfolds.{guide_note}",
             next_floor_data.floor, next_floor_data.name, anomaly_name
         );
         run.add_event(summary.clone());
@@ -601,11 +615,13 @@ fn available_party_ids(state: &GameState) -> Vec<u64> {
         .collect()
 }
 
-fn record_floor_reached(state: &mut GameState, data: &GameData, floor: u32) {
+fn record_floor_reached(state: &mut GameState, floor: u32) {
     state.tower_progress.best_floor = state.tower_progress.best_floor.max(floor);
+}
 
-    if let Some(floor_data) = data.tower_floor(floor) {
-        let unlocked = floor_data.unlocks_floor.max(floor);
+fn unlock_after_clearing_floor(state: &mut GameState, data: &GameData, cleared_floor: u32) {
+    if let Some(floor_data) = data.tower_floor(cleared_floor) {
+        let unlocked = floor_data.unlocks_floor.max(cleared_floor);
         state.tower_progress.unlocked_floor = state
             .tower_progress
             .unlocked_floor

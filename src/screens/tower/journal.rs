@@ -81,7 +81,7 @@ pub(super) fn draw(data: &GameData, run: &TowerRunState) {
     );
     for (index, message) in run.event_log.iter().rev().take(2).enumerate() {
         draw_ui_text_ex(
-            &format!("• {}", message),
+            &format!("• {}", journal_excerpt(message, 28)),
             panel.x + 16.0,
             panel.y + 105.0 + index as f32 * 22.0,
             TextParams {
@@ -91,6 +91,18 @@ pub(super) fn draw(data: &GameData, run: &TowerRunState) {
             },
         );
     }
+}
+
+fn journal_excerpt(message: &str, max_chars: usize) -> String {
+    if message.chars().count() <= max_chars {
+        return message.to_owned();
+    }
+    let mut excerpt = message
+        .chars()
+        .take(max_chars.saturating_sub(1))
+        .collect::<String>();
+    excerpt.push('…');
+    excerpt
 }
 
 pub(super) fn draw_anomaly(data: &GameData, run: &TowerRunState) {
@@ -163,3 +175,6 @@ fn draw_anomaly_detail(text: &str, x: f32, y: f32) {
         },
     );
 }
+
+#[cfg(test)]
+mod tests;

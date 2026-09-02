@@ -1,7 +1,7 @@
 //! Deterministic scene fixtures used by the screenshot verification harness.
 
 use super::Game;
-use crate::engine::town_engine;
+use crate::engine::{tower_engine, town_engine};
 use crate::screens::AppScreen;
 use crate::state::{CombatOutcome, TowerRunGoal, TownJobKind};
 
@@ -43,6 +43,48 @@ impl Game {
                 }
                 self.tower_prep_floor = 4;
                 self.enter_tower(TowerRunGoal::Scout);
+            }
+            "tower_floor_unlocked" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                self.enter_tower(TowerRunGoal::PushDeeper);
+                let stair = self.state.as_ref().and_then(|state| {
+                    state
+                        .tower_run
+                        .as_ref()?
+                        .map
+                        .objects
+                        .iter()
+                        .find_map(|object| {
+                            (object.kind == crate::state::TowerMapObjectKind::Stairs)
+                                .then_some((object.x, object.y))
+                        })
+                });
+                if let (Some(state), Some(stair)) = (&mut self.state, stair) {
+                    let run = state.tower_run.as_mut().unwrap();
+                    run.pressure_limit = 999;
+                    run.map
+                        .objects
+                        .retain(|object| object.kind == crate::state::TowerMapObjectKind::Stairs);
+                    for _ in 0..128 {
+                        let result = tower_engine::route_party_to(state, &self.data, stair);
+                        self.status_message = result.summary;
+                        if state
+                            .tower_run
+                            .as_ref()
+                            .is_some_and(|run| run.current_floor == 2)
+                        {
+                            break;
+                        }
+                    }
+                    if let Some(warning) = self.status_message.find(" The tower stirs") {
+                        self.status_message.truncate(warning);
+                    }
+                    if let Some(run) = state.tower_run.as_mut() {
+                        run.pressure = 0;
+                        run.pressure_stage = 0;
+                        run.event_log = vec![self.status_message.clone()];
+                    }
+                }
             }
             "dungeon_prep_unlocked" => {
                 self.begin_capture_fixture(AppScreen::DungeonPrep);

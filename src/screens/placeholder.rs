@@ -94,7 +94,7 @@ fn copy(kind: PlaceholderKind) -> (&'static str, &'static str, &'static str) {
         PlaceholderKind::DungeonPrep => (
             "Dungeon Prep",
             "Choose what this run is for before the party enters.",
-            "Each goal changes eggs, materials, routes, and risk.",
+            "Choose a goal; reach the floor's stairs to unlock the next route.",
         ),
         PlaceholderKind::EndOfDay => (
             "End Of Day",

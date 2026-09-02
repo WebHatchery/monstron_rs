@@ -297,7 +297,7 @@ fn finish_victory(state: &mut GameState, data: &GameData, combat: CombatState) -
     sync_allies(state, &combat);
     award_xp(state, data, combat.xp_reward);
     apply_victory_strain(state, &combat);
-    record_floor_reached(state, data, combat.floor);
+    record_floor_reached(state, combat.floor);
     let rewards = victory_rewards(&combat, data);
 
     if let Some(run) = &mut state.tower_run {

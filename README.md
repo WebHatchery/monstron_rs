@@ -49,10 +49,12 @@ Turn a fragile camp into a working monster haven that can support increasingly d
 - Mouse: build, open, trade, and greet.
 - Touch/mouse: tap a chamber to travel toward it at a readable pace. Travel pauses at loot,
   hazards, landmarks, and encounters; tap another room to redirect, or use STEP NOW, SURVEY,
-  CAMP, or RETREAT for direct control. Live expedition results wrap inside the world HUD so route
-  changes and discoveries remain readable.
+  CAMP, or RETREAT for direct control. Live expedition results wrap inside the world HUD, while
+  bounded journal excerpts keep route changes and discoveries readable without covering controls.
 - Tower Prep defaults to the deepest unlocked floor, with visible PREV FLOOR and NEXT FLOOR
   controls for revisiting any earlier route under a different expedition goal.
+- A deeper floor unlocks only after the party reaches the current floor's stairs; entering,
+  fighting, or retreating alone cannot bypass exploration.
 - The first-expedition guide can be skipped at any step and replayed from the Camp Menu.
 - When the first egg reaches camp, contextual guidance covers daily care, incubation, Stable
   expansion or confirmed rehoming, and hatching without interrupting later free play.
@@ -74,6 +76,8 @@ The ten-floor tower currently includes:
 - A persistent Field Guide that records enemies, hazards, landmarks, and tried approaches; knowledge ranks improve future survey kits and reveal known hunter tracks in explored rooms.
 - Marked CAMP rooms with stronger recovery, Safe Run return routing, and event-created shelters that permanently reshape the current floor.
 - Pressure escalation, wandering hunters, floor-specific guardian eggs, and sealed guardian thresholds on floors 5 and 10.
+- Stair-authoritative sequential progression backed by connectivity checks across every floor,
+  expedition goal, and a broad deterministic seed sweep.
 - An authored floor-10 conclusion that banks the final expedition, records the restored Verdant
   Crown, celebrates the active party, and keeps post-story expeditions available.
 

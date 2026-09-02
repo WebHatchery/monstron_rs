@@ -30,6 +30,8 @@ At maximum Stable capacity, use **Prev/Next** to inspect all roster pages. Bench
 
 Tower Prep starts on the deepest unlocked floor. Use the visible **Prev Floor** and **Next Floor**
 buttons to revisit earlier floors, then choose the expedition goal that fits what you want to find.
+To unlock the next floor, explore until the party physically reaches the stairs. Entering a floor,
+winning an ordinary fight, or retreating does not open a deeper route.
 
 In the tower, tap a chamber to send the party toward it. Travel advances across the dungeon and
 stops at loot, hazards, landmarks, encounters, or maximum pressure so you remain in control. Tap

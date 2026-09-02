@@ -26,6 +26,7 @@
       - "shop"     -> seeded shop scene
       - "tower"    -> seeded active first-floor dungeon run
       - "tower_revisit" -> seeded revisit to unlocked floor 4
+      - "tower_floor_unlocked" -> reached stair and newly unlocked floor 2
       - "dungeon_prep_unlocked" -> unlocked-floor revisit selector and expedition goals
       - "combat"   -> seeded first-floor combat scene
       - "combat_status" -> combat damage and named status evidence

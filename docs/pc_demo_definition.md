@@ -65,7 +65,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
 7. Spend expedition resources on the required facility improvement.
 8. Find an egg, return safely, care for it in the Hatchery, advance days, and hatch it.
 9. Use the Stable to make an explicit party or recovery decision involving Pip or the hatchling.
-10. Complete enough expeditions to unlock floors 2 and 3 without an unrecoverable resource deadlock.
+10. Reach each floor's stairs to unlock floors 2 and 3 without an unrecoverable resource deadlock;
+    entry, ordinary combat, and retreat do not grant progression by themselves.
 11. Enter floor 3, receive a clear finale objective, and defeat or otherwise resolve the authored finale.
 12. View results, thanks, and feedback instructions; return safely to the title screen.
 13. Load the completed save and remain at the demo boundary without bypassing it or losing the completion record.
@@ -80,6 +81,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   rehoming, so a ready egg cannot permanently dead-end the raising loop.
 - Tower Prep defaults to the deepest unlocked floor while exposing touch controls for revisiting
   every earlier unlocked floor; later unlocks no longer erase access to earlier dungeon content.
+- Floor progression is stair-authoritative: only reaching an unsealed stair unlocks the next route,
+  and automated connectivity coverage checks every authored floor and expedition goal.
 - The existing floor data unlocks floor 4 immediately after floor 3; there is no demo boundary.
 - Floor 3 has no guardian or authored finale state.
 - Tutorial progress now persists in save data. A separately approved demo-completion boundary and

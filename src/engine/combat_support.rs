@@ -298,15 +298,8 @@ pub(crate) fn encounter_xp(data: &GameData, enemies: &[Combatant]) -> u32 {
         .sum()
 }
 
-pub(crate) fn record_floor_reached(state: &mut GameState, data: &GameData, floor: u32) {
+pub(crate) fn record_floor_reached(state: &mut GameState, floor: u32) {
     state.tower_progress.best_floor = state.tower_progress.best_floor.max(floor);
-    if let Some(floor_data) = data.tower_floor(floor) {
-        state.tower_progress.unlocked_floor = state
-            .tower_progress
-            .unlocked_floor
-            .max(floor_data.unlocks_floor.max(floor))
-            .min(max_floor(data));
-    }
 }
 
 pub(crate) fn add_boss_egg(run: &mut TowerRunState, data: &GameData, floor: u32) {
@@ -634,14 +627,6 @@ fn add_reward(rewards: &mut Vec<ResourceStack>, resource_id: &str, amount: i32) 
         resource_id: resource_id.to_owned(),
         amount,
     });
-}
-
-fn max_floor(data: &GameData) -> u32 {
-    data.tower_floors
-        .iter()
-        .map(|floor| floor.floor)
-        .max()
-        .unwrap_or(1)
 }
 
 fn hash_id(id: &str) -> u64 {

@@ -194,7 +194,8 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 - A local opt-in tester summary now exports saved pacing and balance counters without telemetry.
   Human coaching, comprehension, enjoyment, and skill-band evidence still require real testers.
   Tower Prep now defaults to the deepest unlocked floor while keeping every earlier floor
-  revisit-able through visible touch controls. The new playtest packet and cohort summarizer bind
+  revisit-able through visible touch controls. Deeper routes now unlock only at reached stairs,
+  rather than from entry, retreat, or ordinary combat. The new playtest packet and cohort summarizer bind
   those future human records to one exact ZIP,
   reject non-anonymous schema additions, and preserve every human observation and consent gate.
 
