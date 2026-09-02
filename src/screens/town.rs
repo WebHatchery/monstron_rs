@@ -39,7 +39,7 @@ pub fn handle_input(state: &GameState, data: &GameData, menu_open: bool) -> Opti
     if is_key_pressed(KeyCode::C) {
         return Some(TownAction::Scavenge);
     }
-    if is_key_pressed(KeyCode::Escape) {
+    if is_key_pressed(KeyCode::Escape) || ui::controller_menu_pressed() {
         return Some(TownAction::OpenMenu);
     }
 
@@ -96,7 +96,7 @@ pub fn draw(state: &GameState, data: &GameData, status_message: &str, menu_open:
 }
 
 fn handle_menu_input() -> Option<TownAction> {
-    if is_key_pressed(KeyCode::Escape) {
+    if is_key_pressed(KeyCode::Escape) || ui::controller_cancel_pressed() {
         return Some(TownAction::CloseMenu);
     }
     if is_key_pressed(KeyCode::S) || ui::button_clicked(town_layout::menu_save_rect(), true) {
@@ -222,6 +222,7 @@ fn draw_town_tooltips(data: &GameData) {
 }
 
 fn draw_escape_menu() {
+    ui::begin_controller_modal();
     draw_rectangle(
         0.0,
         0.0,

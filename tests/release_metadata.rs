@@ -51,6 +51,12 @@ fn catalog_metadata_is_explicitly_internal_and_has_no_inherited_repository_claim
         .iter()
         .any(|control| control["key"] == "Tower actions"));
     assert!(controls.iter().any(|control| control["key"] == "Combat"));
+    assert!(controls.iter().any(|control| {
+        control["key"] == "Gamepad"
+            && control["desc"]
+                .as_str()
+                .is_some_and(|description| description.contains("LB/RB"))
+    }));
 }
 
 #[test]
@@ -93,6 +99,10 @@ fn packaged_player_documents_match_current_local_data_and_known_issue_facts() {
     assert!(known_issues.contains("final human visual review is pending"));
     assert!(!known_issues.contains("No music or sound effects ship"));
     assert!(known_issues.contains("Original procedural music and sound effects now ship"));
+    assert!(!known_issues.contains("Gamepad support is not implemented"));
+    assert!(known_issues.contains("direct dungeon movement are implemented"));
+    assert!(known_issues.contains("physical controllers is pending"));
+    assert!(player_readme.contains("LB/RB"));
     assert!(player_readme.contains("audio-mix approval"));
     assert!(normalized(&known_issues).contains("a custom icon derived from the title art"));
     assert!(normalized(&known_issues).contains("a code signature remain absent"));

@@ -1,5 +1,7 @@
 use macroquad::prelude::*;
+use macroquad_toolkit::input::GamepadFrame;
 use macroquad_toolkit::ui::draw_ui_text_ex;
+use std::cell::{Cell, RefCell};
 
 pub const VIEW_WIDTH: f32 = 1280.0;
 pub const VIEW_HEIGHT: f32 = 720.0;
@@ -15,6 +17,39 @@ const BUTTON: Color = Color::new(0.173, 0.243, 0.275, 1.0);
 const BUTTON_HOVER: Color = Color::new(0.224, 0.337, 0.365, 1.0);
 const BUTTON_DISABLED: Color = Color::new(0.145, 0.157, 0.169, 1.0);
 
+#[derive(Clone, Copy, Debug, Default)]
+struct ControllerUiState {
+    focused: Option<Rect>,
+    frame: GamepadFrame,
+    active: bool,
+}
+
+thread_local! {
+    static CONTROLLER_TARGETS: RefCell<Vec<Rect>> = const { RefCell::new(Vec::new()) };
+    static CONTROLLER_STATE: Cell<ControllerUiState> = const { Cell::new(ControllerUiState {
+        focused: None,
+        frame: GamepadFrame {
+            connected: false,
+            confirm: false,
+            cancel: false,
+            secondary: false,
+            tertiary: false,
+            menu: false,
+            next: false,
+            previous: false,
+            up: false,
+            down: false,
+            left: false,
+            right: false,
+            held_up: false,
+            held_down: false,
+            held_left: false,
+            held_right: false,
+        },
+        active: false,
+    }) };
+}
+
 #[derive(Clone, Copy, Debug)]
 pub struct Tooltip {
     pub rect: Rect,
@@ -23,7 +58,119 @@ pub struct Tooltip {
 }
 
 pub fn button_clicked(rect: Rect, enabled: bool) -> bool {
-    enabled && is_mouse_over(rect) && is_mouse_button_released(MouseButton::Left)
+    enabled
+        && (is_mouse_over(rect) && is_mouse_button_released(MouseButton::Left)
+            || controller_activated(rect))
+}
+
+pub(crate) fn begin_controller_registry() {
+    CONTROLLER_TARGETS.with(|targets| targets.borrow_mut().clear());
+}
+
+pub(crate) fn begin_controller_modal() {
+    begin_controller_registry();
+}
+
+pub(crate) fn register_controller_target(rect: Rect, enabled: bool) {
+    if !enabled {
+        return;
+    }
+    CONTROLLER_TARGETS.with(|targets| {
+        let mut targets = targets.borrow_mut();
+        if !targets.contains(&rect) {
+            targets.push(rect);
+        }
+    });
+}
+
+pub(crate) fn controller_targets() -> Vec<Rect> {
+    CONTROLLER_TARGETS.with(|targets| targets.borrow().clone())
+}
+
+pub(crate) fn set_controller_input(
+    focused: Option<Rect>,
+    mut frame: GamepadFrame,
+    active: bool,
+    allow_cancel: bool,
+) {
+    if !allow_cancel {
+        frame.cancel = false;
+    }
+    CONTROLLER_STATE.with(|state| {
+        state.set(ControllerUiState {
+            focused,
+            frame,
+            active,
+        });
+    });
+}
+
+pub(crate) fn controller_cancel_pressed() -> bool {
+    CONTROLLER_STATE.with(|state| {
+        let state = state.get();
+        state.active && state.frame.cancel
+    })
+}
+
+pub(crate) fn controller_menu_pressed() -> bool {
+    CONTROLLER_STATE.with(|state| {
+        let state = state.get();
+        state.active && state.frame.menu
+    })
+}
+
+pub(crate) fn controller_direction() -> Option<(i32, i32)> {
+    CONTROLLER_STATE.with(|state| {
+        let state = state.get();
+        if !state.active {
+            return None;
+        }
+        if state.frame.up {
+            Some((0, -1))
+        } else if state.frame.down {
+            Some((0, 1))
+        } else if state.frame.left {
+            Some((-1, 0))
+        } else if state.frame.right {
+            Some((1, 0))
+        } else {
+            None
+        }
+    })
+}
+
+fn controller_activated(rect: Rect) -> bool {
+    CONTROLLER_STATE.with(|state| {
+        let state = state.get();
+        state.active && state.frame.confirm && state.focused == Some(rect)
+    })
+}
+
+fn controller_focused(rect: Rect) -> bool {
+    CONTROLLER_STATE.with(|state| {
+        let state = state.get();
+        state.active && state.focused == Some(rect)
+    })
+}
+
+pub(crate) fn draw_controller_focus(rect: Rect, enabled: bool) {
+    if enabled && controller_focused(rect) {
+        draw_rectangle_lines(
+            rect.x - 3.0,
+            rect.y - 3.0,
+            rect.w + 6.0,
+            rect.h + 6.0,
+            3.0,
+            Color::from_rgba(246, 196, 83, 255),
+        );
+        draw_circle(
+            rect.x + 4.0,
+            rect.y + 4.0,
+            8.0,
+            Color::from_rgba(9, 19, 20, 245),
+        );
+        draw_centered_text("A", rect.x + 4.0, rect.y + 8.0, 11, ACCENT);
+    }
 }
 
 pub fn virtual_camera() -> Camera2D {
@@ -35,7 +182,8 @@ pub fn virtual_camera() -> Camera2D {
 }
 
 pub fn draw_button(rect: Rect, label: &str, enabled: bool) {
-    let hovered = enabled && is_mouse_over(rect);
+    register_controller_target(rect, enabled);
+    let hovered = enabled && (is_mouse_over(rect) || controller_focused(rect));
     let color = if !enabled {
         BUTTON_DISABLED
     } else if hovered {
@@ -57,6 +205,7 @@ pub fn draw_button(rect: Rect, label: &str, enabled: bool) {
     macroquad_toolkit::ui::draw_text_centered_in_box(
         label, rect.x, rect.y, rect.w, rect.h, font_size, text_color,
     );
+    draw_controller_focus(rect, enabled);
 }
 
 pub fn draw_button_with_tooltip(
@@ -115,7 +264,8 @@ pub fn draw_tooltip_target(tooltip: Tooltip) {
 }
 
 pub fn draw_title_button(rect: Rect, label: &str, enabled: bool) {
-    let hovered = enabled && is_mouse_over(rect);
+    register_controller_target(rect, enabled);
+    let hovered = enabled && (is_mouse_over(rect) || controller_focused(rect));
     let fill = if !enabled {
         Color::from_rgba(18, 24, 29, 210)
     } else if hovered {
@@ -170,9 +320,11 @@ pub fn draw_title_button(rect: Rect, label: &str, enabled: bool) {
     macroquad_toolkit::ui::draw_text_centered_in_box(
         label, rect.x, rect.y, rect.w, rect.h, 22.0, text_color,
     );
+    draw_controller_focus(rect, enabled);
 }
 
 pub fn draw_toggle(rect: Rect, label: &str, enabled: bool) {
+    register_controller_target(rect, true);
     let surface = macroquad_toolkit::ui::SurfaceStyle::new(PANEL).with_border(1.5, PANEL_EDGE);
     macroquad_toolkit::ui::draw_surface(rect, &surface);
 
@@ -218,6 +370,7 @@ pub fn draw_toggle(rect: Rect, label: &str, enabled: bool) {
         track_color,
     );
     draw_circle(knob_x, track_y + track_h * 0.5, track_h * 0.38, TEXT_BRIGHT);
+    draw_controller_focus(rect, true);
 }
 
 pub fn draw_panel(rect: Rect) {
@@ -273,3 +426,6 @@ fn is_mouse_over(rect: Rect) -> bool {
     let mouse = macroquad_toolkit::ui::virtual_mouse_position(VIEW_WIDTH, VIEW_HEIGHT);
     macroquad_toolkit::input::rect_contains_point(rect, mouse)
 }
+
+#[cfg(test)]
+mod tests;

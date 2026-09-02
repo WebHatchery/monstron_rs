@@ -86,7 +86,7 @@ pub fn handle_input(has_save: bool) -> Option<MenuAction> {
 }
 
 pub fn handle_settings_input() -> Option<SettingsAction> {
-    if is_key_pressed(KeyCode::Escape) {
+    if is_key_pressed(KeyCode::Escape) || ui::controller_cancel_pressed() {
         return Some(SettingsAction::Back);
     }
     if is_key_pressed(KeyCode::Enter)
@@ -121,7 +121,10 @@ pub fn handle_settings_input() -> Option<SettingsAction> {
 }
 
 pub fn handle_new_game_confirmation_input() -> Option<NewGameConfirmationAction> {
-    if is_key_pressed(KeyCode::Escape) || ui::button_clicked(keep_game_rect(), true) {
+    if is_key_pressed(KeyCode::Escape)
+        || ui::controller_cancel_pressed()
+        || ui::button_clicked(keep_game_rect(), true)
+    {
         return Some(NewGameConfirmationAction::Cancel);
     }
     if ui::button_clicked(start_over_rect(), true) {
@@ -132,7 +135,10 @@ pub fn handle_new_game_confirmation_input() -> Option<NewGameConfirmationAction>
 }
 
 pub fn handle_save_reset_confirmation_input() -> Option<SaveResetConfirmationAction> {
-    if is_key_pressed(KeyCode::Escape) || ui::button_clicked(keep_save_rect(), true) {
+    if is_key_pressed(KeyCode::Escape)
+        || ui::controller_cancel_pressed()
+        || ui::button_clicked(keep_save_rect(), true)
+    {
         return Some(SaveResetConfirmationAction::KeepSave);
     }
     if ui::button_clicked(delete_save_rect(), true) {

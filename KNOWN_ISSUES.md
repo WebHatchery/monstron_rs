@@ -8,7 +8,8 @@ This is an internal development build, not the approved public demo.
 - Original procedural music and sound effects now ship through the shared runtime and obey the
   existing audio settings, but their final listening and mix approval is pending.
 - Combat has deterministic four-size clarity captures, but final human visual review is pending.
-- Gamepad support is not implemented.
+- Gamepad navigation and direct dungeon movement are implemented for the Windows and browser
+  builds, but final compatibility and control-label review on physical controllers is pending.
 - The executable has verified Windows version/product fields and a custom icon derived from the
   title art. Rights approval for that art and a code signature remain absent, so Windows may show
   an unsigned-app warning.

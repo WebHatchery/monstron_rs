@@ -26,7 +26,10 @@ pub fn handle_input(
     pending_rehome: Option<u64>,
 ) -> Option<StableAction> {
     if let Some(monster_id) = pending_rehome {
-        if is_key_pressed(KeyCode::Escape) || ui::button_clicked(cancel_rehome_rect(), true) {
+        if is_key_pressed(KeyCode::Escape)
+            || ui::controller_cancel_pressed()
+            || ui::button_clicked(cancel_rehome_rect(), true)
+        {
             return Some(StableAction::CancelRehome);
         }
         if ui::button_clicked(confirm_rehome_rect(), true) {
@@ -34,7 +37,7 @@ pub fn handle_input(
         }
         return None;
     }
-    if is_key_pressed(KeyCode::Escape) {
+    if is_key_pressed(KeyCode::Escape) || ui::controller_cancel_pressed() {
         return Some(StableAction::ToTown);
     }
 
@@ -313,6 +316,7 @@ fn draw_rehome_confirmation(state: &GameState, data: &GameData, monster_id: u64)
     let Some(monster) = state.monster_roster.monster(monster_id) else {
         return;
     };
+    ui::begin_controller_modal();
     let species = data
         .species(&monster.species_id)
         .map(|species| species.name.as_str())

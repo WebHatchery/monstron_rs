@@ -21,7 +21,10 @@ pub fn handle_input(can_preserve: bool, has_backup: bool) -> Option<SaveRecovery
     if has_backup && ui::button_clicked(restore_rect(), true) {
         return Some(SaveRecoveryAction::RestoreBackup);
     }
-    if is_key_pressed(KeyCode::Escape) || ui::button_clicked(back_rect(), true) {
+    if is_key_pressed(KeyCode::Escape)
+        || ui::controller_cancel_pressed()
+        || ui::button_clicked(back_rect(), true)
+    {
         return Some(SaveRecoveryAction::BackToTitle);
     }
 

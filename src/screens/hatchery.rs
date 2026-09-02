@@ -16,7 +16,7 @@ pub enum HatcheryAction {
 }
 
 pub fn handle_input(state: &GameState) -> Option<HatcheryAction> {
-    if is_key_pressed(KeyCode::Escape) {
+    if is_key_pressed(KeyCode::Escape) || ui::controller_cancel_pressed() {
         return Some(HatcheryAction::ToTown);
     }
 

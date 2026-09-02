@@ -17,7 +17,10 @@ pub fn handle_input() -> Option<FinaleAction> {
     if is_key_pressed(KeyCode::Enter) || ui::button_clicked(continue_rect(), true) {
         return Some(FinaleAction::ContinueInTown);
     }
-    if is_key_pressed(KeyCode::Escape) || ui::button_clicked(title_rect(), true) {
+    if is_key_pressed(KeyCode::Escape)
+        || ui::controller_cancel_pressed()
+        || ui::button_clicked(title_rect(), true)
+    {
         return Some(FinaleAction::ReturnToTitle);
     }
     None

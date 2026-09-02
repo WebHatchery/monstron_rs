@@ -24,6 +24,8 @@ Turn a fragile camp into a working monster haven that can support increasingly d
 
 ## Controls
 
+- Gamepad: D-pad / left stick selects visible controls; A activates and B goes back.
+- During a tower run, D-pad / left stick moves the party and LB / RB selects the action dock.
 - Enter: new save or enter tower.
 - Space: sleep.
 - WASD / arrows: move through the tower view.

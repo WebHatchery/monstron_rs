@@ -14,7 +14,7 @@ pub enum BreedingAction {
 }
 
 pub fn handle_input(state: &GameState) -> Option<BreedingAction> {
-    if is_key_pressed(KeyCode::Escape) {
+    if is_key_pressed(KeyCode::Escape) || ui::controller_cancel_pressed() {
         return Some(BreedingAction::ToTown);
     }
     if ui::button_clicked(town_button_rect(), true) {

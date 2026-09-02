@@ -16,7 +16,10 @@ pub(super) fn handle_input(
 ) -> Option<TowerAction> {
     let page_count = entries(state, data).len().max(1).div_ceil(ENTRIES_PER_PAGE);
     let page = requested_page.min(page_count - 1);
-    if is_key_pressed(KeyCode::Escape) || ui::button_clicked(close_rect(), true) {
+    if is_key_pressed(KeyCode::Escape)
+        || ui::controller_cancel_pressed()
+        || ui::button_clicked(close_rect(), true)
+    {
         Some(TowerAction::CloseGuide)
     } else if ui::button_clicked(previous_rect(), page > 0) {
         Some(TowerAction::GuidePage(-1))
@@ -28,6 +31,7 @@ pub(super) fn handle_input(
 }
 
 pub(super) fn draw(state: &GameState, data: &GameData, requested_page: usize) {
+    ui::begin_controller_modal();
     draw_rectangle(
         0.0,
         0.0,

@@ -19,6 +19,10 @@
       "desc": "Every required action has a visible target"
     },
     {
+      "key": "Gamepad",
+      "desc": "D-pad or stick selects; A activates; B goes back; LB/RB selects tower actions"
+    },
+    {
       "key": "Main menu",
       "desc": "Tap New Game, Continue, Settings, or Save Options"
     },

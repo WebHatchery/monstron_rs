@@ -209,6 +209,7 @@ pub fn draw(state: &GameState, screen: AppScreen, town_menu_open: bool) {
     let Some(step) = current_step(state, screen, town_menu_open) else {
         return;
     };
+    ui::begin_controller_modal();
     draw_rectangle(
         0.0,
         0.0,
@@ -217,6 +218,7 @@ pub fn draw(state: &GameState, screen: AppScreen, town_menu_open: bool) {
         color(2, 6, 8, 38),
     );
     if let Some(target) = target_rect(state, step) {
+        ui::register_controller_target(target, true);
         let pulse = 2.0 + ((get_time() * 4.0).sin() as f32 + 1.0) * 1.5;
         draw_rectangle_lines(
             target.x - 5.0,
@@ -226,6 +228,7 @@ pub fn draw(state: &GameState, screen: AppScreen, town_menu_open: bool) {
             pulse,
             color(246, 196, 83, 255),
         );
+        ui::draw_controller_focus(target, true);
     }
 
     let card = card_rect(step);

@@ -22,7 +22,7 @@ pub enum WorkshopAction {
 }
 
 pub fn handle_input(state: &GameState) -> Option<WorkshopAction> {
-    if is_key_pressed(KeyCode::Escape) {
+    if is_key_pressed(KeyCode::Escape) || ui::controller_cancel_pressed() {
         return Some(WorkshopAction::ToTown);
     }
     if ui::button_clicked(town_button_rect(), true) {

@@ -48,7 +48,10 @@ pub fn handle_input(state: &GameState) -> Option<CombatAction> {
     if is_key_pressed(KeyCode::I) {
         return Some(CombatAction::Command(CombatCommand::Item));
     }
-    if is_key_pressed(KeyCode::F) || is_key_pressed(KeyCode::Escape) {
+    if is_key_pressed(KeyCode::F)
+        || is_key_pressed(KeyCode::Escape)
+        || ui::controller_cancel_pressed()
+    {
         return Some(CombatAction::Command(CombatCommand::Flee));
     }
 

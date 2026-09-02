@@ -2,6 +2,7 @@
 
 mod actions;
 mod capture;
+mod gamepad;
 mod save_flow;
 
 use macroquad::prelude::*;
@@ -19,6 +20,7 @@ use crate::screens::{
 use crate::settings::AppSettings;
 use crate::state::GameState;
 use crate::ui;
+use macroquad_toolkit::input::GamepadInput;
 
 pub struct Game {
     pub(crate) data: GameData,
@@ -38,6 +40,10 @@ pub struct Game {
     save_recovery_has_backup: bool,
     autosave_enabled: bool,
     audio: GameAudio,
+    gamepad: GamepadInput,
+    gamepad_active: bool,
+    gamepad_focus: usize,
+    gamepad_screen: AppScreen,
 }
 
 impl Game {
@@ -89,6 +95,10 @@ impl Game {
             save_recovery_has_backup: false,
             autosave_enabled: true,
             audio,
+            gamepad: GamepadInput::new(),
+            gamepad_active: false,
+            gamepad_focus: 0,
+            gamepad_screen: AppScreen::MainMenu,
         }
     }
 
@@ -100,6 +110,7 @@ impl Game {
     }
 
     fn update_gameplay(&mut self) {
+        self.prepare_gamepad();
         let tutorial_action = (self.stable_rehome_pending.is_none())
             .then(|| {
                 self.state.as_ref().and_then(|state| {
@@ -273,6 +284,7 @@ impl Game {
     pub fn draw(&self) {
         clear_background(ui::BACKGROUND);
         set_camera(&ui::virtual_camera());
+        ui::begin_controller_registry();
 
         match self.screen {
             AppScreen::MainMenu => {

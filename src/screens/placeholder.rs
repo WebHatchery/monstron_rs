@@ -24,7 +24,7 @@ pub fn handle_input(
     unlocked_floor: u32,
     can_enter: bool,
 ) -> Option<PlaceholderAction> {
-    if is_key_pressed(KeyCode::Escape) {
+    if is_key_pressed(KeyCode::Escape) || ui::controller_cancel_pressed() {
         return Some(PlaceholderAction::ToTown);
     }
 

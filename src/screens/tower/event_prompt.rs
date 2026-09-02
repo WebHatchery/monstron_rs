@@ -30,6 +30,7 @@ pub(super) fn draw(state: &GameState, data: &GameData, run: &TowerRunState) {
     let Some(pending) = &run.pending_event else {
         return;
     };
+    ui::begin_controller_modal();
     let location = data.tower_special_location(&pending.special_location_id);
     draw_rectangle(
         0.0,
@@ -117,6 +118,7 @@ fn draw_choice(
 ) {
     let enabled =
         event.is_some_and(|event| tower_engine::event_choice_available(state, data, &event.id));
+    ui::register_controller_target(rect, enabled);
     draw_rectangle(
         rect.x,
         rect.y,
@@ -136,6 +138,7 @@ fn draw_choice(
             ui::TEXT_DIM
         },
     );
+    ui::draw_controller_focus(rect, enabled);
     let tried = event.is_some_and(|entry| state.tower_discoveries.event_ids.contains(&entry.id));
     let label = choice_label(index, event, tried);
     draw_ui_text_ex(

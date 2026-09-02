@@ -38,7 +38,7 @@ pub fn handle_input(
     if guide_open {
         return field_guide::handle_input(state, data, guide_page);
     }
-    if is_key_pressed(KeyCode::Escape) {
+    if is_key_pressed(KeyCode::Escape) || ui::controller_cancel_pressed() {
         return if state.tower_run.is_some() {
             Some(TowerAction::ReturnToTown)
         } else {
@@ -53,6 +53,9 @@ pub fn handle_input(
     if let Some(run) = &state.tower_run {
         if run.pending_event.is_some() {
             return event_prompt::handle_input(state, data, run);
+        }
+        if let Some((dx, dy)) = ui::controller_direction() {
+            return Some(TowerAction::Move(dx, dy));
         }
         if is_key_pressed(KeyCode::W) || is_key_pressed(KeyCode::Up) {
             return Some(TowerAction::Move(0, -1));

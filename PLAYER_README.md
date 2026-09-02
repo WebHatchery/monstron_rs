@@ -21,6 +21,10 @@ minimum hardware requirements have not yet been approved.
 Every required action has a visible mouse/touch target. Keyboard shortcuts are optional. Open the
 camp menu with its visible button and choose **Exit Game** for a clean quit.
 
+With a gamepad, use the D-pad or left stick to move the gold **A** focus marker between visible
+controls, **A** to activate, and **B** to go back. During an active tower run, the D-pad or left
+stick moves the party directly; **LB/RB** moves the focus through the action dock.
+
 A new save opens an optional gold first-expedition guide. It builds egg capacity before the first
 tower run, then teaches exploration, recovery, and saving through highlighted visible controls.
 Tap **SKIP GUIDE** at any step, or choose **Replay Guide** from the Camp Menu later.

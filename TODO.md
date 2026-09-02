@@ -45,6 +45,7 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Restore active Tower, Combat, and pending Finale screens correctly after save/load.
 - [x] Keep the next campaign objective and guardian thresholds visible in Town through the ending.
 - [x] Add original procedural ambience and gameplay cues governed by the existing audio settings.
+- [x] Add full-route gamepad focus, modal navigation, back actions, and direct dungeon movement.
 
 ## Verification captures
 

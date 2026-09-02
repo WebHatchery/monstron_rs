@@ -13,7 +13,7 @@ pub enum ShopAction {
 }
 
 pub fn handle_input() -> Option<ShopAction> {
-    if is_key_pressed(KeyCode::Escape) {
+    if is_key_pressed(KeyCode::Escape) || ui::controller_cancel_pressed() {
         return Some(ShopAction::ToTown);
     }
     if ui::button_clicked(town_button_rect(), true) {

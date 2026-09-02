@@ -13,7 +13,10 @@ pub enum HelpAction {
 }
 
 pub fn handle_input(can_export: bool) -> Option<HelpAction> {
-    if is_key_pressed(KeyCode::Escape) || ui::button_clicked(back_rect(), true) {
+    if is_key_pressed(KeyCode::Escape)
+        || ui::controller_cancel_pressed()
+        || ui::button_clicked(back_rect(), true)
+    {
         Some(HelpAction::Back)
     } else if ui::button_clicked(export_rect(), can_export) {
         Some(HelpAction::ExportLocalSummary)
