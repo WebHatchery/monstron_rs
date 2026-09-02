@@ -44,6 +44,8 @@ Turn a fragile camp into a working monster haven that can support increasingly d
 - Help & Support in Settings shows the build version, save path, recovery guidance, and an explicit
   local-only tester-summary export. Nothing is uploaded.
 - Audio levels, mute, fullscreen, and reduced motion persist independently from game saves.
+- Original procedural ambient loops and action cues cover Town, dungeon travel and discovery,
+  encounters, combat, recovery, victory, defeat, and the finale without external audio assets.
 - Window UI scale resizes the complete fixed canvas to 90%, 100%, 110%, or 125% without clipping controls.
 - Supported older saves are normalized and rewritten at the current version when loaded.
 - Each successful replacement save keeps the previous state available through RESTORE BACKUP on the recovery screen.

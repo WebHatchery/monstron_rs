@@ -6,6 +6,7 @@ mod save_flow;
 
 use macroquad::prelude::*;
 
+use crate::audio::{AudioSnapshot, GameAudio};
 use crate::data::{GameData, GameDataLoader};
 use crate::engine::tower_engine;
 use crate::playtest_report;
@@ -36,6 +37,7 @@ pub struct Game {
     save_recovery_can_preserve: bool,
     save_recovery_has_backup: bool,
     autosave_enabled: bool,
+    audio: GameAudio,
 }
 
 impl Game {
@@ -63,6 +65,11 @@ impl Game {
         let title_texture =
             Texture2D::from_file_with_format(include_bytes!("../hatchspire_title.png"), None);
         title_texture.set_filter(FilterMode::Linear);
+        let (audio, audio_error) = GameAudio::load().await;
+        let status_message = match audio_error {
+            Some(error) => format!("{status_message} Audio unavailable: {error}"),
+            None => status_message,
+        };
 
         Self {
             data,
@@ -81,10 +88,18 @@ impl Game {
             save_recovery_can_preserve: false,
             save_recovery_has_backup: false,
             autosave_enabled: true,
+            audio,
         }
     }
 
     pub fn update(&mut self) {
+        let before = AudioSnapshot::capture(self.screen, &self.status_message, self.state.as_ref());
+        self.update_gameplay();
+        let after = AudioSnapshot::capture(self.screen, &self.status_message, self.state.as_ref());
+        self.audio.respond(&before, &after, &self.settings);
+    }
+
+    fn update_gameplay(&mut self) {
         let tutorial_action = (self.stable_rehome_pending.is_none())
             .then(|| {
                 self.state.as_ref().and_then(|state| {

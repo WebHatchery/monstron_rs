@@ -5,8 +5,8 @@ This is an internal development build, not the approved public demo.
 - The first-expedition and first-egg guides are implemented, but their pacing and clarity still
   need independent tester validation.
 - Floors 1–3 do not yet end in an authored demo finale or progression boundary.
-- No music or sound effects ship in the build. Audio settings are present but have no approved
-  audio content to control.
+- Original procedural music and sound effects now ship through the shared runtime and obey the
+  existing audio settings, but their final listening and mix approval is pending.
 - Combat has deterministic four-size clarity captures, but final human visual review is pending.
 - Gamepad support is not implemented.
 - The executable has verified Windows version/product fields and a custom icon derived from the

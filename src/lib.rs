@@ -1,4 +1,5 @@
 pub mod assets;
+mod audio;
 pub mod build_info;
 pub mod data;
 pub mod engine;

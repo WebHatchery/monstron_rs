@@ -91,6 +91,9 @@ fn packaged_player_documents_match_current_local_data_and_known_issue_facts() {
     assert!(!known_issues.contains("There is no first-time tutorial"));
     assert!(known_issues.contains("first-expedition and first-egg guides are implemented"));
     assert!(known_issues.contains("final human visual review is pending"));
+    assert!(!known_issues.contains("No music or sound effects ship"));
+    assert!(known_issues.contains("Original procedural music and sound effects now ship"));
+    assert!(player_readme.contains("audio-mix approval"));
     assert!(normalized(&known_issues).contains("a custom icon derived from the title art"));
     assert!(normalized(&known_issues).contains("a code signature remain absent"));
 
