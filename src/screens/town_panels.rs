@@ -21,7 +21,7 @@ pub(crate) fn draw(state: &GameState, data: &GameData) {
     draw_buildings(state, data);
     draw_roster(state, data);
     draw_npcs(state, data);
-    draw_tower_progress(state);
+    draw_tower_progress(state, data);
     draw_log(state);
     draw_shop(state);
     draw_actions();
@@ -251,44 +251,91 @@ fn draw_npcs(state: &GameState, data: &GameData) {
     }
 }
 
-fn draw_tower_progress(state: &GameState) {
+fn draw_tower_progress(state: &GameState, data: &GameData) {
     let rect = Rect::new(24.0, 344.0, 220.0, 142.0);
     ui::draw_panel(rect);
     ui::draw_section_title("Tower", rect.x + 16.0, rect.y + 32.0);
     draw_ui_text_ex(
-        &format!("Best floor: {}", state.tower_progress.best_floor),
+        &format!(
+            "Reached {}  ·  Open {}",
+            state.tower_progress.best_floor, state.tower_progress.unlocked_floor
+        ),
         rect.x + 16.0,
         rect.y + 70.0,
         TextParams {
-            font_size: BODY_FONT,
-            color: ui::TEXT,
-            ..Default::default()
-        },
-    );
-    draw_ui_text_ex(
-        &format!("Unlocked floor: {}", state.tower_progress.unlocked_floor),
-        rect.x + 16.0,
-        rect.y + 100.0,
-        TextParams {
-            font_size: BODY_FONT,
-            color: ui::TEXT,
-            ..Default::default()
-        },
-    );
-    draw_ui_text_ex(
-        &format!(
-            "Egg slots: {}/{}",
-            state.egg_inventory.eggs.len(),
-            town_engine::egg_capacity(state)
-        ),
-        rect.x + 16.0,
-        rect.y + 130.0,
-        TextParams {
             font_size: DETAIL_FONT,
-            color: ui::TEXT_DIM,
+            color: ui::TEXT,
             ..Default::default()
         },
     );
+    let objective = campaign_objective(state, data);
+    draw_ui_text_ex(
+        &objective.heading,
+        rect.x + 16.0,
+        rect.y + 98.0,
+        TextParams {
+            font_size: 14,
+            color: ui::ACCENT,
+            ..Default::default()
+        },
+    );
+    draw_ui_text_ex(
+        &objective.action,
+        rect.x + 16.0,
+        rect.y + 122.0,
+        TextParams {
+            font_size: 14,
+            color: ui::TEXT,
+            ..Default::default()
+        },
+    );
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+struct CampaignObjective {
+    heading: String,
+    action: String,
+}
+
+fn campaign_objective(state: &GameState, data: &GameData) -> CampaignObjective {
+    if state.story_flags.has("verdant_crown_restored") {
+        return CampaignObjective {
+            heading: "CROWN RESTORED".to_owned(),
+            action: "Free expeditions remain open.".to_owned(),
+        };
+    }
+
+    let max_floor = data
+        .tower_floors
+        .iter()
+        .map(|floor| floor.floor)
+        .max()
+        .unwrap_or(1);
+    let open_floor = state.tower_progress.unlocked_floor.clamp(1, max_floor);
+    let Some(floor) = data.tower_floor(open_floor) else {
+        return CampaignObjective {
+            heading: "NEXT · CLIMB THE TOWER".to_owned(),
+            action: "Reach the open floor's stairs.".to_owned(),
+        };
+    };
+    if !floor.guardian_enemy_id.is_empty() {
+        let guardian = data
+            .enemy(&floor.guardian_enemy_id)
+            .map_or(floor.name.as_str(), |enemy| enemy.name.as_str());
+        return CampaignObjective {
+            heading: format!("NEXT · {}", guardian.to_uppercase()),
+            action: if open_floor == max_floor {
+                "Defeat it and cross the threshold.".to_owned()
+            } else {
+                "Defeat it, then reach the stairs.".to_owned()
+            },
+        };
+    }
+
+    CampaignObjective {
+        heading: "NEXT · CLIMB THE TOWER".to_owned(),
+        action: "Reach the open floor's stairs.".to_owned(),
+    }
 }
 
 fn draw_log(state: &GameState) {
@@ -390,3 +437,6 @@ fn short_log_line(day: u32, message: &str) -> String {
     }
     format!("{prefix}{body}")
 }
+
+#[cfg(test)]
+mod tests;

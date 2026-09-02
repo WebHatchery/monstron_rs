@@ -12,6 +12,25 @@ impl Game {
         self.autosave_enabled = false;
         match scene {
             "town" => self.begin_capture_fixture(AppScreen::Town),
+            "town_guardian" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                if let Some(state) = &mut self.state {
+                    state.tower_progress.best_floor = 4;
+                    state.tower_progress.unlocked_floor = 5;
+                }
+                self.status_message =
+                    "The Mirror Matriarch guards the route beyond floor 5.".to_owned();
+            }
+            "town_postgame" => {
+                self.begin_capture_fixture(AppScreen::Town);
+                if let Some(state) = &mut self.state {
+                    state.tower_progress.best_floor = 10;
+                    state.tower_progress.unlocked_floor = 10;
+                    state.story_flags.add("verdant_crown_restored");
+                }
+                self.status_message =
+                    "The Crown is restored. Free expeditions remain open.".to_owned();
+            }
             "hatchery" => self.begin_capture_fixture(AppScreen::Hatchery),
             "stable" => self.begin_capture_fixture(AppScreen::Stable),
             "stable_full" => {

@@ -43,6 +43,7 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Traverse generated maps from floor 1 to the finale through routed movement and live interruptions.
 - [x] Make defeat recovery explicit in Town and prove the injured party can re-enter after sleeping.
 - [x] Restore active Tower, Combat, and pending Finale screens correctly after save/load.
+- [x] Keep the next campaign objective and guardian thresholds visible in Town through the ending.
 
 ## Verification captures
 

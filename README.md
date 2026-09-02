@@ -96,6 +96,8 @@ The ten-floor tower currently includes:
   each condition, and a regression proves three recovery nights restore deep-floor re-entry.
 - Loading reconstructs unresolved Combat and Tower screens, preserves an unseen Crown epilogue,
   and records finale choices so completed post-game saves resume in Town without replay loops.
+- Town keeps the next campaign objective visible after onboarding, naming both guardian thresholds
+  and replacing the ascent goal with a post-story free-expedition state after the Crown is restored.
 - An authored floor-10 conclusion that banks the final expedition, records the restored Verdant
   Crown, celebrates the active party, and keeps post-story expeditions available.
 
