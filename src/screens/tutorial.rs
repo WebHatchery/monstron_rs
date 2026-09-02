@@ -2,7 +2,7 @@ use macroquad::prelude::*;
 
 use crate::engine::combat_engine::CombatCommand;
 use crate::engine::town_engine::{self, TownCommand};
-use crate::screens::{combat, hatchery, placeholder, tower, town_layout, AppScreen};
+use crate::screens::{combat, hatchery, placeholder, stable, tower, town_layout, AppScreen};
 use crate::state::{GameState, TowerRunGoal};
 use crate::ui;
 use macroquad_toolkit::ui::draw_ui_text_ex;
@@ -60,6 +60,8 @@ pub enum TutorialStep {
     HatchEgg,
     EggBuildStable,
     EggUpgradeStable,
+    EggOpenStable,
+    EggRehome,
     EggFinished,
 }
 
@@ -158,11 +160,13 @@ fn egg_care_step(state: &GameState, screen: AppScreen) -> Option<TutorialStep> {
         let stable_can_expand =
             town_engine::monster_capacity(state) < town_engine::MAX_MONSTER_CAPACITY;
         return match screen {
-            AppScreen::Hatchery if stable_can_expand => Some(TutorialStep::LeaveEggHatchery),
+            AppScreen::Hatchery => Some(TutorialStep::LeaveEggHatchery),
             AppScreen::Town if state.town.building_level("stable") == 0 => {
                 Some(TutorialStep::EggBuildStable)
             }
             AppScreen::Town if stable_can_expand => Some(TutorialStep::EggUpgradeStable),
+            AppScreen::Town => Some(TutorialStep::EggOpenStable),
+            AppScreen::Stable => Some(TutorialStep::EggRehome),
             _ => None,
         };
     }
@@ -212,7 +216,7 @@ pub fn draw(state: &GameState, screen: AppScreen, town_menu_open: bool) {
         ui::VIEW_HEIGHT,
         color(2, 6, 8, 38),
     );
-    if let Some(target) = target_rect(step) {
+    if let Some(target) = target_rect(state, step) {
         let pulse = 2.0 + ((get_time() * 4.0).sin() as f32 + 1.0) * 1.5;
         draw_rectangle_lines(
             target.x - 5.0,
@@ -262,7 +266,7 @@ pub fn mark(state: &mut GameState, flag: &str) {
     state.story_flags.add(flag);
 }
 
-fn target_rect(step: TutorialStep) -> Option<Rect> {
+fn target_rect(state: &GameState, step: TutorialStep) -> Option<Rect> {
     match step {
         TutorialStep::Scavenge => town_layout::action_buttons()
             .into_iter()
@@ -305,6 +309,8 @@ fn target_rect(step: TutorialStep) -> Option<Rect> {
         TutorialStep::EggBuildStable | TutorialStep::EggUpgradeStable => {
             Some(town_layout::building_button_rect(2))
         }
+        TutorialStep::EggOpenStable => Some(town_layout::building_open_button_rect(2)),
+        TutorialStep::EggRehome => stable::first_rehome_button_rect(state),
         TutorialStep::Welcome
         | TutorialStep::CombatIntro
         | TutorialStep::Finished
@@ -341,6 +347,8 @@ fn step_title(step: TutorialStep) -> &'static str {
         TutorialStep::HatchEgg => "WELCOME A NEW COMPANION",
         TutorialStep::EggBuildStable => "MAKE ROOM IN THE STABLE",
         TutorialStep::EggUpgradeStable => "EXPAND THE STABLE",
+        TutorialStep::EggOpenStable => "MAKE SPACE FOR THE READY EGG",
+        TutorialStep::EggRehome => "CHOOSE A TRUSTED NEW HOME",
         TutorialStep::EggFinished => "A NEW KEEPER JOINS THE CAMP",
     }
 }
@@ -396,6 +404,10 @@ fn step_instruction(step: TutorialStep) -> &'static str {
         }
         TutorialStep::EggUpgradeStable => {
             "Tap the Stable UPGRADE button to create more room for companions."
+        }
+        TutorialStep::EggOpenStable => "Tap OPEN beside the Stable to free one roster space.",
+        TutorialStep::EggRehome => {
+            "Tap REHOME beside a benched companion, then review the permanent choice."
         }
         TutorialStep::EggFinished => {
             "Care, time, and Stable space turn recovered eggs into new party members."

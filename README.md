@@ -8,6 +8,8 @@ You begin with a loyal slime, a cold hatchery brazier, and just enough supplies 
 
 - Rebuild camp facilities such as the hatchery, stable, workshop, shop, and breeding grove.
 - Hatch, raise, rest, and organize tower-born monsters.
+- Page through every Stable slot and safely rehome a benched companion when a full roster blocks
+  further hatching.
 - Choose a party before entering the tower.
 - Follow an optional, persistent first-expedition guide through Hatchery construction, dungeon
   exploration, recovery, and the first manual save using exact visible touch targets.
@@ -50,7 +52,7 @@ Turn a fragile camp into a working monster haven that can support increasingly d
   CAMP, or RETREAT for direct control.
 - The first-expedition guide can be skipped at any step and replayed from the Camp Menu.
 - When the first egg reaches camp, contextual guidance covers daily care, incubation, Stable
-  capacity recovery, and hatching without interrupting later free play.
+  expansion or confirmed rehoming, and hatching without interrupting later free play.
 
 ## Current Scope
 

@@ -540,6 +540,10 @@ impl Game {
 
         self.screen = screen;
         self.town_menu_open = false;
+        if screen == AppScreen::Stable {
+            self.stable_roster_page = 0;
+            self.stable_rehome_pending = None;
+        }
         if building_id == "hatchery" {
             if let Some(state) = &mut self.state {
                 tutorial::mark(state, tutorial::HATCHERY_OPENED);

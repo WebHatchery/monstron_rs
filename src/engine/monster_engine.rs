@@ -95,6 +95,37 @@ pub fn remove_party_slot(state: &mut GameState, slot_index: usize) -> MonsterRes
     }
 }
 
+pub fn rehome_monster(state: &mut GameState, monster_id: u64) -> MonsterResult {
+    let Some(index) = state
+        .monster_roster
+        .monsters
+        .iter()
+        .position(|monster| monster.id == monster_id)
+    else {
+        return MonsterResult {
+            summary: "That companion is no longer in the roster.".to_owned(),
+        };
+    };
+    let monster_name = state.monster_roster.monsters[index].name.clone();
+    if state.monster_roster.monsters.len() <= 1 {
+        return MonsterResult {
+            summary: format!("{monster_name} is the camp's last companion and cannot be rehomed."),
+        };
+    }
+    if state.monster_roster.is_in_party(monster_id) {
+        return MonsterResult {
+            summary: format!("Bench {monster_name} before choosing a new home."),
+        };
+    }
+
+    state.town.clear_monster_job(monster_id);
+    state.monster_roster.monsters.remove(index);
+    let summary =
+        format!("{monster_name} left for a trusted new home. One Stable space is now available.");
+    state.activity_log.add(state.day, summary.clone());
+    MonsterResult { summary }
+}
+
 pub struct RecoveryResult {
     pub fatigue_reduced: usize,
     pub injuries_healed: usize,

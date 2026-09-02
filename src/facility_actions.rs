@@ -1,8 +1,13 @@
 use crate::engine::{breeding_engine, egg_engine, job_engine, monster_engine, town_engine};
 use crate::game::Game;
 use crate::screens::{
-    breeding::BreedingAction, hatchery::HatcheryAction, shop::ShopAction, stable::StableAction,
-    tutorial, workshop::WorkshopAction, AppScreen,
+    breeding::BreedingAction,
+    hatchery::HatcheryAction,
+    shop::ShopAction,
+    stable::{self, StableAction},
+    tutorial,
+    workshop::WorkshopAction,
+    AppScreen,
 };
 
 impl Game {
@@ -34,6 +39,7 @@ impl Game {
     pub(crate) fn apply_stable_action(&mut self, action: StableAction) {
         match action {
             StableAction::ToTown => {
+                self.stable_rehome_pending = None;
                 self.screen = AppScreen::Town;
                 self.status_message = "Returned to tower camp.".to_owned();
             }
@@ -48,6 +54,34 @@ impl Game {
                     self.status_message =
                         monster_engine::remove_party_slot(state, slot_index).summary;
                 }
+            }
+            StableAction::Page(delta) => {
+                let page_count = self.state.as_ref().map_or(1, |state| {
+                    stable::roster_page_count(state.monster_roster.monsters.len())
+                });
+                self.stable_roster_page = if delta < 0 {
+                    self.stable_roster_page
+                        .saturating_sub(delta.unsigned_abs() as usize)
+                } else {
+                    self.stable_roster_page.saturating_add(delta as usize)
+                }
+                .min(page_count - 1);
+            }
+            StableAction::RequestRehome(monster_id) => {
+                self.stable_rehome_pending = Some(monster_id);
+                self.status_message = "Choose CANCEL or REHOME.".to_owned();
+            }
+            StableAction::ConfirmRehome(monster_id) => {
+                self.stable_rehome_pending = None;
+                if let Some(state) = &mut self.state {
+                    self.status_message = monster_engine::rehome_monster(state, monster_id).summary;
+                    let page_count = stable::roster_page_count(state.monster_roster.monsters.len());
+                    self.stable_roster_page = self.stable_roster_page.min(page_count - 1);
+                }
+            }
+            StableAction::CancelRehome => {
+                self.stable_rehome_pending = None;
+                self.status_message = "Rehoming cancelled; the roster is unchanged.".to_owned();
             }
         }
     }

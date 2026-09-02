@@ -18,6 +18,9 @@
       - "town"     -> fresh save, town screen
       - "hatchery" -> seeded hatchery screen
       - "stable"   -> seeded stable roster and recovery scene
+      - "stable_full" -> first page of a maximum-capacity roster
+      - "stable_page_two" -> remaining maximum-capacity roster entries
+      - "stable_rehome_warning" -> permanent rehoming confirmation
       - "breeding" -> seeded breeding grove scene
       - "workshop" -> seeded workshop assignments scene
       - "shop"     -> seeded shop scene
@@ -52,6 +55,9 @@
       - "tutorial_egg_hatch" -> highlighted ready-egg HATCH action
       - "tutorial_egg_build_stable" -> full-roster Stable construction recovery
       - "tutorial_egg_upgrade_stable" -> full-roster Stable expansion recovery
+      - "tutorial_egg_open_stable" -> maximum-capacity Stable entry recovery
+      - "tutorial_egg_rehome" -> highlighted max-capacity REHOME action
+      - "tutorial_egg_rehome_warning" -> confirmed first-egg capacity recovery
       - "tutorial_egg_finished" -> first hatch completion
 
 .EXAMPLE

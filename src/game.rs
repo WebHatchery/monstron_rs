@@ -24,6 +24,8 @@ pub struct Game {
     pub(crate) screen: AppScreen,
     pub(crate) status_message: String,
     pub(crate) town_menu_open: bool,
+    pub(crate) stable_roster_page: usize,
+    pub(crate) stable_rehome_pending: Option<u64>,
     tower_guide_open: bool,
     tower_guide_page: usize,
     pub(crate) tower_route_step_ready_at: f64,
@@ -66,6 +68,8 @@ impl Game {
             screen: AppScreen::MainMenu,
             status_message,
             town_menu_open: false,
+            stable_roster_page: 0,
+            stable_rehome_pending: None,
             tower_guide_open: false,
             tower_guide_page: 0,
             tower_route_step_ready_at: 0.0,
@@ -78,10 +82,13 @@ impl Game {
     }
 
     pub fn update(&mut self) {
-        let tutorial_action = self
-            .state
-            .as_ref()
-            .and_then(|state| tutorial::handle_input(state, self.screen, self.town_menu_open));
+        let tutorial_action = (self.stable_rehome_pending.is_none())
+            .then(|| {
+                self.state.as_ref().and_then(|state| {
+                    tutorial::handle_input(state, self.screen, self.town_menu_open)
+                })
+            })
+            .flatten();
         if let Some(action) = tutorial_action {
             self.apply_progression(|game| game.apply_tutorial_action(action));
             return;
@@ -150,7 +157,11 @@ impl Game {
             }
             AppScreen::Stable => {
                 if let Some(state) = &self.state {
-                    if let Some(action) = stable::handle_input(state) {
+                    if let Some(action) = stable::handle_input(
+                        state,
+                        self.stable_roster_page,
+                        self.stable_rehome_pending,
+                    ) {
                         self.apply_progression(|game| game.apply_stable_action(action));
                     }
                 } else {
@@ -274,7 +285,13 @@ impl Game {
             }
             AppScreen::Stable => {
                 if let Some(state) = &self.state {
-                    stable::draw(state, &self.data, &self.status_message);
+                    stable::draw(
+                        state,
+                        &self.data,
+                        &self.status_message,
+                        self.stable_roster_page,
+                        self.stable_rehome_pending,
+                    );
                 }
             }
             AppScreen::Breeding => {
@@ -321,8 +338,10 @@ impl Game {
             }
         }
 
-        if let Some(state) = &self.state {
-            tutorial::draw(state, self.screen, self.town_menu_open);
+        if self.stable_rehome_pending.is_none() {
+            if let Some(state) = &self.state {
+                tutorial::draw(state, self.screen, self.town_menu_open);
+            }
         }
 
         set_default_camera();

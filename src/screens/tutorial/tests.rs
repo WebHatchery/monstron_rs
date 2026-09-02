@@ -195,8 +195,16 @@ fn first_egg_guidance_covers_care_incubation_hatching_and_capacity() {
     }
     assert_eq!(
         current_step(&state, AppScreen::Hatchery, false),
-        None,
-        "the guide must not point at a disabled max-level Stable upgrade"
+        Some(TutorialStep::LeaveEggHatchery)
+    );
+    assert_eq!(
+        current_step(&state, AppScreen::Town, false),
+        Some(TutorialStep::EggOpenStable),
+        "the guide must route around a disabled max-level Stable upgrade"
+    );
+    assert_eq!(
+        current_step(&state, AppScreen::Stable, false),
+        Some(TutorialStep::EggRehome)
     );
 
     state.egg_inventory.eggs.clear();

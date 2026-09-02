@@ -75,6 +75,8 @@ This is the route the tutorial, deterministic test fixture, and release capture 
   controls through scavenging, Hatchery construction and entry, tower preparation, exploration,
   survey, retreat, recovery, manual saving, and first combat. The first stored egg then receives
   contextual care, incubation, Stable-capacity recovery, and hatching guidance.
+- A maximum-capacity Stable exposes all 12 companions across visible pages and offers confirmed
+  rehoming, so a ready egg cannot permanently dead-end the raising loop.
 - The existing floor data unlocks floor 4 immediately after floor 3; there is no demo boundary.
 - Floor 3 has no guardian or authored finale state.
 - Tutorial progress now persists in save data. A separately approved demo-completion boundary and

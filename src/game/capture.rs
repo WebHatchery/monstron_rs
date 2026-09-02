@@ -1,6 +1,7 @@
 //! Deterministic scene fixtures used by the screenshot verification harness.
 
 use super::Game;
+use crate::engine::town_engine;
 use crate::screens::AppScreen;
 use crate::state::{CombatOutcome, TowerRunGoal, TownJobKind};
 
@@ -13,6 +14,20 @@ impl Game {
             "town" => self.begin_capture_fixture(AppScreen::Town),
             "hatchery" => self.begin_capture_fixture(AppScreen::Hatchery),
             "stable" => self.begin_capture_fixture(AppScreen::Stable),
+            "stable_full" => {
+                self.begin_capture_fixture(AppScreen::Stable);
+                self.seed_capture_full_roster();
+            }
+            "stable_page_two" => {
+                self.begin_capture_fixture(AppScreen::Stable);
+                self.seed_capture_full_roster();
+                self.stable_roster_page = 1;
+            }
+            "stable_rehome_warning" => {
+                self.begin_capture_fixture(AppScreen::Stable);
+                self.seed_capture_full_roster();
+                self.stable_rehome_pending = Some(4);
+            }
             "breeding" => self.begin_capture_fixture(AppScreen::Breeding),
             "workshop" => self.begin_capture_fixture(AppScreen::Workshop),
             "shop" => self.begin_capture_fixture(AppScreen::Shop),
@@ -194,6 +209,22 @@ impl Game {
                         state.monster_roster.monsters.push(monster);
                     }
                 }
+            }
+            "tutorial_egg_open_stable" => {
+                self.begin_capture_egg_tutorial(AppScreen::Town, 0, false);
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::EGG_INTRO]);
+                self.seed_capture_full_roster();
+            }
+            "tutorial_egg_rehome" => {
+                self.begin_capture_egg_tutorial(AppScreen::Stable, 0, false);
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::EGG_INTRO]);
+                self.seed_capture_full_roster();
+            }
+            "tutorial_egg_rehome_warning" => {
+                self.begin_capture_egg_tutorial(AppScreen::Stable, 0, false);
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::EGG_INTRO]);
+                self.seed_capture_full_roster();
+                self.stable_rehome_pending = Some(4);
             }
             "tutorial_egg_finished" => {
                 self.begin_capture_egg_tutorial(AppScreen::Hatchery, 0, false);
@@ -395,6 +426,8 @@ impl Game {
         state.story_flags.add(crate::screens::tutorial::SKIPPED);
         self.screen = screen;
         self.town_menu_open = false;
+        self.stable_roster_page = 0;
+        self.stable_rehome_pending = None;
         self.status_message =
             "Seeded verification scene. Tap a visible control to continue.".to_owned();
     }
@@ -429,6 +462,30 @@ impl Game {
             if let Some(egg) = state.egg_inventory.eggs.first_mut() {
                 egg.days_remaining = days_remaining;
                 egg.last_care_day = if cared_today { state.day } else { 0 };
+            }
+        }
+    }
+
+    fn seed_capture_full_roster(&mut self) {
+        let Some(state) = &mut self.state else {
+            return;
+        };
+        state.town.set_building_level("stable", 3);
+        let names = [
+            "Fern", "Cinder", "Brook", "Pebble", "Glimmer", "Mallow", "Ash", "Reed", "Dew",
+        ];
+        let species_ids = ["rootling", "emberkit", "rillfin", "pebblepup", "glowmoth"];
+        while state.monster_roster.monsters.len() < town_engine::MAX_MONSTER_CAPACITY {
+            let index = state.monster_roster.monsters.len() - 3;
+            let species_id = species_ids[index % species_ids.len()];
+            if let Some(species) = self.data.species(species_id) {
+                state.monster_roster.add_monster(
+                    names[index].to_owned(),
+                    species,
+                    0x5100 + index as u64,
+                );
+            } else {
+                break;
             }
         }
     }
