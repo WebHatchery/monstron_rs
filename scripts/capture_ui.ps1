@@ -43,6 +43,16 @@
       - "tutorial_menu" -> visible Camp Menu target before saving
       - "tutorial_save" -> highlighted manual save control
       - "tutorial_finished" -> completion and replay guidance
+      - "tutorial_egg_intro" -> first recovered egg explanation
+      - "tutorial_egg_open" -> contextual Hatchery return target
+      - "tutorial_egg_care" -> highlighted WARM care action
+      - "tutorial_egg_leave" -> return path after daily care
+      - "tutorial_egg_sleep" -> overnight incubation action
+      - "tutorial_egg_end_day" -> next-day Hatchery return
+      - "tutorial_egg_hatch" -> highlighted ready-egg HATCH action
+      - "tutorial_egg_build_stable" -> full-roster Stable construction recovery
+      - "tutorial_egg_upgrade_stable" -> full-roster Stable expansion recovery
+      - "tutorial_egg_finished" -> first hatch completion
 
 .EXAMPLE
     ./scripts/capture_ui.ps1

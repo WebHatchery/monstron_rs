@@ -19,6 +19,7 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Add a Camp Menu replay path and verification captures at desktop and small-window sizes.
 - [x] Build and visit the Hatchery before the guided expedition so discovered eggs have capacity.
 - [x] Teach post-expedition recovery and the explicit manual-save path with visible controls.
+- [x] Add contextual first-egg care, incubation, Stable-capacity recovery, and hatching guidance.
 
 ## Balance tooling
 

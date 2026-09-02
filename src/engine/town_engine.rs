@@ -5,6 +5,7 @@ use crate::state::GameState;
 const SHOP_ID: &str = "shop";
 const STABLE_ID: &str = "stable";
 const HATCHERY_ID: &str = "hatchery";
+pub const MAX_MONSTER_CAPACITY: usize = 12;
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize)]
 pub enum ShopTrade {
@@ -214,7 +215,7 @@ pub fn monster_capacity(state: &GameState) -> usize {
         0 => 3,
         1 => 6,
         2 => 9,
-        _ => 12,
+        _ => MAX_MONSTER_CAPACITY,
     }
 }
 

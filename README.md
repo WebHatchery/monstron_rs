@@ -49,6 +49,8 @@ Turn a fragile camp into a working monster haven that can support increasingly d
   hazards, landmarks, and encounters; tap another room to redirect, or use STEP NOW, SURVEY,
   CAMP, or RETREAT for direct control.
 - The first-expedition guide can be skipped at any step and replayed from the Camp Menu.
+- When the first egg reaches camp, contextual guidance covers daily care, incubation, Stable
+  capacity recovery, and hatching without interrupting later free play.
 
 ## Current Scope
 

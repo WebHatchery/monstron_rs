@@ -266,7 +266,7 @@ fn care_enabled(
     last_care_day != current_day && (care_focus != EggCareFocus::Warm || days_remaining > 0)
 }
 
-fn care_button_rect(row: usize, column: usize) -> Rect {
+pub(crate) fn care_button_rect(row: usize, column: usize) -> Rect {
     Rect::new(
         488.0 + column as f32 * 62.0,
         160.0 + row as f32 * 66.0,
@@ -275,7 +275,7 @@ fn care_button_rect(row: usize, column: usize) -> Rect {
     )
 }
 
-fn hatch_button_rect(index: usize) -> Rect {
+pub(crate) fn hatch_button_rect(index: usize) -> Rect {
     Rect::new(736.0, 160.0 + index as f32 * 66.0, 60.0, 28.0)
 }
 

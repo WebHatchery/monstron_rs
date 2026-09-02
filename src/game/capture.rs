@@ -149,6 +149,62 @@ impl Game {
                 self.set_capture_tutorial_flags(&flags);
                 self.town_menu_open = true;
             }
+            "tutorial_egg_intro" => {
+                self.begin_capture_egg_tutorial(AppScreen::Town, 2, false);
+            }
+            "tutorial_egg_open" => {
+                self.begin_capture_egg_tutorial(AppScreen::Town, 2, false);
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::EGG_INTRO]);
+            }
+            "tutorial_egg_care" => {
+                self.begin_capture_egg_tutorial(AppScreen::Hatchery, 2, false);
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::EGG_INTRO]);
+            }
+            "tutorial_egg_leave" => {
+                self.begin_capture_egg_tutorial(AppScreen::Hatchery, 1, true);
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::EGG_INTRO]);
+            }
+            "tutorial_egg_sleep" => {
+                self.begin_capture_egg_tutorial(AppScreen::Town, 1, true);
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::EGG_INTRO]);
+            }
+            "tutorial_egg_end_day" => {
+                self.begin_capture_egg_tutorial(AppScreen::EndOfDay, 1, true);
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::EGG_INTRO]);
+            }
+            "tutorial_egg_hatch" => {
+                self.begin_capture_egg_tutorial(AppScreen::Hatchery, 0, false);
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::EGG_INTRO]);
+            }
+            "tutorial_egg_build_stable" => {
+                self.begin_capture_egg_tutorial(AppScreen::Town, 0, false);
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::EGG_INTRO]);
+                if let Some(state) = &mut self.state {
+                    state.town.set_building_level("stable", 0);
+                }
+            }
+            "tutorial_egg_upgrade_stable" => {
+                self.begin_capture_egg_tutorial(AppScreen::Town, 0, false);
+                self.set_capture_tutorial_flags(&[crate::screens::tutorial::EGG_INTRO]);
+                if let Some(state) = &mut self.state {
+                    let template = state.monster_roster.monsters[0].clone();
+                    while state.monster_roster.monsters.len() < 6 {
+                        let mut monster = template.clone();
+                        monster.id = state.monster_roster.monsters.len() as u64 + 1;
+                        state.monster_roster.monsters.push(monster);
+                    }
+                }
+            }
+            "tutorial_egg_finished" => {
+                self.begin_capture_egg_tutorial(AppScreen::Hatchery, 0, false);
+                if let Some(state) = &mut self.state {
+                    state.egg_inventory.eggs.clear();
+                }
+                self.set_capture_tutorial_flags(&[
+                    crate::screens::tutorial::EGG_INTRO,
+                    crate::screens::tutorial::EGG_HATCHED,
+                ]);
+            }
             "finale" => {
                 self.begin_capture_fixture(AppScreen::Finale);
                 if let Some(state) = &mut self.state {
@@ -356,6 +412,23 @@ impl Game {
         if let Some(state) = &mut self.state {
             for flag in flags {
                 state.story_flags.add(flag);
+            }
+        }
+    }
+
+    fn begin_capture_egg_tutorial(
+        &mut self,
+        screen: AppScreen,
+        days_remaining: u32,
+        cared_today: bool,
+    ) {
+        self.begin_capture_fixture(screen);
+        self.reset_capture_tutorial();
+        self.set_capture_tutorial_flags(&[crate::screens::tutorial::COMPLETE]);
+        if let Some(state) = &mut self.state {
+            if let Some(egg) = state.egg_inventory.eggs.first_mut() {
+                egg.days_remaining = days_remaining;
+                egg.last_care_day = if cared_today { state.day } else { 0 };
             }
         }
     }

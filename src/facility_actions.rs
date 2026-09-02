@@ -23,7 +23,9 @@ impl Game {
             }
             HatcheryAction::HatchEgg(egg_id) => {
                 if let Some(state) = &mut self.state {
+                    let eggs_before = state.egg_inventory.eggs.len();
                     self.status_message = egg_engine::hatch_egg(state, &self.data, egg_id).summary;
+                    mark_tutorial_hatch(state, eggs_before);
                 }
             }
         }
@@ -104,3 +106,12 @@ impl Game {
         }
     }
 }
+
+fn mark_tutorial_hatch(state: &mut crate::state::GameState, eggs_before: usize) {
+    if state.egg_inventory.eggs.len() < eggs_before {
+        tutorial::mark(state, tutorial::EGG_HATCHED);
+    }
+}
+
+#[cfg(test)]
+mod tests;

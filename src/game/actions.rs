@@ -581,6 +581,10 @@ impl Game {
                         tutorial::mark(state, tutorial::COMBAT_INTRO)
                     }
                     Some(TutorialStep::Finished) => tutorial::mark(state, tutorial::COMPLETE),
+                    Some(TutorialStep::EggIntro) => tutorial::mark(state, tutorial::EGG_INTRO),
+                    Some(TutorialStep::EggFinished) => {
+                        tutorial::mark(state, tutorial::EGG_COMPLETE)
+                    }
                     _ => {}
                 }
                 self.status_message = "Follow the highlighted visible control.".to_owned();

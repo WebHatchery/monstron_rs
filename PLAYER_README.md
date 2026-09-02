@@ -24,6 +24,7 @@ camp menu with its visible button and choose **Exit Game** for a clean quit.
 A new save opens an optional gold first-expedition guide. It builds egg capacity before the first
 tower run, then teaches exploration, recovery, and saving through highlighted visible controls.
 Tap **SKIP GUIDE** at any step, or choose **Replay Guide** from the Camp Menu later.
+The guide returns once for the first stored egg, including what to do if the Stable is full.
 
 In the tower, tap a chamber to send the party toward it. Travel advances across the dungeon and
 stops at loot, hazards, landmarks, encounters, or maximum pressure so you remain in control. Tap

@@ -1,7 +1,7 @@
 use macroquad::prelude::*;
 
 use crate::engine::combat_engine::CombatCommand;
-use crate::engine::town_engine::TownCommand;
+use crate::engine::town_engine::{self, TownCommand};
 use crate::screens::{combat, hatchery, placeholder, tower, town_layout, AppScreen};
 use crate::state::{GameState, TowerRunGoal};
 use crate::ui;
@@ -21,6 +21,9 @@ pub const SAVED: &str = "tutorial_saved";
 pub const COMBAT_INTRO: &str = "tutorial_combat_intro";
 pub const COMBAT_ACTION: &str = "tutorial_combat_action";
 pub const COMPLETE: &str = "tutorial_complete";
+pub const EGG_INTRO: &str = "tutorial_egg_intro";
+pub const EGG_HATCHED: &str = "tutorial_egg_hatched";
+pub const EGG_COMPLETE: &str = "tutorial_egg_complete";
 pub const SKIPPED: &str = "tutorial_skipped";
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -48,6 +51,16 @@ pub enum TutorialStep {
     CombatIntro,
     CombatAttack,
     Finished,
+    EggIntro,
+    OpenEggHatchery,
+    CareEgg,
+    LeaveEggHatchery,
+    EggSleep,
+    EggEndDayContinue,
+    HatchEgg,
+    EggBuildStable,
+    EggUpgradeStable,
+    EggFinished,
 }
 
 pub fn current_step(
@@ -64,9 +77,17 @@ pub fn current_step(
     if screen == AppScreen::Combat && !state.story_flags.has(COMBAT_ACTION) {
         return Some(TutorialStep::CombatAttack);
     }
-    if state.story_flags.has(COMPLETE) {
-        return None;
+    if !state.story_flags.has(COMPLETE) {
+        return first_expedition_step(state, screen, town_menu_open);
     }
+    egg_care_step(state, screen)
+}
+
+fn first_expedition_step(
+    state: &GameState,
+    screen: AppScreen,
+    town_menu_open: bool,
+) -> Option<TutorialStep> {
     if !state.story_flags.has(WELCOME) {
         return (screen == AppScreen::Town).then_some(TutorialStep::Welcome);
     }
@@ -118,6 +139,45 @@ pub fn current_step(
     (screen == AppScreen::Town).then_some(TutorialStep::Finished)
 }
 
+fn egg_care_step(state: &GameState, screen: AppScreen) -> Option<TutorialStep> {
+    if state.story_flags.has(EGG_COMPLETE) {
+        return None;
+    }
+    if state.story_flags.has(EGG_HATCHED) {
+        return matches!(screen, AppScreen::Hatchery | AppScreen::Town)
+            .then_some(TutorialStep::EggFinished);
+    }
+    let egg = state.egg_inventory.eggs.first()?;
+    if !state.story_flags.has(EGG_INTRO) {
+        return (screen == AppScreen::Town).then_some(TutorialStep::EggIntro);
+    }
+    if screen == AppScreen::EndOfDay {
+        return Some(TutorialStep::EggEndDayContinue);
+    }
+    if egg.days_remaining == 0 && !town_engine::has_monster_capacity(state) {
+        let stable_can_expand =
+            town_engine::monster_capacity(state) < town_engine::MAX_MONSTER_CAPACITY;
+        return match screen {
+            AppScreen::Hatchery if stable_can_expand => Some(TutorialStep::LeaveEggHatchery),
+            AppScreen::Town if state.town.building_level("stable") == 0 => {
+                Some(TutorialStep::EggBuildStable)
+            }
+            AppScreen::Town if stable_can_expand => Some(TutorialStep::EggUpgradeStable),
+            _ => None,
+        };
+    }
+    match screen {
+        AppScreen::Town if egg.last_care_day == state.day && egg.days_remaining > 0 => {
+            Some(TutorialStep::EggSleep)
+        }
+        AppScreen::Town => Some(TutorialStep::OpenEggHatchery),
+        AppScreen::Hatchery if egg.days_remaining == 0 => Some(TutorialStep::HatchEgg),
+        AppScreen::Hatchery if egg.last_care_day != state.day => Some(TutorialStep::CareEgg),
+        AppScreen::Hatchery => Some(TutorialStep::LeaveEggHatchery),
+        _ => None,
+    }
+}
+
 pub fn handle_input(
     state: &GameState,
     screen: AppScreen,
@@ -129,7 +189,11 @@ pub fn handle_input(
     }
     if matches!(
         step,
-        TutorialStep::Welcome | TutorialStep::CombatIntro | TutorialStep::Finished
+        TutorialStep::Welcome
+            | TutorialStep::CombatIntro
+            | TutorialStep::Finished
+            | TutorialStep::EggIntro
+            | TutorialStep::EggFinished
     ) && ui::button_clicked(continue_rect(step), true)
     {
         return Some(TutorialAction::Continue);
@@ -160,11 +224,7 @@ pub fn draw(state: &GameState, screen: AppScreen, town_menu_open: bool) {
         );
     }
 
-    let card = if matches!(step, TutorialStep::Welcome | TutorialStep::Finished) {
-        Rect::new(350.0, 242.0, 580.0, 194.0)
-    } else {
-        Rect::new(340.0, 92.0, 600.0, 128.0)
-    };
+    let card = card_rect(step);
     draw_rectangle(card.x, card.y, card.w, card.h, color(7, 13, 15, 246));
     draw_rectangle_lines(
         card.x,
@@ -187,7 +247,11 @@ pub fn draw(state: &GameState, screen: AppScreen, town_menu_open: bool) {
     draw_instruction(step_instruction(step), card.x + 24.0, card.y + 74.0);
     if matches!(
         step,
-        TutorialStep::Welcome | TutorialStep::CombatIntro | TutorialStep::Finished
+        TutorialStep::Welcome
+            | TutorialStep::CombatIntro
+            | TutorialStep::Finished
+            | TutorialStep::EggIntro
+            | TutorialStep::EggFinished
     ) {
         ui::draw_button(continue_rect(step), continue_label(step), true);
     }
@@ -229,7 +293,23 @@ fn target_rect(step: TutorialStep) -> Option<Rect> {
             .into_iter()
             .find(|(command, _)| *command == CombatCommand::Attack)
             .map(|(_, rect)| rect),
-        TutorialStep::Welcome | TutorialStep::CombatIntro | TutorialStep::Finished => None,
+        TutorialStep::OpenEggHatchery => Some(town_layout::building_open_button_rect(1)),
+        TutorialStep::CareEgg => Some(hatchery::care_button_rect(0, 0)),
+        TutorialStep::LeaveEggHatchery => Some(hatchery::town_button_rect()),
+        TutorialStep::EggSleep => town_layout::action_buttons()
+            .into_iter()
+            .find(|(action, _)| *action == TownCommand::Sleep)
+            .map(|(_, rect)| rect),
+        TutorialStep::EggEndDayContinue => Some(placeholder::end_day_town_rect()),
+        TutorialStep::HatchEgg => Some(hatchery::hatch_button_rect(0)),
+        TutorialStep::EggBuildStable | TutorialStep::EggUpgradeStable => {
+            Some(town_layout::building_button_rect(2))
+        }
+        TutorialStep::Welcome
+        | TutorialStep::CombatIntro
+        | TutorialStep::Finished
+        | TutorialStep::EggIntro
+        | TutorialStep::EggFinished => None,
     }
 }
 
@@ -252,6 +332,16 @@ fn step_title(step: TutorialStep) -> &'static str {
         TutorialStep::CombatIntro => "A DENIZEN BLOCKS THE PATH",
         TutorialStep::CombatAttack => "TAKE THE FIRST TURN",
         TutorialStep::Finished => "FIRST EXPEDITION READY",
+        TutorialStep::EggIntro => "AN EGG CAME HOME",
+        TutorialStep::OpenEggHatchery => "VISIT THE WAITING EGG",
+        TutorialStep::CareEgg => "WARM THE FIRST EGG",
+        TutorialStep::LeaveEggHatchery => "LET THE EGG REST",
+        TutorialStep::EggSleep => "PASS A WARM NIGHT",
+        TutorialStep::EggEndDayContinue => "THE SHELL STIRS",
+        TutorialStep::HatchEgg => "WELCOME A NEW COMPANION",
+        TutorialStep::EggBuildStable => "MAKE ROOM IN THE STABLE",
+        TutorialStep::EggUpgradeStable => "EXPAND THE STABLE",
+        TutorialStep::EggFinished => "A NEW KEEPER JOINS THE CAMP",
     }
 }
 
@@ -290,6 +380,26 @@ fn step_instruction(step: TutorialStep) -> &'static str {
         TutorialStep::Finished => {
             "You can now explore freely. Replay this guide from the Camp Menu."
         }
+        TutorialStep::EggIntro => {
+            "The Hatchery kept a tower egg safe. Follow the gold guide to hatch it."
+        }
+        TutorialStep::OpenEggHatchery => "Tap OPEN beside the Hatchery to inspect the first egg.",
+        TutorialStep::CareEgg => "Tap WARM to shorten incubation and record today's care.",
+        TutorialStep::LeaveEggHatchery => {
+            "Tap TOWN. The egg needs a new day, or more Stable space, before hatching."
+        }
+        TutorialStep::EggSleep => "Tap SLEEP to warm the cared-for egg overnight.",
+        TutorialStep::EggEndDayContinue => "Tap TOWN to check the egg on the new day.",
+        TutorialStep::HatchEgg => "Tap HATCH to welcome the ready creature into the roster.",
+        TutorialStep::EggBuildStable => {
+            "Tap the Stable BUILD button to create more room for companions."
+        }
+        TutorialStep::EggUpgradeStable => {
+            "Tap the Stable UPGRADE button to create more room for companions."
+        }
+        TutorialStep::EggFinished => {
+            "Care, time, and Stable space turn recovered eggs into new party members."
+        }
     }
 }
 
@@ -298,7 +408,34 @@ fn continue_label(step: TutorialStep) -> &'static str {
         TutorialStep::Welcome => "CONTINUE",
         TutorialStep::CombatIntro => "SHOW ACTIONS",
         TutorialStep::Finished => "FINISH GUIDE",
+        TutorialStep::EggIntro => "SHOW THE EGG",
+        TutorialStep::EggFinished => "CONTINUE",
         _ => "CONTINUE",
+    }
+}
+
+fn card_rect(step: TutorialStep) -> Rect {
+    if matches!(
+        step,
+        TutorialStep::Welcome
+            | TutorialStep::Finished
+            | TutorialStep::EggIntro
+            | TutorialStep::EggFinished
+    ) {
+        Rect::new(350.0, 242.0, 580.0, 194.0)
+    } else if matches!(
+        step,
+        TutorialStep::BuildHatchery
+            | TutorialStep::OpenHatchery
+            | TutorialStep::OpenEggHatchery
+            | TutorialStep::CareEgg
+            | TutorialStep::HatchEgg
+            | TutorialStep::EggBuildStable
+            | TutorialStep::EggUpgradeStable
+    ) {
+        Rect::new(340.0, 478.0, 600.0, 128.0)
+    } else {
+        Rect::new(340.0, 92.0, 600.0, 128.0)
     }
 }
 

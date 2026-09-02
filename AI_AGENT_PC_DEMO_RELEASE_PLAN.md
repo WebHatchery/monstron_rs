@@ -132,8 +132,9 @@ The schedule is driven by feedback cycles rather than code volume. An agent can 
 
 - New Game now opens a persistent, skippable first-expedition guide that builds and visits the
   Hatchery before highlighting TOWER, SAFE RUN, EXPLORE, SURVEY, RETREAT, recovery, manual saving,
-  and the first combat ATTACK path. It can be replayed from the Camp Menu. Egg care and hatching
-  still need later contextual steps before the complete proposed demo path is taught.
+  and the first combat ATTACK path. A contextual continuation teaches first-egg care, overnight
+  incubation, Stable-capacity recovery, and hatching. The complete guide can be replayed from the
+  Camp Menu.
 - Defeating the floor-10 guardian now opens an authored full-campaign finale, banks the expedition rewards, records the restored crown, and offers visible town/title continuations. A shorter demo still has no separately authored finish line.
 - The initial combat capture contained a magenta VFX background and overlapping statistics. Combat
   now uses the processed transparent atlas and distinct card rows at all four structural capture
