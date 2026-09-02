@@ -26,6 +26,7 @@ pub struct Game {
     pub(crate) town_menu_open: bool,
     tower_guide_open: bool,
     tower_guide_page: usize,
+    pub(crate) tower_route_step_ready_at: f64,
     title_texture: Texture2D,
     settings: AppSettings,
     save_recovery_can_preserve: bool,
@@ -67,6 +68,7 @@ impl Game {
             town_menu_open: false,
             tower_guide_open: false,
             tower_guide_page: 0,
+            tower_route_step_ready_at: 0.0,
             title_texture,
             settings,
             save_recovery_can_preserve: false,
@@ -180,13 +182,16 @@ impl Game {
             }
             AppScreen::Tower => {
                 if let Some(state) = &self.state {
-                    if let Some(action) = tower::handle_input(
+                    let action = tower::handle_input(
                         state,
                         &self.data,
                         self.tower_guide_open,
                         self.tower_guide_page,
-                    ) {
+                    );
+                    if let Some(action) = action {
                         self.apply_progression(|game| game.apply_tower_action(action));
+                    } else {
+                        self.advance_tower_route();
                     }
                 } else {
                     self.screen = AppScreen::MainMenu;

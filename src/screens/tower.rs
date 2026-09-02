@@ -342,8 +342,13 @@ fn draw_party_rail(state: &GameState) {
 }
 
 fn draw_action_dock(run: &TowerRunState) {
+    let explore_title = if run.route_target.is_some() {
+        "Step now"
+    } else {
+        "Explore"
+    };
     for (index, (icon, title)) in [
-        ("+", "Explore"),
+        ("+", explore_title),
         ("?", "Survey"),
         ("*", "Camp"),
         ("<", "Retreat"),
@@ -403,6 +408,18 @@ fn draw_action_dock(run: &TowerRunState) {
             TextParams {
                 font_size: 13,
                 color: Color::from_rgba(135, 211, 151, 255),
+                ..Default::default()
+            },
+        );
+    }
+    if run.route_target.is_some() {
+        draw_ui_text_ex(
+            "ROUTE ACTIVE · tap a room to redirect",
+            explore_button_rect().x - 2.0,
+            explore_button_rect().y - 8.0,
+            TextParams {
+                font_size: 13,
+                color: Color::from_rgba(232, 173, 82, 255),
                 ..Default::default()
             },
         );

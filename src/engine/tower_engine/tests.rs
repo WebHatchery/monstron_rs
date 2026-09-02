@@ -576,8 +576,52 @@ fn room_route_focus_persists_for_followup_explore_taps() {
     assert_ne!((run.map.player_x, run.map.player_y), start);
     if (run.map.player_x, run.map.player_y) != target {
         assert_eq!(run.route_target, Some(target));
-        assert!(result.summary.contains("remains marked"));
+        assert!(result.summary.contains("follows the marked route"));
     }
+}
+
+#[test]
+fn room_route_stops_when_travel_reaches_a_discovery() {
+    let data = GameDataLoader::load_embedded().expect("embedded data should load");
+    let mut state = GameState::new(&data);
+    start_run(&mut state, &data, TowerRunGoal::Balanced);
+    let run = state.tower_run.as_mut().expect("run should exist");
+    let (dx, dy) = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+        .into_iter()
+        .find(|(dx, dy)| {
+            let x = run.map.player_x as i32 + dx;
+            let y = run.map.player_y as i32 + dy;
+            x >= 0 && y >= 0 && run.map.is_passable(x as u32, y as u32)
+        })
+        .expect("start room should have a passable neighbor");
+    let target = (
+        (run.map.player_x as i32 + dx) as u32,
+        (run.map.player_y as i32 + dy) as u32,
+    );
+    run.route_target = Some(target);
+    run.map
+        .objects
+        .retain(|object| (object.x, object.y) != target);
+    run.map.objects.push(TowerMapObject {
+        kind: TowerMapObjectKind::Loot,
+        x: target.0,
+        y: target.1,
+        resource_id: "wood".to_owned(),
+        amount: 1,
+        egg_type_id: String::new(),
+        hatch_days: 0,
+        palette_seed: 0,
+        enemy_id: String::new(),
+        special_location_id: String::new(),
+        event_id: String::new(),
+        hazard_id: String::new(),
+        wandering: false,
+        revealed: true,
+    });
+
+    move_party(&mut state, &data, dx, dy);
+
+    assert_eq!(state.tower_run.as_ref().unwrap().route_target, None);
 }
 
 fn test_map_object(kind: TowerMapObjectKind, x: u32, y: u32) -> TowerMapObject {

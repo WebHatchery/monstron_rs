@@ -215,6 +215,12 @@ pub fn move_party(state: &mut GameState, data: &GameData, dx: i32, dy: i32) -> T
             .map
             .object_index_at(run.map.player_x, run.map.player_y)
             .map(|index| run.map.objects.remove(index));
+        if object.is_some() {
+            // Discoveries are deliberate travel interruption points. The player
+            // chooses whether to resume after reading the result or resolving
+            // the encounter instead of being pulled onward by an old room tap.
+            run.route_target = None;
+        }
         let hunter_interval = if anomaly == Some(crate::data::TowerAnomalyEffect::HunterTracks) {
             1
         } else {
@@ -352,7 +358,7 @@ pub fn route_party_to(state: &mut GameState, data: &GameData, target: (u32, u32)
     } else {
         outcome
             .summary
-            .push_str(" The room remains marked; tap EXPLORE to continue the route.");
+            .push_str(" The party follows the marked route; tap another room to redirect.");
     }
     outcome
 }

@@ -22,6 +22,8 @@ use crate::screens::{
 use crate::state::{GameState, TowerRunGoal};
 
 impl Game {
+    const TOWER_ROUTE_STEP_SECONDS: f64 = 0.22;
+
     pub(crate) fn apply_menu_action(&mut self, action: MenuAction) {
         match action {
             MenuAction::NewGame => {
@@ -291,6 +293,7 @@ impl Game {
     pub(crate) fn apply_tower_action(&mut self, action: TowerAction) {
         match action {
             TowerAction::Move(dx, dy) => {
+                self.clear_tower_route();
                 let result = self
                     .state
                     .as_mut()
@@ -307,6 +310,7 @@ impl Game {
                 if let Some(result) = result {
                     self.apply_tower_result(result);
                 }
+                self.schedule_tower_route_step();
             }
             TowerAction::Explore => {
                 let result = self
@@ -316,13 +320,16 @@ impl Game {
                 if let Some(result) = result {
                     self.apply_tower_result(result);
                 }
+                self.schedule_tower_route_step();
             }
             TowerAction::Survey => {
+                self.clear_tower_route();
                 if let Some(state) = &mut self.state {
                     self.status_message = tower_engine::survey_floor(state, &self.data).summary;
                 }
             }
             TowerAction::Camp => {
+                self.clear_tower_route();
                 if let Some(state) = &mut self.state {
                     self.status_message = tower_engine::camp_party(state, &self.data).summary;
                 }
@@ -343,6 +350,7 @@ impl Game {
                 }
             }
             TowerAction::ReturnToTown => {
+                self.clear_tower_route();
                 if let Some(state) = &mut self.state {
                     self.status_message = tower_engine::return_to_town(state, &self.data).summary;
                 }
@@ -350,6 +358,7 @@ impl Game {
                 self.tower_guide_open = false;
             }
             TowerAction::ToTown => {
+                self.clear_tower_route();
                 self.screen = AppScreen::Town;
                 self.tower_guide_open = false;
                 self.status_message = "Returned to tower camp.".to_owned();
@@ -368,6 +377,48 @@ impl Game {
                 };
             }
         }
+    }
+
+    pub(crate) fn advance_tower_route(&mut self) {
+        if self.tower_guide_open || get_time() < self.tower_route_step_ready_at {
+            return;
+        }
+        let target = self.state.as_ref().and_then(|state| {
+            state.tower_run.as_ref().and_then(|run| {
+                (run.pending_event.is_none() && run.pressure < run.pressure_limit)
+                    .then_some(run.route_target)
+                    .flatten()
+            })
+        });
+        let Some(target) = target else {
+            return;
+        };
+
+        self.apply_progression(|game| {
+            let result = game
+                .state
+                .as_mut()
+                .map(|state| tower_engine::route_party_to(state, &game.data, target));
+            if let Some(result) = result {
+                game.apply_tower_result(result);
+            }
+        });
+        self.schedule_tower_route_step();
+    }
+
+    fn schedule_tower_route_step(&mut self) {
+        self.tower_route_step_ready_at = get_time() + Self::TOWER_ROUTE_STEP_SECONDS;
+    }
+
+    fn clear_tower_route(&mut self) {
+        if let Some(run) = self
+            .state
+            .as_mut()
+            .and_then(|state| state.tower_run.as_mut())
+        {
+            run.route_target = None;
+        }
+        self.tower_route_step_ready_at = 0.0;
     }
 
     fn apply_tower_result(&mut self, result: tower_engine::TowerResult) {

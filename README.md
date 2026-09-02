@@ -43,7 +43,9 @@ Turn a fragile camp into a working monster haven that can support increasingly d
 - Each successful replacement save keeps the previous state available through RESTORE BACKUP on the recovery screen.
 - Native crashes append a local `crash_log.txt` beside the save; nothing is uploaded automatically.
 - Mouse: build, open, trade, and greet.
-- Touch/mouse: every required tower action has a visible target, including room routing, EXPLORE, SURVEY, CAMP, RETREAT, event choices, and the Field Guide.
+- Touch/mouse: tap a chamber to travel toward it at a readable pace. Travel pauses at loot,
+  hazards, landmarks, and encounters; tap another room to redirect, or use STEP NOW, SURVEY,
+  CAMP, or RETREAT for direct control.
 
 ## Current Scope
 
@@ -54,7 +56,8 @@ The ten-floor tower currently includes:
 - 80 authored dungeon enemies across 11 active combat behaviors, six visual families, roaming hunters, and two floor guardians.
 - 22 special locations with 44 persistent, touch-first event approaches, including party requirements, cargo costs, map effects, blessings, ambushes, and shelter-building outcomes.
 - Deterministic room-art variants keep each generated chamber's visual identity stable through save/load, while completed landmarks leave an authored event trail on the map.
-- Six hazards, six anomalies, six expedition contracts, persistent room purposes, and goal-aware automated routing.
+- Six hazards, six anomalies, six expedition contracts, persistent room purposes, and goal-aware
+  routed travel that visibly crosses the map and stops for discoveries.
 - Concealed floor caches that use the secret-discovery atlas and can be exposed by SURVEY, loot-finder passives, or map-reading landmark events. Salvage runs hide two caches per floor.
 - A persistent Field Guide that records enemies, hazards, landmarks, and tried approaches; knowledge ranks improve future survey kits and reveal known hunter tracks in explored rooms.
 - Marked CAMP rooms with stronger recovery, Safe Run return routing, and event-created shelters that permanently reshape the current floor.

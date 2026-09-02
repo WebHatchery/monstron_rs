@@ -20,6 +20,10 @@ minimum hardware requirements have not yet been approved.
 Every required action has a visible mouse/touch target. Keyboard shortcuts are optional. Open the
 camp menu with its visible button and choose **Exit Game** for a clean quit.
 
+In the tower, tap a chamber to send the party toward it. Travel advances across the dungeon and
+stops at loot, hazards, landmarks, encounters, or maximum pressure so you remain in control. Tap
+another chamber to redirect, or use the visible STEP NOW, SURVEY, CAMP, and RETREAT controls.
+
 ## Saves and recovery
 
 Progress autosaves after successful state-changing actions. A successful replacement save retains
