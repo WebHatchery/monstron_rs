@@ -2,6 +2,9 @@ use crate::data::{BuildingDefinition, GameData};
 use crate::engine::day_engine;
 use crate::state::GameState;
 
+#[cfg(test)]
+mod economy_tests;
+
 const SHOP_ID: &str = "shop";
 const STABLE_ID: &str = "stable";
 const HATCHERY_ID: &str = "hatchery";

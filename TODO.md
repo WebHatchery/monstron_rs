@@ -38,6 +38,7 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Regression-test deep victory, overnight recovery, and same-floor re-entry as one playable loop.
 - [x] Prove a fresh three-monster party can level through generated-map revisits and beat both guardians.
 - [x] Show individual level and XP-to-next-level progress in the Stable for training decisions.
+- [x] Prove required early facilities and every maximum upgrade remain reachable from renewable income.
 
 ## Verification captures
 

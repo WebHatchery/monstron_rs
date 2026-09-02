@@ -85,6 +85,8 @@ The ten-floor tower currently includes:
   three-companion party, plus a victory, overnight recovery, and same-floor re-entry cycle.
 - Natural-progression coverage starts three companions at level one, trains only through encounters
   present on generated revisit maps, and clears both guardians by level ten within 45 victories.
+- The required Hatchery and Stable foundations are reachable after two visible camp gathers, while
+  repeatable town income can eventually complete every facility without a resource dead end.
 - An authored floor-10 conclusion that banks the final expedition, records the restored Verdant
   Crown, celebrates the active party, and keeps post-story expeditions available.
 
