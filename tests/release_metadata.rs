@@ -103,6 +103,8 @@ fn packaged_player_documents_match_current_local_data_and_known_issue_facts() {
     assert!(known_issues.contains("direct dungeon movement are implemented"));
     assert!(known_issues.contains("physical controllers is pending"));
     assert!(player_readme.contains("LB/RB"));
+    assert!(player_readme.contains("Defeating a floor guardian is permanent"));
+    assert!(player_readme.contains("the guardian stays gone"));
     assert!(player_readme.contains("audio-mix approval"));
     assert!(normalized(&known_issues).contains("a custom icon derived from the title art"));
     assert!(normalized(&known_issues).contains("a code signature remain absent"));

@@ -89,6 +89,7 @@ impl GameState {
             tower_progress: TowerProgress {
                 best_floor: 0,
                 unlocked_floor: 1,
+                defeated_guardian_floors: Vec::new(),
             },
             tower_discoveries: TowerDiscoveryState::default(),
             tower_run: None,

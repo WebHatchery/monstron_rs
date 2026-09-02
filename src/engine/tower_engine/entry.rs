@@ -58,8 +58,13 @@ pub fn start_run_on_floor(
         .unwrap_or("No anomaly");
     let guide_bonus = state.tower_discoveries.survey_bonus();
     let mut run = TowerRunState::new(requested_floor, floor.pressure_limit, goal).with_map(map);
+    let guardian_remembered = state.tower_progress.guardian_defeated(requested_floor);
+    run.boss_defeated = guardian_remembered;
     run.survey_charges = run.survey_charges.saturating_add(guide_bonus).min(5);
     run.anomaly_id = anomaly_id;
+    if guardian_remembered {
+        run.add_event("The defeated guardian remains gone; its threshold is open.".to_owned());
+    }
     state.tower_run = Some(run);
     record_visible_discoveries(state, data, None);
     let guide_note = if guide_bonus > 0 {
@@ -67,8 +72,13 @@ pub fn start_run_on_floor(
     } else {
         String::new()
     };
+    let guardian_note = if guardian_remembered {
+        " The guardian's cleared threshold remains open."
+    } else {
+        ""
+    };
     let summary = format!(
-        "The party enters floor {}: {} under {}. Move through the map to find event sites, hazards, stairs, eggs, caches, and denizens.{guide_note}",
+        "The party enters floor {}: {} under {}. Move through the map to find event sites, hazards, stairs, eggs, caches, and denizens.{guardian_note}{guide_note}",
         floor.floor, floor.name, anomaly_name
     );
     state.activity_log.add(state.day, summary.clone());
@@ -77,6 +87,27 @@ pub fn start_run_on_floor(
 }
 
 pub fn ensure_map(state: &mut GameState, data: &GameData) {
+    if let Some(floor) = state
+        .tower_run
+        .as_ref()
+        .filter(|run| {
+            run.boss_defeated
+                && data
+                    .tower_floor(run.current_floor)
+                    .is_some_and(|floor| floor.is_boss_floor || !floor.guardian_enemy_id.is_empty())
+        })
+        .map(|run| run.current_floor)
+    {
+        state.tower_progress.record_guardian_defeat(floor);
+    }
+    if let Some(run) = &mut state.tower_run {
+        if state.tower_progress.guardian_defeated(run.current_floor) {
+            run.boss_defeated = true;
+            run.map
+                .objects
+                .retain(|object| object.kind != crate::state::TowerMapObjectKind::Boss);
+        }
+    }
     let Some(run) = &state.tower_run else {
         return;
     };
@@ -90,6 +121,7 @@ pub fn ensure_map(state: &mut GameState, data: &GameData) {
         if let Some(run) = &mut state.tower_run {
             run.current_floor = floor;
             run.map = map;
+            run.boss_defeated = state.tower_progress.guardian_defeated(floor);
             if run.anomaly_id.is_empty() {
                 run.anomaly_id = select_anomaly_id(data, floor, seed);
             }

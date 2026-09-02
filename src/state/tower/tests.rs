@@ -1,6 +1,22 @@
 use super::*;
 
 #[test]
+fn guardian_defeats_are_sorted_and_recorded_once() {
+    let mut progress = TowerProgress {
+        best_floor: 1,
+        unlocked_floor: 1,
+        defeated_guardian_floors: Vec::new(),
+    };
+
+    assert!(progress.record_guardian_defeat(10));
+    assert!(progress.record_guardian_defeat(5));
+    assert!(!progress.record_guardian_defeat(10));
+    assert_eq!(progress.defeated_guardian_floors, vec![5, 10]);
+    assert!(progress.guardian_defeated(5));
+    assert!(!progress.guardian_defeated(4));
+}
+
+#[test]
 fn field_guide_records_unlock_two_survey_preparation_ranks() {
     let mut discoveries = TowerDiscoveryState::default();
     assert_eq!(discoveries.record_count(), 0);

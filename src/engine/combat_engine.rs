@@ -299,13 +299,17 @@ fn finish_victory(state: &mut GameState, data: &GameData, combat: CombatState) -
     apply_victory_strain(state, &combat);
     record_floor_reached(state, combat.floor);
     let rewards = victory_rewards(&combat, data);
+    let first_guardian_defeat =
+        combat.is_boss && state.tower_progress.record_guardian_defeat(combat.floor);
 
     if let Some(run) = &mut state.tower_run {
         for reward in &rewards {
             run.add_cargo(&reward.resource_id, reward.amount);
         }
         if combat.is_boss {
-            add_boss_egg(run, data, combat.floor);
+            if first_guardian_defeat {
+                add_boss_egg(run, data, combat.floor);
+            }
             run.boss_defeated = true;
             let exits = run
                 .map
@@ -318,7 +322,11 @@ fn finish_victory(state: &mut GameState, data: &GameData, combat: CombatState) -
                 run.map
                     .set_visibility(x, y, crate::state::TowerTileVisibility::Visible);
             }
-            run.add_event("The guardian falls; the crown threshold opens.".to_owned());
+            run.add_event(if first_guardian_defeat {
+                "The guardian falls; its defeat is remembered and the threshold opens.".to_owned()
+            } else {
+                "The cleared guardian threshold remains open.".to_owned()
+            });
         }
         run.add_event(format!("Won combat on floor {}.", combat.floor));
     } else {

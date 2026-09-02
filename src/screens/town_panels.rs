@@ -319,6 +319,16 @@ fn campaign_objective(state: &GameState, data: &GameData) -> CampaignObjective {
         };
     };
     if !floor.guardian_enemy_id.is_empty() {
+        if state.tower_progress.guardian_defeated(open_floor) {
+            return CampaignObjective {
+                heading: "NEXT · OPEN THRESHOLD".to_owned(),
+                action: if open_floor == max_floor {
+                    "Return and cross the Crown threshold.".to_owned()
+                } else {
+                    "Return and reach the open stairs.".to_owned()
+                },
+            };
+        }
         let guardian = data
             .enemy(&floor.guardian_enemy_id)
             .map_or(floor.name.as_str(), |enemy| enemy.name.as_str());

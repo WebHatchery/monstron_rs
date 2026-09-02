@@ -83,6 +83,8 @@ The ten-floor tower currently includes:
 - A persistent Field Guide that records enemies, hazards, landmarks, and tried approaches; knowledge ranks improve future survey kits and reveal known hunter tracks in explored rooms.
 - Marked CAMP rooms with stronger recovery, Safe Run return routing, and event-created shelters that permanently reshape the current floor.
 - Pressure escalation, wandering hunters, floor-specific guardian eggs, and sealed guardian thresholds on floors 5 and 10.
+- Guardian victories persist through retreat, recovery, save/load, and later expeditions; a cleared
+  threshold remains open and its guardian does not respawn.
 - Stair-authoritative sequential progression backed by connectivity checks across every floor,
   expedition goal, and a broad deterministic seed sweep.
 - Deep-floor balance regressions exercise every floor 4–10 enemy and both guardians with a

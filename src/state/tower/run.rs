@@ -12,6 +12,24 @@ use super::map::TowerMapState;
 pub struct TowerProgress {
     pub best_floor: u32,
     pub unlocked_floor: u32,
+    #[serde(default)]
+    pub defeated_guardian_floors: Vec<u32>,
+}
+
+impl TowerProgress {
+    pub fn guardian_defeated(&self, floor: u32) -> bool {
+        self.defeated_guardian_floors.contains(&floor)
+    }
+
+    pub fn record_guardian_defeat(&mut self, floor: u32) -> bool {
+        if self.guardian_defeated(floor) {
+            false
+        } else {
+            self.defeated_guardian_floors.push(floor);
+            self.defeated_guardian_floors.sort_unstable();
+            true
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Serialize)]

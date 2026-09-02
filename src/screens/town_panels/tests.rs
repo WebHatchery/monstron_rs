@@ -23,12 +23,30 @@ fn campaign_objective_guides_every_story_threshold() {
         }
     );
 
+    state.tower_progress.record_guardian_defeat(5);
+    assert_eq!(
+        campaign_objective(&state, &data),
+        CampaignObjective {
+            heading: "NEXT · OPEN THRESHOLD".to_owned(),
+            action: "Return and reach the open stairs.".to_owned(),
+        }
+    );
+
     state.tower_progress.unlocked_floor = 10;
     assert_eq!(
         campaign_objective(&state, &data),
         CampaignObjective {
             heading: "NEXT · VERDANT CROWN".to_owned(),
             action: "Defeat it and cross the threshold.".to_owned(),
+        }
+    );
+
+    state.tower_progress.record_guardian_defeat(10);
+    assert_eq!(
+        campaign_objective(&state, &data),
+        CampaignObjective {
+            heading: "NEXT · OPEN THRESHOLD".to_owned(),
+            action: "Return and cross the Crown threshold.".to_owned(),
         }
     );
 

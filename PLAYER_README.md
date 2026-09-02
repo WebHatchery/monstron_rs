@@ -41,6 +41,8 @@ The Stable shows every companion's current level and XP progress. Revisit earlie
 when the party needs training; map encounters continue awarding XP on return expeditions.
 To unlock the next floor, explore until the party physically reaches the stairs. Entering a floor,
 winning an ordinary fight, or retreating does not open a deeper route.
+Defeating a floor guardian is permanent. If the party must retreat afterward, recover in Town and
+return to the cleared floor; the guardian stays gone and the open threshold remains available.
 
 In the tower, tap a chamber to send the party toward it. Travel advances across the dungeon and
 stops at loot, hazards, landmarks, encounters, or maximum pressure so you remain in control. Tap

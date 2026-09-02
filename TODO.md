@@ -46,6 +46,7 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Keep the next campaign objective and guardian thresholds visible in Town through the ending.
 - [x] Add original procedural ambience and gameplay cues governed by the existing audio settings.
 - [x] Add full-route gamepad focus, modal navigation, back actions, and direct dungeon movement.
+- [x] Persist guardian victories across retreat, recovery, save/load, and later dungeon runs.
 
 ## Verification captures
 

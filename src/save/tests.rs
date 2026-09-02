@@ -19,6 +19,7 @@ fn phase6_and_phase7_fields_round_trip_through_save_data() {
     state.town.set_building_level("workshop", 1);
     state.resources.add("herbs", 10);
     state.playtest_metrics.progression_actions = 3;
+    state.tower_progress.record_guardian_defeat(5);
 
     let rillfin = data.species("rillfin").expect("rillfin should exist");
     let second_id = state
@@ -38,11 +39,13 @@ fn phase6_and_phase7_fields_round_trip_through_save_data() {
     assert!(json.contains("art_profile"));
     assert!(json.contains("lineage_quality"));
     assert!(json.contains("playtest_metrics"));
+    assert!(json.contains("defeated_guardian_floors"));
 
     let loaded: SaveData = serde_json::from_str(&json).expect("save should deserialize");
     assert!(loaded.state.egg_inventory.eggs[0].inheritance.is_some());
     assert_eq!(loaded.state.town.assignments[0].job, TownJobKind::Forage);
     assert_eq!(loaded.state.playtest_metrics.progression_actions, 3);
+    assert!(loaded.state.tower_progress.guardian_defeated(5));
 }
 
 #[test]
@@ -68,6 +71,10 @@ fn older_saves_without_phase6_or_phase7_fields_still_load() {
         .as_object_mut()
         .expect("state should be an object")
         .remove("playtest_metrics");
+    value["state"]["tower_progress"]
+        .as_object_mut()
+        .expect("tower progress should be an object")
+        .remove("defeated_guardian_floors");
     for egg in value["state"]["egg_inventory"]["eggs"]
         .as_array_mut()
         .expect("eggs should be an array")
@@ -97,6 +104,11 @@ fn older_saves_without_phase6_or_phase7_fields_still_load() {
     assert_eq!(loaded.state.monster_roster.monsters[0].condition.fatigue, 0);
     assert!(loaded.state.tower_discoveries.enemy_ids.is_empty());
     assert_eq!(loaded.state.playtest_metrics, Default::default());
+    assert!(loaded
+        .state
+        .tower_progress
+        .defeated_guardian_floors
+        .is_empty());
     assert!(loaded.state.monster_roster.monsters[0]
         .art_profile
         .is_empty());
@@ -104,6 +116,9 @@ fn older_saves_without_phase6_or_phase7_fields_still_load() {
     assert!(normalized["state"]["town"].get("assignments").is_some());
     assert!(normalized["state"].get("tower_discoveries").is_some());
     assert!(normalized["state"].get("playtest_metrics").is_some());
+    assert!(normalized["state"]["tower_progress"]
+        .get("defeated_guardian_floors")
+        .is_some());
     assert!(normalized["state"]["monster_roster"]["monsters"][0]
         .get("condition")
         .is_some());

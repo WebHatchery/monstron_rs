@@ -585,7 +585,7 @@ fn advance_floor(state: &mut GameState, data: &GameData) -> TowerResult {
         run.current_floor = next_floor;
         run.stats.floors_descended += 1;
         run.pressure_limit = next_floor_data.pressure_limit;
-        run.boss_defeated = false;
+        run.boss_defeated = state.tower_progress.guardian_defeated(next_floor);
         run.survey_charges = crate::state::survey_charges_for(run.goal)
             .saturating_add(guide_bonus)
             .min(5);

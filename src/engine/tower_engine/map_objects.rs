@@ -44,9 +44,10 @@ pub(super) fn add_map_objects(
         place_object(map, object, rng);
     }
 
-    if !floor.guardian_enemy_id.is_empty() {
+    if !floor.guardian_enemy_id.is_empty() && !state.tower_progress.guardian_defeated(floor_number)
+    {
         place_object(map, TowerMapObject::boss(&floor.guardian_enemy_id), rng);
-    } else if floor.is_boss_floor {
+    } else if floor.is_boss_floor && !state.tower_progress.guardian_defeated(floor_number) {
         if let Some(enemy) = eligible_enemies(data, floor_number, true).first() {
             place_object(map, TowerMapObject::boss(&enemy.id), rng);
         }
