@@ -5,7 +5,9 @@ use hatchspire::engine::{
     egg_engine, monster_engine, tower_engine, town_engine,
 };
 use hatchspire::screens;
-use hatchspire::state::{GameState, TowerMapObject, TowerMapObjectKind, TowerRunGoal};
+use hatchspire::state::{
+    EggCareFocus, GameState, TowerMapObject, TowerMapObjectKind, TowerRunGoal,
+};
 
 fn data_and_state() -> (hatchspire::data::GameData, GameState) {
     let data = GameDataLoader::load_embedded().expect("embedded game data should load");
@@ -30,6 +32,82 @@ fn hatchery_care_and_hatching_flow_preserves_capacity_and_traits() {
     assert!(hatch.summary.contains("hatched"));
     assert!(state.egg_inventory.eggs.is_empty());
     assert_eq!(state.monster_roster.monsters.len(), 2);
+}
+
+#[test]
+fn explored_floor_one_eggs_can_become_a_three_monster_party() {
+    let (data, mut state) = data_and_state();
+    town_engine::scavenge_supplies(&mut state);
+    town_engine::advance_building(&mut state, &data, "hatchery");
+    town_engine::scavenge_supplies(&mut state);
+    town_engine::advance_building(&mut state, &data, "stable");
+
+    tower_engine::start_run_on_floor(&mut state, &data, TowerRunGoal::EggHunt, 1);
+    let targets = state
+        .tower_run
+        .as_ref()
+        .unwrap()
+        .map
+        .objects
+        .iter()
+        .filter(|object| object.kind == TowerMapObjectKind::Egg)
+        .take(2)
+        .map(|object| (object.x, object.y))
+        .collect::<Vec<_>>();
+    assert_eq!(
+        targets.len(),
+        2,
+        "an Egg Hunt should generate two reachable nests"
+    );
+    {
+        let run = state.tower_run.as_mut().unwrap();
+        run.pressure_limit = 999;
+        run.map
+            .objects
+            .retain(|object| object.kind == TowerMapObjectKind::Egg);
+    }
+    for target in targets {
+        for _ in 0..128 {
+            let before = state.tower_run.as_ref().unwrap().found_eggs.len();
+            tower_engine::route_party_to(&mut state, &data, target);
+            if state.tower_run.as_ref().unwrap().found_eggs.len() > before {
+                break;
+            }
+        }
+    }
+    assert!(state.tower_run.as_ref().unwrap().found_eggs.len() >= 2);
+
+    tower_engine::return_to_town(&mut state, &data);
+    let egg_ids = state
+        .egg_inventory
+        .eggs
+        .iter()
+        .take(2)
+        .map(|egg| egg.id)
+        .collect::<Vec<_>>();
+    assert_eq!(egg_ids.len(), 2);
+    for egg_id in &egg_ids {
+        let care = egg_engine::care_for_egg(&mut state, &data, *egg_id, EggCareFocus::Warm);
+        assert!(care.summary.contains("warmed"));
+    }
+    town_engine::reduce(&mut state, &data, &town_engine::TownCommand::Sleep);
+    for egg_id in egg_ids {
+        let hatch = egg_engine::hatch_egg(&mut state, &data, egg_id);
+        assert!(hatch.summary.contains("hatched"));
+    }
+
+    let recruits = state
+        .monster_roster
+        .monsters
+        .iter()
+        .skip(1)
+        .map(|monster| monster.id)
+        .collect::<Vec<_>>();
+    for monster_id in recruits {
+        let result = monster_engine::toggle_party_member(&mut state, &data, monster_id);
+        assert!(result.summary.contains("Assigned"));
+    }
+    assert_eq!(tower_engine::battle_ready_party_count(&state), 3);
 }
 
 #[test]

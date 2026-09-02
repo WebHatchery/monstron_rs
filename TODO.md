@@ -39,6 +39,7 @@ and open-ended external toolchain decisions are intentionally excluded.
 - [x] Prove a fresh three-monster party can level through generated-map revisits and beat both guardians.
 - [x] Show individual level and XP-to-next-level progress in the Stable for training decisions.
 - [x] Prove required early facilities and every maximum upgrade remain reachable from renewable income.
+- [x] Prove routed dungeon eggs can be recovered, incubated, hatched, and assigned as a full early party.
 
 ## Verification captures
 

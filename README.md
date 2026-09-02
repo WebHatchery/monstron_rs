@@ -87,6 +87,8 @@ The ten-floor tower currently includes:
   present on generated revisit maps, and clears both guardians by level ten within 45 victories.
 - The required Hatchery and Stable foundations are reachable after two visible camp gathers, while
   repeatable town income can eventually complete every facility without a resource dead end.
+- A generated floor-one Egg Hunt is integration-tested through routed nest exploration, safe return,
+  daily care, incubation, hatching, and Stable assignment into a three-companion expedition party.
 - An authored floor-10 conclusion that banks the final expedition, records the restored Verdant
   Crown, celebrates the active party, and keeps post-story expeditions available.
 
