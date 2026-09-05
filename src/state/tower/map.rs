@@ -320,20 +320,18 @@ fn room_kind_priority(kind: TowerRoomKind) -> u8 {
 
 #[derive(Clone, Debug)]
 pub struct TowerMapRng {
-    state: u64,
+    stream: macroquad_toolkit::rng::LegacyLcg64<1_442_695_040_888_963_407>,
 }
 
 impl TowerMapRng {
     pub fn new(seed: u64) -> Self {
-        Self { state: seed.max(1) }
+        Self {
+            stream: macroquad_toolkit::rng::LegacyLcg64::new(seed),
+        }
     }
 
     pub fn next_u32(&mut self) -> u32 {
-        self.state = self
-            .state
-            .wrapping_mul(6_364_136_223_846_793_005)
-            .wrapping_add(1_442_695_040_888_963_407);
-        (self.state >> 32) as u32
+        self.stream.next_u32()
     }
 
     pub fn range(&mut self, min: u32, max_exclusive: u32) -> u32 {
@@ -347,3 +345,6 @@ impl TowerMapRng {
         denominator == 0 || self.range(0, denominator) < numerator
     }
 }
+
+#[cfg(test)]
+mod tests;
