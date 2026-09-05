@@ -10,6 +10,7 @@ impl Game {
     /// facility-unlock gating so a fresh save can still reach these screens.
     pub fn begin_capture_scene(&mut self, scene: &str) {
         self.autosave_enabled = false;
+        self.tower_guide_open = false;
         match scene {
             "town" => self.begin_capture_fixture(AppScreen::Town),
             "town_guardian" => {
@@ -50,9 +51,24 @@ impl Game {
             "breeding" => self.begin_capture_fixture(AppScreen::Breeding),
             "workshop" => self.begin_capture_fixture(AppScreen::Workshop),
             "shop" => self.begin_capture_fixture(AppScreen::Shop),
-            "tower" => {
+            "tower" | "tower_long" | "tower_guide" => {
                 self.begin_capture_fixture(AppScreen::Town);
                 self.enter_tower(TowerRunGoal::Balanced);
+                if scene == "tower_long" {
+                    self.status_message = "The party follows a winding route through the crystal halls, past silent landmarks and abandoned camps, toward the distant guardian. ".repeat(4);
+                }
+                if scene == "tower_guide" {
+                    if let Some(state) = &mut self.state {
+                        state.tower_discoveries.special_location_ids.extend(
+                            self.data
+                                .tower_special_locations
+                                .iter()
+                                .take(3)
+                                .map(|location| location.id.clone()),
+                        );
+                    }
+                    self.tower_guide_open = true;
+                }
             }
             "tower_revisit" => {
                 self.begin_capture_fixture(AppScreen::Town);
@@ -366,9 +382,16 @@ impl Game {
                 self.begin_capture_fixture(AppScreen::ConfirmSaveReset);
                 self.status_message = "Choose whether to keep or delete the save.".to_owned();
             }
-            "help" => {
+            "help" | "help_long" => {
                 self.begin_capture_fixture(AppScreen::Help);
-                self.status_message = "Help verification scene.".to_owned();
+                self.status_message = if scene == "help_long" {
+                    format!(
+                        "tester summary: C:\\Users\\Tester  Name\\{}\\存档\\tester_summary.txt",
+                        "A long folder with preserved spaces\\".repeat(3)
+                    )
+                } else {
+                    "Help verification scene.".to_owned()
+                };
             }
             "settings" => {
                 self.state = None;

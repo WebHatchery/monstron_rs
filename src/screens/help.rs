@@ -1,5 +1,5 @@
 use macroquad::prelude::*;
-use macroquad_toolkit::ui::draw_ui_text_ex;
+use macroquad_toolkit::ui::{draw_ui_text_ex, wrap_literal_text, TextStyle};
 
 use crate::ui;
 
@@ -48,7 +48,15 @@ pub fn draw(save_location: &str, summary_location: &str, can_export: bool, statu
     );
 
     draw_label("Saved camp location", panel.x + 28.0, panel.y + 124.0);
-    for (index, line) in wrapped_lines(save_location, 92).iter().enumerate() {
+    for (index, line) in wrap_literal_text(
+        save_location,
+        panel.w - 56.0,
+        TextStyle::new(18.0, ui::TEXT),
+    )
+    .iter()
+    .take(3)
+    .enumerate()
+    {
         draw_value(line, panel.x + 28.0, panel.y + 154.0 + index as f32 * 25.0);
     }
 
@@ -76,30 +84,23 @@ pub fn draw(save_location: &str, summary_location: &str, can_export: bool, statu
         panel.y + 406.0,
     );
 
-    draw_label("Local tester summary", panel.x + 28.0, panel.y + 450.0);
+    draw_label("Local tester summary", panel.x + 28.0, panel.y + 440.0);
     let summary_text = if status_message.contains("tester summary") {
         status_message
     } else {
         summary_location
     };
-    for (index, line) in wrapped_lines(summary_text, 92).iter().take(2).enumerate() {
-        draw_value(line, panel.x + 28.0, panel.y + 478.0 + index as f32 * 22.0);
+    for (index, line) in
+        wrap_literal_text(summary_text, panel.w - 56.0, TextStyle::new(18.0, ui::TEXT))
+            .iter()
+            .take(2)
+            .enumerate()
+    {
+        draw_value(line, panel.x + 28.0, panel.y + 468.0 + index as f32 * 22.0);
     }
 
     ui::draw_title_button(export_rect(), "EXPORT LOCAL SUMMARY", can_export);
     ui::draw_title_button(back_rect(), "BACK TO SETTINGS", true);
-}
-
-fn wrapped_lines(text: &str, max_chars: usize) -> Vec<String> {
-    let max_chars = max_chars.max(1);
-    let characters = text.chars().collect::<Vec<_>>();
-    if characters.is_empty() {
-        return vec![String::new()];
-    }
-    characters
-        .chunks(max_chars)
-        .map(|chunk| chunk.iter().collect())
-        .collect()
 }
 
 fn draw_label(text: &str, x: f32, y: f32) {

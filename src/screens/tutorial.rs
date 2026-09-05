@@ -251,7 +251,12 @@ pub fn draw(state: &GameState, screen: AppScreen, town_menu_open: bool) {
             ..Default::default()
         },
     );
-    draw_instruction(step_instruction(step), card.x + 24.0, card.y + 74.0);
+    draw_instruction(
+        step_instruction(step),
+        card.x + 24.0,
+        card.y + 74.0,
+        card.w - 48.0,
+    );
     if matches!(
         step,
         TutorialStep::Welcome
@@ -454,38 +459,15 @@ fn card_rect(step: TutorialStep) -> Rect {
     }
 }
 
-fn draw_instruction(text: &str, x: f32, y: f32) {
-    let mut line = String::new();
-    let mut row = 0;
-    for word in text.split_whitespace() {
-        if !line.is_empty() && line.len() + word.len() + 1 > 62 {
-            draw_ui_text_ex(
-                &line,
-                x,
-                y + row as f32 * 22.0,
-                TextParams {
-                    font_size: 17,
-                    color: ui::TEXT,
-                    ..Default::default()
-                },
-            );
-            line.clear();
-            row += 1;
-        }
-        if !line.is_empty() {
-            line.push(' ');
-        }
-        line.push_str(word);
-    }
-    draw_ui_text_ex(
-        &line,
+fn draw_instruction(text: &str, x: f32, y: f32, width: f32) {
+    macroquad_toolkit::ui::draw_text_block_ex(
+        text,
         x,
-        y + row as f32 * 22.0,
-        TextParams {
-            font_size: 17,
-            color: ui::TEXT,
-            ..Default::default()
-        },
+        y - 17.0,
+        width,
+        41.0,
+        macroquad_toolkit::ui::TextStyle::new(17.0, ui::TEXT).with_line_gap(5.0),
+        17.0,
     );
 }
 

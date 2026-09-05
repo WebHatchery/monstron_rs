@@ -81,7 +81,11 @@ pub(super) fn draw(data: &GameData, run: &TowerRunState) {
     );
     for (index, message) in run.event_log.iter().rev().take(2).enumerate() {
         draw_ui_text_ex(
-            &format!("• {}", journal_excerpt(message, 28)),
+            &macroquad_toolkit::ui::truncate_text_to_width(
+                &format!("• {message}"),
+                panel.w - 32.0,
+                12.0,
+            ),
             panel.x + 16.0,
             panel.y + 105.0 + index as f32 * 22.0,
             TextParams {
@@ -91,18 +95,6 @@ pub(super) fn draw(data: &GameData, run: &TowerRunState) {
             },
         );
     }
-}
-
-fn journal_excerpt(message: &str, max_chars: usize) -> String {
-    if message.chars().count() <= max_chars {
-        return message.to_owned();
-    }
-    let mut excerpt = message
-        .chars()
-        .take(max_chars.saturating_sub(1))
-        .collect::<String>();
-    excerpt.push('…');
-    excerpt
 }
 
 pub(super) fn draw_anomaly(data: &GameData, run: &TowerRunState) {
@@ -138,43 +130,23 @@ pub(super) fn draw_anomaly(data: &GameData, run: &TowerRunState) {
             ..Default::default()
         },
     );
-    draw_anomaly_detail(&anomaly.description, panel.x + 88.0, panel.y + 68.0);
-}
-
-fn draw_anomaly_detail(text: &str, x: f32, y: f32) {
-    let mut line = String::new();
-    let mut row = 0;
-    for word in text.split_whitespace() {
-        if !line.is_empty() && line.len() + word.len() + 1 > 21 {
-            draw_ui_text_ex(
-                &line,
-                x,
-                y + row as f32 * 14.0,
-                TextParams {
-                    font_size: 10,
-                    color: ui::TEXT_DIM,
-                    ..Default::default()
-                },
-            );
-            line.clear();
-            row += 1;
-        }
-        if !line.is_empty() {
-            line.push(' ');
-        }
-        line.push_str(word);
-    }
-    draw_ui_text_ex(
-        &line,
-        x,
-        y + row as f32 * 14.0,
-        TextParams {
-            font_size: 10,
-            color: ui::TEXT_DIM,
-            ..Default::default()
-        },
+    draw_anomaly_detail(
+        &anomaly.description,
+        panel.x + 88.0,
+        panel.y + 68.0,
+        panel.w - 96.0,
+        panel.h - 78.0,
     );
 }
 
-#[cfg(test)]
-mod tests;
+fn draw_anomaly_detail(text: &str, x: f32, y: f32, width: f32, height: f32) {
+    macroquad_toolkit::ui::draw_text_block_ex(
+        text,
+        x,
+        y - 10.0,
+        width,
+        height,
+        macroquad_toolkit::ui::TextStyle::new(10.0, ui::TEXT_DIM).with_line_gap(4.0),
+        10.0,
+    );
+}

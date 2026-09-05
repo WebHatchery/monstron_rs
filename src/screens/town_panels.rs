@@ -357,7 +357,11 @@ fn draw_log(state: &GameState) {
     for (index, entry) in visible.enumerate() {
         let y = rect.y + 62.0 + index as f32 * 32.0;
         draw_ui_text_ex(
-            &short_log_line(entry.day, &entry.message),
+            &macroquad_toolkit::ui::truncate_text_to_width(
+                &format!("Day {}: {}", entry.day, entry.message),
+                rect.w - 36.0,
+                DETAIL_FONT as f32,
+            ),
             rect.x + 18.0,
             y,
             TextParams {
@@ -435,17 +439,6 @@ fn open_label(building_id: &str) -> Option<&'static str> {
         "hatchery" | "stable" | "breeding_grove" | "workshop" | "shop" => Some("Open"),
         _ => None,
     }
-}
-
-fn short_log_line(day: u32, message: &str) -> String {
-    const MAX_CHARS: usize = 58;
-    let prefix = format!("Day {day}: ");
-    let available = MAX_CHARS.saturating_sub(prefix.len());
-    let mut body = message.chars().take(available).collect::<String>();
-    if message.chars().count() > available {
-        body.push_str("...");
-    }
-    format!("{prefix}{body}")
 }
 
 #[cfg(test)]

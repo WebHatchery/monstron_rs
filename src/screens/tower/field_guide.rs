@@ -214,7 +214,7 @@ fn draw_card(entry: &GuideEntry<'_>, card: Rect) {
             ..Default::default()
         },
     );
-    draw_wrapped(detail, card.x + 108.0, card.y + 72.0, 52);
+    draw_wrapped(detail, card.x + 108.0, card.y + 72.0, card.w - 120.0);
     draw_ui_text_ex(
         &floors,
         card.x + 108.0,
@@ -251,38 +251,15 @@ fn hazard_counter(hazard: &TowerHazardDefinition) -> String {
     )
 }
 
-fn draw_wrapped(text: &str, x: f32, y: f32, max_chars: usize) {
-    let mut line = String::new();
-    let mut row = 0;
-    for word in text.split_whitespace() {
-        if !line.is_empty() && line.len() + word.len() + 1 > max_chars {
-            draw_ui_text_ex(
-                &line,
-                x,
-                y + row as f32 * 16.0,
-                TextParams {
-                    font_size: 12,
-                    color: ui::TEXT_DIM,
-                    ..Default::default()
-                },
-            );
-            line.clear();
-            row += 1;
-        }
-        if !line.is_empty() {
-            line.push(' ');
-        }
-        line.push_str(word);
-    }
-    draw_ui_text_ex(
-        &line,
+fn draw_wrapped(text: &str, x: f32, y: f32, width: f32) {
+    macroquad_toolkit::ui::draw_text_block_ex(
+        text,
         x,
-        y + row as f32 * 16.0,
-        TextParams {
-            font_size: 12,
-            color: ui::TEXT_DIM,
-            ..Default::default()
-        },
+        y - 12.0,
+        width,
+        40.0,
+        macroquad_toolkit::ui::TextStyle::new(12.0, ui::TEXT_DIM).with_line_gap(4.0),
+        12.0,
     );
 }
 

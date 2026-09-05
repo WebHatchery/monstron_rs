@@ -58,7 +58,8 @@ pub(super) fn draw(state: &GameState, data: &GameData, run: &TowerRunState) {
         ),
         panel.x + 146.0,
         panel.y + 124.0,
-        54,
+        panel.w - 180.0,
+        74.0,
         ui::TEXT_DIM,
     );
     if let Some(location) = location {
@@ -160,7 +161,8 @@ fn draw_choice(
             &event.narrative,
             rect.x + 20.0,
             rect.y + 56.0,
-            78,
+            rect.w - 40.0,
+            36.0,
             ui::TEXT_DIM,
         );
         let mut effects = effect_summary(data, event);

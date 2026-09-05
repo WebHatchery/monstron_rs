@@ -59,7 +59,14 @@ pub(super) fn draw(data: &GameData, run: &TowerRunState) {
     let detail = focus
         .and_then(|object| object_detail(data, run, object))
         .unwrap_or_else(|| "Move through lit rooms to reveal what the tower is hiding.".to_owned());
-    draw_wrapped_line(&detail, panel.x + 16.0, panel.y + 258.0, 27, ui::TEXT_DIM);
+    draw_wrapped_line(
+        &detail,
+        panel.x + 16.0,
+        panel.y + 258.0,
+        panel.w - 32.0,
+        72.0,
+        ui::TEXT_DIM,
+    );
     draw_ui_text_ex(
         if focus.is_some() {
             "Approach to interact"

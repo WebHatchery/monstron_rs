@@ -90,7 +90,7 @@ pub fn draw(state: &GameState) {
         "The Verdant Crown parts above the tower. Daylight reaches the old halls, and every egg, companion, and rebuilt hearth below answers with new life.",
         640.0,
         218.0,
-        70,
+        panel.w - 96.0,
     );
 
     draw_party(state, 640.0, 355.0);
@@ -149,20 +149,15 @@ fn draw_party(state: &GameState, center_x: f32, y: f32) {
     }
 }
 
-fn draw_wrapped_centered(text: &str, center_x: f32, y: f32, max_chars: usize) {
-    let mut lines = vec![String::new()];
-    for word in text.split_whitespace() {
-        let line = lines.last_mut().expect("one line is always present");
-        if !line.is_empty() && line.len() + word.len() + 1 > max_chars {
-            lines.push(word.to_owned());
-        } else {
-            if !line.is_empty() {
-                line.push(' ');
-            }
-            line.push_str(word);
-        }
-    }
-    for (index, line) in lines.iter().enumerate() {
+fn draw_wrapped_centered(text: &str, center_x: f32, y: f32, width: f32) {
+    let layout = macroquad_toolkit::ui::fit_text_to_box_ex(
+        text,
+        width,
+        90.0,
+        macroquad_toolkit::ui::TextStyle::new(19.0, ui::TEXT).with_line_gap(6.0),
+        19.0,
+    );
+    for (index, line) in layout.lines.iter().enumerate() {
         ui::draw_centered_text(line, center_x, y + index as f32 * 25.0, 19, ui::TEXT);
     }
 }

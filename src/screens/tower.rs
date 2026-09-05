@@ -459,7 +459,23 @@ fn draw_run_status(status_message: &str) {
     let rect = Rect::new(250.0, 58.0, 780.0, 48.0);
     let surface = macroquad_toolkit::ui::SurfaceStyle::new(Color::from_rgba(8, 12, 14, 226));
     macroquad_toolkit::ui::draw_surface(rect, &surface);
-    for (row, line) in wrap_status_lines(status_message, 84).iter().enumerate() {
+    let mut layout = macroquad_toolkit::ui::fit_text_to_box_ex(
+        status_message,
+        rect.w - 24.0,
+        35.0,
+        macroquad_toolkit::ui::TextStyle::new(16.0, ui::TEXT_DIM).with_line_gap(3.0),
+        16.0,
+    );
+    if layout.truncated {
+        if let Some(last) = layout.lines.last_mut() {
+            *last = macroquad_toolkit::ui::truncate_text_to_width(
+                &format!("{last}..."),
+                rect.w - 24.0,
+                16.0,
+            );
+        }
+    }
+    for (row, line) in layout.lines.iter().enumerate() {
         draw_ui_text_ex(
             line,
             rect.x + 12.0,
@@ -473,37 +489,10 @@ fn draw_run_status(status_message: &str) {
     }
 }
 
-fn wrap_status_lines(text: &str, max_chars: usize) -> Vec<String> {
-    let mut lines = Vec::new();
-    let mut line = String::new();
-    for word in text.split_whitespace() {
-        let next_len = line.chars().count() + usize::from(!line.is_empty()) + word.chars().count();
-        if next_len > max_chars && !line.is_empty() {
-            lines.push(std::mem::take(&mut line));
-        }
-        if !line.is_empty() {
-            line.push(' ');
-        }
-        line.push_str(word);
-    }
-    if !line.is_empty() {
-        lines.push(line);
-    }
-    if lines.len() > 2 {
-        lines.truncate(2);
-        if let Some(last) = lines.last_mut() {
-            while last.chars().count() >= max_chars {
-                last.pop();
-            }
-            last.push('…');
-        }
-    }
-    lines
-}
-
 fn gold_bright() -> Color {
     Color::from_rgba(227, 196, 139, 255)
 }
+
 fn gold_dim() -> Color {
     Color::from_rgba(112, 82, 42, 220)
 }
@@ -526,7 +515,7 @@ fn draw_empty_run() {
         "Dungeon maps are generated each run with rooms, landmarks, event sites, hazards, caches, eggs, enemies, stairs, and exits.",
         rect.x + 20.0,
         rect.y + 132.0,
-        58,
+        rect.w - 40.0, 140.0,
         ui::TEXT_DIM,
     );
 }
@@ -584,50 +573,17 @@ fn draw_floor_reference(state: &GameState, data: &GameData) {
     }
 }
 
-fn draw_wrapped_line(text: &str, x: f32, y: f32, max_chars: usize, color: Color) {
-    let mut line = String::new();
-    let mut row = 0;
-
-    for word in text.split_whitespace() {
-        let next_len = if line.is_empty() {
-            word.len()
-        } else {
-            line.len() + 1 + word.len()
-        };
-        if next_len > max_chars && !line.is_empty() {
-            draw_ui_text_ex(
-                &line,
-                x,
-                y + row as f32 * 20.0,
-                TextParams {
-                    font_size: 16,
-                    color,
-                    ..Default::default()
-                },
-            );
-            line.clear();
-            row += 1;
-        }
-        if !line.is_empty() {
-            line.push(' ');
-        }
-        line.push_str(word);
-    }
-
-    if !line.is_empty() {
-        draw_ui_text_ex(
-            &line,
-            x,
-            y + row as f32 * 20.0,
-            TextParams {
-                font_size: 16,
-                color,
-                ..Default::default()
-            },
-        );
-    }
+fn draw_wrapped_line(text: &str, x: f32, y: f32, width: f32, height: f32, color: Color) {
+    macroquad_toolkit::ui::draw_text_block_ex(
+        text,
+        x,
+        y - 16.0,
+        width,
+        height,
+        macroquad_toolkit::ui::TextStyle::new(16.0, color).with_line_gap(4.0),
+        16.0,
+    );
 }
-
 fn town_button_rect() -> Rect {
     Rect::new(ui::VIEW_WIDTH - 116.0, 18.0, 98.0, 40.0)
 }
@@ -666,6 +622,3 @@ fn guide_button_rect(active_run: bool) -> Rect {
         Rect::new(998.0, 616.0, 250.0, 52.0)
     }
 }
-
-#[cfg(test)]
-mod tests;
