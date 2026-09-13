@@ -1,82 +1,44 @@
 # TODO — Hatchspire
 
-This backlog is limited to implementation, test, harness, and documentation work that
-can be completed by an AI coding agent. Subjective playtest tuning, visual approval,
-and open-ended external toolchain decisions are intentionally excluded.
-
-## Polish
-
-- [x] Add a reusable tooltip primitive that supports pointer hover and a visible touch path.
-- [x] Add contextual tooltips to town map, building upgrade, facility entry, and menu controls.
-- [x] Add actionable validation messages for town building, shop trade, and NPC greeting failures.
-- [x] Add actionable validation messages for hatchery, stable, breeding, and workshop failures.
-- [x] Add tower and combat failure/recovery messages with a visible touch action for each.
-- [x] Expose all 12 Stable slots and add confirmed rehoming so maximum capacity cannot block eggs.
-- [x] Let players revisit every unlocked tower floor from a touch-first expedition-prep selector.
-- [x] Keep live expedition messages and journal history inside their dungeon HUD bounds.
-- [x] Make reached stairs—not entry, retreat, or ordinary combat—the authority for floor unlocks.
-- [x] Verify every room and map object is reachable across all floors, goals, and representative seeds.
-- [x] Show party readiness and a tested floor-level recommendation before each expedition.
-
-## Onboarding
-
-- [x] Add a persistent, skippable first-expedition guide from camp scavenging through tower return.
-- [x] Add contextual first-combat guidance with an exact visible ATTACK target.
-- [x] Add a Camp Menu replay path and verification captures at desktop and small-window sizes.
-- [x] Build and visit the Hatchery before the guided expedition so discovered eggs have capacity.
-- [x] Teach post-expedition recovery and the explicit manual-save path with visible controls.
-- [x] Add contextual first-egg care, incubation, Stable-capacity recovery, and hatching guidance.
-
-## Balance tooling
-
-- [x] Define a serializable combat replay format containing the RNG seed, roster, encounter,
-  commands, and expected outcome.
-- [x] Record player commands and the RNG seed while a combat encounter is running.
-- [x] Implement a replay runner that reconstructs an encounter and reports the first mismatch.
-- [x] Add deterministic replay tests for victory, defeat, fleeing, and item use.
-- [x] Regression-test every deep-floor enemy and guardian with a three-monster same-level party.
-- [x] Regression-test deep victory, overnight recovery, and same-floor re-entry as one playable loop.
-- [x] Prove a fresh three-monster party can level through generated-map revisits and beat both guardians.
-- [x] Show individual level and XP-to-next-level progress in the Stable for training decisions.
-- [x] Prove required early facilities and every maximum upgrade remain reachable from renewable income.
-- [x] Prove routed dungeon eggs can be recovered, incubated, hatched, and assigned as a full early party.
-- [x] Traverse generated maps from floor 1 to the finale through routed movement and live interruptions.
-- [x] Make defeat recovery explicit in Town and prove the injured party can re-enter after sleeping.
-- [x] Restore active Tower, Combat, and pending Finale screens correctly after save/load.
-- [x] Keep the next campaign objective and guardian thresholds visible in Town through the ending.
-- [x] Add original procedural ambience and gameplay cues governed by the existing audio settings.
-- [x] Add full-route gamepad focus, modal navigation, back actions, and direct dungeon movement.
-- [x] Persist guardian victories across retreat, recovery, save/load, and later dungeon runs.
-
-## Verification captures
-
-- [x] Extend the capture harness with seeded stable, breeding grove, workshop, shop, and
-  combat scenes.
-- [x] Capture town and hatchery verification screens in `docs/verification/`.
-- [x] Capture stable, breeding grove, and workshop verification screens in
-  `docs/verification/`.
-- [x] Capture shop, tower, and combat verification screens in `docs/verification/`.
-
-## Engineering — integration coverage
-
-- [x] Add an integration test for the hatchery care and hatching flow.
-- [x] Add an integration test for stable roster and recovery actions.
-- [x] Add an integration test for shop trades and purchase validation.
-- [x] Add an integration test for tower preparation, movement, return, and rewards.
-- [x] Add an integration test for combat commands, resolution, and recovery.
-- [x] Add an integration test for town purchases and building progression.
-
-## Engineering — shared configuration
-
-- [x] Move monster stat curves into shared typed game data and add integrity checks.
-- [x] Move combat cooldown definitions into shared typed game data and add integrity checks.
-- [x] Move shop inventory and trade costs into shared typed game data and add integrity checks.
-- [x] Move tower rewards into shared typed game data and add integrity checks.
-
-## Engineering — command boundaries
-
-- [x] Standardise explicit town commands for building, trade, greeting, save, and navigation.
-- [x] Move remaining town progression mutations behind the town command/reducer boundary.
-- [x] Standardise explicit combat commands for attacks, skills, items, defence, and fleeing.
-- [x] Move remaining combat progression mutations behind the combat command/reducer boundary.
-- [x] Add regression tests proving rendering does not mutate town or combat progression.
+- [ ] Migrate all tests and test-only helpers from `src/` into `tests/`
+  (53 test files, 161 cases). Exercise the public library API, introduce only
+  intentional public seams, and remove test module declarations from production
+  sources before expanding coverage (CODE_STANDARDS §11.4).
+- [ ] Review suites by major feature, especially tower navigation, combat commands,
+  and combat support; consolidate related inputs into table-driven cases toward
+  five tests per feature. Preserve distinct regressions and explain suites that
+  need more than five cases (§11.3).
+- [ ] Remove `parse_json<T>` from `src/data/loader.rs`; call the toolkit's labeled
+  embedded loader or `include_json!` directly, retaining project schemas,
+  semantic validation, and source-specific errors (§5.3).
+- [ ] Move remaining gameplay balance into typed JSON, including scavenging rewards
+  in `town_engine.rs` and fatigue/recovery/bond values in `monster_engine.rs`.
+  Validate the new fields and derive reward messages from loaded values (§5.3).
+- [ ] Externalize player-facing labels, tutorial copy, and action/result messages
+  from `src/screens/`, `src/game/actions.rs`, and engines into JSON under `assets/`;
+  load through the toolkit and validate required text keys (§5.3).
+- [ ] Make introductory/completion tutorial instructions name their visible next
+  button (`CONTINUE`, `SHOW ACTIONS`, `FINISH GUIDE`, or `SHOW THE EGG`). Update
+  `game_page.json` to describe direct room tapping instead of the obsolete
+  focus-then-`ROUTE` interaction; verify the touch flow and replace affected
+  captures directly in `docs/verification/` (§7.5).
+- [ ] Split functions exceeding 100 lines by responsibility, starting with
+  `Game::begin_capture_scene`, `Game::update_gameplay`, `Game::draw`, content
+  validation/index/fallback builders, and tower/egg/breeding/combat handlers.
+  Keep files below 800 total lines, extract cohesive action modules from the
+  758-line `src/game/actions.rs`, and migrate touched `mod.rs` roots to named
+  module files when restructuring (§2.2–2.3, §4.1).
+- [ ] Move tutorial progression selection/flags and `tutorial::mark` from
+  `src/screens/tutorial.rs` into state/engine modules; keep screen input/rendering
+  read-only and apply progression through the existing action dispatcher
+  (§2.1, §5.1, §7.1).
+- [ ] Add missing `//!` purpose documentation to production and test modules,
+  including crate roots. Correct the stale “non-test lines” description in
+  `tests/code_standards.rs` to describe total physical lines (§2.2, §9.2).
+- [ ] Replace oversized argument lists in `GameData::from_parts`, atlas drawing,
+  and breeding rows with cohesive data/context structs; remove the blanket
+  Clippy allowance in `src/main.rs` and explain any remaining targeted allowances
+  with comments (§4.3, §10.2).
+- [ ] Remove same-scope variable shadowing, starting with repeated
+  `status_message` bindings in `Game::new` and `targets` in the UI controller registry;
+  use distinct descriptive bindings or explicit reassignment (§10.3).
